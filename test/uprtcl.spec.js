@@ -30,16 +30,24 @@ const generateCid = async (message) => {
 
 contract('Uprtcl', (accounts) => {
 
+  let creator = accounts[0];
+  let firstOwner = accounts[1];
+  let secondOwner = accounts[2];
+  let observer = accounts[3];
+  
   let contextIdHash;
   let perspectiveIdHash;
+  let perspectiveIdHash2;
+  let head0;
+  let head1;
 
   beforeEach(() => {}) 
   afterEach(() => {}) 
 
-  it('should persist a perspective', async () => {
+  it('should persist a perspective and retrieve it', async () => {
 
     const context = {
-      creatorId: accounts[0],
+      creatorId: 'did:uport:123',
       timestamp: 0,
       nonce: 0
     }
@@ -48,7 +56,7 @@ contract('Uprtcl', (accounts) => {
 
     const perspective = {
       origin: 'eth://contractAddress',
-      creatorId: accounts[0],
+      creatorId: 'did:uport:123',
       timestamp: 0,
       contextId: '',
       name: 'test perspective'
@@ -65,10 +73,63 @@ contract('Uprtcl', (accounts) => {
     let result = await uprtclInstance.methods['addPerspective(bytes32,bytes32,address)'](
       '0x' + perspectiveIdHash.toString('hex'),
       '0x' + contextIdHash.toString('hex'),
-      accounts[1],
-      { from: accounts[0] });    
+      firstOwner,
+      { from: creator });    
 
     assert.isTrue(result.receipt.status, "status not true");
+
+    let perspectiveRead = await uprtclInstance.methods['getPerspective(bytes32)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      { from: observer });
+
+    assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
+  });
+
+  it('should not be able to persist an existing perspective', async () => {
+    
+    let uprtclInstance = await Uprtcl.deployed();
+
+    let failed = false;
+    await uprtclInstance.methods['addPerspective(bytes32,bytes32,address)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      '0x' + contextIdHash.toString('hex'),
+      creator,
+      { from: creator }).catch((error) => {
+        assert.equal(error.reason, 'existing perspective', "unexpected reason");
+        failed = true
+      });
+
+    assert.isTrue(failed, "the perspective was recreated");
+    
+  });
+
+  it('should not be able to persist a perspective without owner', async () => {
+    
+    const perspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123',
+      timestamp: 2,
+      contextId: '',
+      name: 'test perspective 2'
+    }
+
+    let perspectiveCidParts = await generateCid(JSON.stringify(perspective));
+    perspectiveIdHash2 = await multihashing.digest(perspectiveCidParts.join(), 'sha2-256');
+
+    let uprtclInstance = await Uprtcl.deployed();
+
+    let failed = false;
+    await uprtclInstance.methods['addPerspective(bytes32,bytes32,address)'](
+      '0x' + perspectiveIdHash2.toString('hex'),
+      '0x' + contextIdHash.toString('hex'),
+      '0x0000000000000000000000000000000000000000',
+      { from: creator }).catch((error) => {
+        assert.equal(error.reason, 'owner cant be empty', "unexpected reason");
+        failed = true;
+      });    
+
+    assert.isTrue(failed, "the perspective was created");
+    
   });
 
   it('should not be able to update the head of a perspective if not owner', async () => {
@@ -77,17 +138,17 @@ contract('Uprtcl', (accounts) => {
       text: 'This is my data'
     }
 
-    dataIdParts = await generateCid(JSON.stringify(data));
+    let dataIdParts = await generateCid(JSON.stringify(data));
 
     const head = {
-      creatorId: accounts[0],
+      creatorId: 'did:uport:123',
       timestamp: 0,
       message: 'test commit',
       parentsIds: [],
       dataId: dataIdParts.join()
     }
 
-    headParts = await generateCid(JSON.stringify(head));
+    let headParts = await generateCid(JSON.stringify(head));
 
     let uprtclInstance = await Uprtcl.deployed();
 
@@ -96,7 +157,8 @@ contract('Uprtcl', (accounts) => {
       '0x' + perspectiveIdHash.toString('hex'),
       '0x' + headParts[0],
       '0x' + headParts[1],
-      { from: accounts[0] }).catch((error) => {
+      { from: creator }).catch((error) => {
+        assert.equal(error.reason, 'unauthorized access', "unexpected reason");
         failed = true
       });
 
@@ -110,27 +172,218 @@ contract('Uprtcl', (accounts) => {
       text: 'This is my data'
     }
 
-    dataIdParts = await generateCid(JSON.stringify(data));
+    let dataIdParts = await generateCid(JSON.stringify(data));
 
     const head = {
-      creatorId: accounts[0],
-      timestamp: 0,
-      message: 'test commit',
+      creatorId: 'did:uport:123',
+      timestamp: 8787,
+      message: 'test commit new',
       parentsIds: [],
       dataId: dataIdParts.join()
     }
 
-    headParts = await generateCid(JSON.stringify(head));
+    let headParts = await generateCid(JSON.stringify(head));
 
     let uprtclInstance = await Uprtcl.deployed();
+
+    let perspectiveReadBefore = await uprtclInstance.methods['getPerspective(bytes32)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      { from: observer });
+
+    assert.equal(
+      perspectiveReadBefore.head0.toString(), 
+      '0x0000000000000000000000000000000000000000000000000000000000000000', 
+      "original head is not null"); 
+    
+    assert.equal(
+      perspectiveReadBefore.head1.toString(), 
+      '0x0000000000000000000000000000000000000000000000000000000000000000', 
+      "original head is not null"); 
 
     let result = await uprtclInstance.methods['updateHead(bytes32,bytes32,bytes32)'](
       '0x' + perspectiveIdHash.toString('hex'),
       '0x' + headParts[0],
       '0x' + headParts[1],
-      { from: accounts[1] });
+      { from: firstOwner });
+
+    head0 = headParts[0];
+    head1 = headParts[1];
       
     assert.isTrue(result.receipt.status);
+
+    let perspectiveRead = await uprtclInstance.methods['getPerspective(bytes32)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      { from: observer });
+
+    assert.equal(
+      perspectiveRead.head0.toString(), 
+      '0x'+head0, 
+      "new head is not what expected"); 
+    
+    assert.equal(
+      perspectiveRead.head1.toString(), 
+      '0x'+head1, 
+      "new head is not what expected"); 
     
   });
+
+  it('should not be able to change the owner of a perspective if not the current owner', async () => {
+    
+    let uprtclInstance = await Uprtcl.deployed();
+
+    let failed = false
+    let result = await uprtclInstance.methods['changeOwner(bytes32,address)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      secondOwner,
+      { from: creator }).catch((error) => {
+        assert.equal(error.reason, 'unauthorized access', "unexpected reason");
+        failed = true;
+      });
+      
+    assert.isTrue(failed, "the owner was updated");
+
+  });
+
+  it('should be able to change the owner of a perspective if it is the current owner', async () => {
+    
+    let uprtclInstance = await Uprtcl.deployed();
+
+    let result = await uprtclInstance.methods['changeOwner(bytes32,address)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      secondOwner,
+      { from: firstOwner });
+      
+    assert.isTrue(result.receipt.status, "the tx was not sent");
+
+    let perspectiveRead = await uprtclInstance.methods['getPerspective(bytes32)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      { from: observer });
+
+    assert.equal(perspectiveRead.owner, secondOwner, "owner was not updated");
+
+  });
+
+  it('should be able to update the head of a perspective as the new owner', async () => {
+    
+    const data = {
+      text: 'This is my data 2'
+    }
+
+    dataIdParts = await generateCid(JSON.stringify(data));
+
+    const head = {
+      creatorId: 'did:uport:123',
+      timestamp: 615,
+      message: 'test commit 4',
+      parentsIds: [],
+      dataId: dataIdParts.join()
+    }
+
+    let newHeadParts = await generateCid(JSON.stringify(head));
+
+    let uprtclInstance = await Uprtcl.deployed();
+
+    let perspectiveReadBefore = await uprtclInstance.methods['getPerspective(bytes32)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      { from: observer });
+
+    assert.equal(
+      perspectiveReadBefore.head0, 
+      '0x' + head0, 
+      "original head is not what expected"); 
+    
+    assert.equal(
+      perspectiveReadBefore.head1, 
+      '0x' + head1, 
+      "original head is not what expected"); 
+
+    let result = await uprtclInstance.methods['updateHead(bytes32,bytes32,bytes32)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      '0x' + newHeadParts[0],
+      '0x' + newHeadParts[1],
+      { from: secondOwner });
+
+    assert.isTrue(result.receipt.status, "the head was not updated");
+
+    let perspectiveRead = await uprtclInstance.methods['getPerspective(bytes32)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      { from: observer });
+
+    assert.equal(
+      perspectiveRead.head0, 
+      '0x' + newHeadParts[0],
+      "new head is not what expected"); 
+    
+    assert.equal(
+      perspectiveRead.head1, 
+      '0x' + newHeadParts[1],
+      "new head is not what expected"); 
+
+    head0 = perspectiveRead.head0;
+    head1 = perspectiveRead.head1;
+
+  });
+
+  it('should not be able to update the head of a perspective as the old owner', async () => {
+    
+    const data = {
+      text: 'This is my data 5'
+    }
+
+    dataIdParts = await generateCid(JSON.stringify(data));
+
+    const head = {
+      creatorId: 'did:uport:123',
+      timestamp: 822,
+      message: 'test commit 587',
+      parentsIds: [],
+      dataId: dataIdParts.join()
+    }
+
+    let newHeadParts = await generateCid(JSON.stringify(head));
+
+    let uprtclInstance = await Uprtcl.deployed();
+
+    let perspectiveReadBefore = await uprtclInstance.methods['getPerspective(bytes32)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      { from: observer });
+
+    assert.equal(
+      perspectiveReadBefore.head0, 
+      head0, 
+      "original head is not what expected"); 
+    
+    assert.equal(
+      perspectiveReadBefore.head1, 
+      head1, 
+      "original head is not what expected"); 
+
+    let failed = false;
+    let result = await uprtclInstance.methods['updateHead(bytes32,bytes32,bytes32)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      '0x' + newHeadParts[0],
+      '0x' + newHeadParts[1],
+      { from: firstOwner }).catch((error) => {
+        assert.equal(error.reason, 'unauthorized access', "unexpected reason");
+        failed = true;
+      });
+
+    assert.isTrue(failed, "the head was updated");
+
+    let perspectiveRead = await uprtclInstance.methods['getPerspective(bytes32)'](
+      '0x' + perspectiveIdHash.toString('hex'),
+      { from: observer });
+
+    assert.equal(
+      perspectiveRead.head0, 
+      head0,
+      "new head is not what expected"); 
+    
+    assert.equal(
+      perspectiveRead.head1, 
+      head1,
+      "new head is not what expected"); 
+
+  });
+
 });

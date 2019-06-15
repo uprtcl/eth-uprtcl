@@ -43,7 +43,7 @@ contract Uprtcl {
 		address owner)
 		public {
 
-		Perspective memory perspective = perspectives[perspectiveIdHash];
+		Perspective storage perspective = perspectives[perspectiveIdHash];
 		require(address(0) != owner, "owner cant be empty");
 		require(address(0) == perspective.owner, "existing perspective");
 
@@ -55,7 +55,7 @@ contract Uprtcl {
 	/** Updates the head pointer of a given perspective. Available only to the owner of that perspective. */
 	function updateHead(bytes32 perspectiveIdHash, bytes32 newHead0, bytes32 newHead1) public {
 
-		Perspective memory perspective = perspectives[perspectiveIdHash];
+		Perspective storage perspective = perspectives[perspectiveIdHash];
 		require(msg.sender == perspective.owner, "unauthorized access");
 
 		bytes32 parentHead0 = perspective.head0;
@@ -70,12 +70,13 @@ contract Uprtcl {
 	/** Changes the owner of a given perspective. Available only to the current owner of that perspective. */
 	function changeOwner(bytes32 perspectiveIdHash, address newOwner) public {
 
-    Perspective memory perspective = perspectives[perspectiveIdHash];
+    Perspective storage perspective = perspectives[perspectiveIdHash];
 		require(msg.sender == perspective.owner, "unauthorized access");
 
-    address previousOwner;
+    address previousOwner = perspective.owner;
 		perspective.owner = newOwner;
-		emit PerspectiveOwnerUpdated(perspectiveIdHash, previousOwner, perspective.owner);
+
+		emit PerspectiveOwnerUpdated(perspectiveIdHash, perspective.owner, previousOwner);
 	}
 
 	/** Get the perspective owner and head from its ID */
