@@ -6,14 +6,29 @@ contract Uprtcl {
 
 	struct Perspective {
 		address owner;
-		bytes head;
+		bytes32 head0;
+		bytes32 head1;
 	}
 
-	mapping (bytes => Perspective) perspectives;
+	mapping (bytes32 => Perspective) public perspectives;
 
-	event PerspectiveAdded(bytes indexed perspectiveId, bytes indexed contextId, address owner);
-	event PerspectiveHeadUpdated(bytes indexed perspectiveId, address author, bytes previousHead, bytes newHead);
-	event PerspectiveOwnerUpdated(bytes indexed perspectiveId, address newOwner, address previousOwner);
+	event PerspectiveAdded(
+		bytes32 indexed perspectiveIdHash,
+		bytes32 indexed contextIdHash,
+		address owner);
+
+	event PerspectiveHeadUpdated(
+		bytes32 indexed perspectiveIdHash,
+		address author,
+		bytes32 previousHead0,
+		bytes32 previousHead1,
+		bytes32 newHead0,
+		bytes32 newHead1);
+
+	event PerspectiveOwnerUpdated(
+		bytes32 indexed perspectiveIdHash,
+		address newOwner,
+		address previousOwner);
 
 	constructor() public {
 	}
@@ -22,51 +37,54 @@ contract Uprtcl {
 	 *  be updated independently using updateHead(). The contextId is not persisted but emited in the PerspectiveAdded
 	 *  event to enable filtering. Validation of the perspectiveId to contextId should be done externally using any
 	 * 	content addressable	storage solution for the perspectiveId. */
-	function addPerspective(bytes memory perspectiveId, bytes memory contextId, address owner) public returns(bool success) {
+	function addPerspective(
+		bytes32 perspectiveIdHash,
+		bytes32 contextIdHash,
+		address owner)
+		public {
 
-		Perspective memory perspective = perspectives[perspectiveId];
+		Perspective memory perspective = perspectives[perspectiveIdHash];
 		require(address(0) != owner, "owner cant be empty");
 		require(address(0) == perspective.owner, "existing perspective");
 
 		perspective.owner = owner;
-		perspectives[perspectiveId] = perspective;
-		emit PerspectiveAdded(perspectiveId, contextId, perspective.owner);
-
-		return true;
+		perspectives[perspectiveIdHash] = perspective;
+		emit PerspectiveAdded(perspectiveIdHash, contextIdHash, perspective.owner);
 	}
 
 	/** Updates the head pointer of a given perspective. Available only to the owner of that perspective. */
-	function updateHead(bytes memory perspectiveId, bytes memory newHead) public returns(bool success) {
+	function updateHead(bytes32 perspectiveIdHash, bytes32 newHead0, bytes32 newHead1) public {
 
-		Perspective memory perspective = perspectives[perspectiveId];
+		Perspective memory perspective = perspectives[perspectiveIdHash];
 		require(msg.sender == perspective.owner, "unauthorized access");
 
-		bytes memory parentHead = perspective.head;
-		perspective.head = newHead;
-		emit PerspectiveHeadUpdated(perspectiveId, msg.sender, parentHead, perspective.head);
+		bytes32 parentHead0 = perspective.head0;
+		bytes32 parentHead1 = perspective.head1;
 
-    return true;
+		perspective.head0 = newHead0;
+		perspective.head1 = newHead1;
+
+		emit PerspectiveHeadUpdated(perspectiveIdHash, msg.sender, parentHead0, parentHead1, perspective.head0, perspective.head1);
 	}
 
 	/** Changes the owner of a given perspective. Available only to the current owner of that perspective. */
-	function changeOwner(bytes memory perspectiveId, address newOwner) public returns(bool success){
+	function changeOwner(bytes32 perspectiveIdHash, address newOwner) public {
 
-    Perspective memory perspective = perspectives[perspectiveId];
+    Perspective memory perspective = perspectives[perspectiveIdHash];
 		require(msg.sender == perspective.owner, "unauthorized access");
 
     address previousOwner;
 		perspective.owner = newOwner;
-		emit PerspectiveOwnerUpdated(perspectiveId, previousOwner, perspective.owner);
-
-    return true;
+		emit PerspectiveOwnerUpdated(perspectiveIdHash, previousOwner, perspective.owner);
 	}
 
 	/** Get the perspective owner and head from its ID */
-	function getPerspective(bytes memory perspectiveId)
-		public view returns(address owner, bytes memory head) {
+	function getPerspective(bytes32 perspectiveIdHash)
+		public view
+		returns(address owner, bytes32 head0, bytes32 head1) {
 
-		Perspective memory perspective = perspectives[perspectiveId];
-		return (perspective.owner, perspective.head);
+		Perspective memory perspective = perspectives[perspectiveIdHash];
+		return (perspective.owner, perspective.head0, perspective.head1);
 	}
 
 }
