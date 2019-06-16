@@ -19,7 +19,7 @@ const generateCid = async (message) => {
    * two chunks of 256 bits each */
   if (cidBytes.length <= 64) {
     cidHex0 = cidBytes.padStart(64, '0');
-    cidHex1 = new Array(64).fill('0');
+    cidHex1 = new Array(64).fill('0').join('');
   } else {
     cidHex0 = cidBytes.slice(-64);
     cidHex1 = cidBytes.slice(-cidBytes.length, -64).padStart(64,'0');
@@ -38,8 +38,8 @@ contract('Uprtcl', (accounts) => {
   let contextIdHash;
   let perspectiveIdHash;
   let perspectiveIdHash2;
-  let head0;
   let head1;
+  let head0;
 
   beforeEach(() => {}) 
   afterEach(() => {}) 
@@ -122,7 +122,7 @@ contract('Uprtcl', (accounts) => {
     await uprtclInstance.methods['addPerspective(bytes32,bytes32,address)'](
       '0x' + perspectiveIdHash2.toString('hex'),
       '0x' + contextIdHash.toString('hex'),
-      '0x0000000000000000000000000000000000000000',
+      '0x' + new Array(40).fill('0').join(''),
       { from: creator }).catch((error) => {
         assert.equal(error.reason, 'owner cant be empty', "unexpected reason");
         failed = true;
@@ -155,8 +155,8 @@ contract('Uprtcl', (accounts) => {
     let failed = false;
     await uprtclInstance.methods['updateHead(bytes32,bytes32,bytes32)'](
       '0x' + perspectiveIdHash.toString('hex'),
-      '0x' + headParts[0],
-      '0x' + headParts[1],
+      '0x' + headParts[0], /** this is head1 */
+      '0x' + headParts[1], /** this is head0 - LSB */
       { from: creator }).catch((error) => {
         assert.equal(error.reason, 'unauthorized access', "unexpected reason");
         failed = true
@@ -191,23 +191,23 @@ contract('Uprtcl', (accounts) => {
       { from: observer });
 
     assert.equal(
-      perspectiveReadBefore.head0.toString(), 
-      '0x0000000000000000000000000000000000000000000000000000000000000000', 
+      perspectiveReadBefore.head1.toString(), 
+      '0x' + new Array(64).fill('0').join(''), 
       "original head is not null"); 
     
     assert.equal(
-      perspectiveReadBefore.head1.toString(), 
-      '0x0000000000000000000000000000000000000000000000000000000000000000', 
+      perspectiveReadBefore.head0.toString(), 
+      '0x' + new Array(64).fill('0').join(''), 
       "original head is not null"); 
 
     let result = await uprtclInstance.methods['updateHead(bytes32,bytes32,bytes32)'](
       '0x' + perspectiveIdHash.toString('hex'),
-      '0x' + headParts[0],
-      '0x' + headParts[1],
+      '0x' + headParts[0], /** this is head1 */
+      '0x' + headParts[1], /** this is head0 LSB */
       { from: firstOwner });
 
-    head0 = headParts[0];
-    head1 = headParts[1];
+    head1 = headParts[0];
+    head0 = headParts[1];  /** this is head0 LSB */
       
     assert.isTrue(result.receipt.status);
 
@@ -216,13 +216,13 @@ contract('Uprtcl', (accounts) => {
       { from: observer });
 
     assert.equal(
-      perspectiveRead.head0.toString(), 
-      '0x'+head0, 
+      perspectiveRead.head1.toString(), 
+      '0x'+head1, 
       "new head is not what expected"); 
     
     assert.equal(
-      perspectiveRead.head1.toString(), 
-      '0x'+head1, 
+      perspectiveRead.head0.toString(), 
+      '0x'+head0, 
       "new head is not what expected"); 
     
   });
@@ -288,19 +288,19 @@ contract('Uprtcl', (accounts) => {
       { from: observer });
 
     assert.equal(
-      perspectiveReadBefore.head0, 
-      '0x' + head0, 
+      perspectiveReadBefore.head1, 
+      '0x' + head1, 
       "original head is not what expected"); 
     
     assert.equal(
-      perspectiveReadBefore.head1, 
-      '0x' + head1, 
+      perspectiveReadBefore.head0, 
+      '0x' + head0, 
       "original head is not what expected"); 
 
     let result = await uprtclInstance.methods['updateHead(bytes32,bytes32,bytes32)'](
       '0x' + perspectiveIdHash.toString('hex'),
-      '0x' + newHeadParts[0],
-      '0x' + newHeadParts[1],
+      '0x' + newHeadParts[0],  /** head1 */
+      '0x' + newHeadParts[1],  /** head0 - LSB */
       { from: secondOwner });
 
     assert.isTrue(result.receipt.status, "the head was not updated");
@@ -310,17 +310,17 @@ contract('Uprtcl', (accounts) => {
       { from: observer });
 
     assert.equal(
-      perspectiveRead.head0, 
+      perspectiveRead.head1, 
       '0x' + newHeadParts[0],
       "new head is not what expected"); 
     
     assert.equal(
-      perspectiveRead.head1, 
+      perspectiveRead.head0, 
       '0x' + newHeadParts[1],
       "new head is not what expected"); 
 
-    head0 = perspectiveRead.head0;
     head1 = perspectiveRead.head1;
+    head0 = perspectiveRead.head0;
 
   });
 
@@ -349,13 +349,13 @@ contract('Uprtcl', (accounts) => {
       { from: observer });
 
     assert.equal(
-      perspectiveReadBefore.head0, 
-      head0, 
+      perspectiveReadBefore.head1, 
+      head1, 
       "original head is not what expected"); 
     
     assert.equal(
-      perspectiveReadBefore.head1, 
-      head1, 
+      perspectiveReadBefore.head0, 
+      head0, 
       "original head is not what expected"); 
 
     let failed = false;
@@ -375,13 +375,13 @@ contract('Uprtcl', (accounts) => {
       { from: observer });
 
     assert.equal(
-      perspectiveRead.head0, 
-      head0,
+      perspectiveRead.head1, 
+      head1,
       "new head is not what expected"); 
     
     assert.equal(
-      perspectiveRead.head1, 
-      head1,
+      perspectiveRead.head0, 
+      head0,
       "new head is not what expected"); 
 
   });
