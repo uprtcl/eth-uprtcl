@@ -6,6 +6,7 @@ contract Uprtcl {
 
 	struct Perspective {
 		address owner;
+		uint8   base;  /* cid base UTF-8 code stored prevent artificial duplication of perspectives caused by base selection */
 		bytes32 head1;
 		bytes32 head0; /* less significant bit */
 	}
@@ -20,6 +21,7 @@ contract Uprtcl {
 	event PerspectiveHeadUpdated(
 		bytes32 indexed perspectiveIdHash,
 		address author,
+		uint8   base,
 		bytes32 previousHead1,
 		bytes32 previousHead0,
 		bytes32 newHead1,
@@ -48,12 +50,18 @@ contract Uprtcl {
 		require(address(0) == perspective.owner, "existing perspective");
 
 		perspective.owner = owner;
+		
 		perspectives[perspectiveIdHash] = perspective;
+
 		emit PerspectiveAdded(perspectiveIdHash, contextIdHash, perspective.owner);
 	}
 
 	/** Updates the head pointer of a given perspective. Available only to the owner of that perspective. */
-	function updateHead(bytes32 perspectiveIdHash, bytes32 newHead1, bytes32 newHead0) public {
+	function updateHead(
+		bytes32 perspectiveIdHash,
+		uint8   base,
+		bytes32 newHead1,
+		bytes32 newHead0) public {
 
 		Perspective storage perspective = perspectives[perspectiveIdHash];
 		require(msg.sender == perspective.owner, "unauthorized access");
@@ -61,10 +69,18 @@ contract Uprtcl {
 		bytes32 parentHead1 = perspective.head1;
 		bytes32 parentHead0 = perspective.head0;
 
+		perspective.base = base;
 		perspective.head1 = newHead1;
 		perspective.head0 = newHead0;
 
-		emit PerspectiveHeadUpdated(perspectiveIdHash, msg.sender, parentHead1, parentHead0, perspective.head1, perspective.head0);
+		emit PerspectiveHeadUpdated(
+			perspectiveIdHash,
+			msg.sender,
+			base,
+			parentHead1,
+			parentHead0,
+			perspective.head1,
+			perspective.head0);
 	}
 
 	/** Changes the owner of a given perspective. Available only to the current owner of that perspective. */
@@ -82,10 +98,19 @@ contract Uprtcl {
 	/** Get the perspective owner and head from its ID */
 	function getPerspective(bytes32 perspectiveIdHash)
 		public view
-		returns(address owner, bytes32 head1, bytes32 head0) {
+		returns(
+			address owner,
+			uint8 base,
+			bytes32 head1,
+			bytes32 head0) {
 
 		Perspective memory perspective = perspectives[perspectiveIdHash];
-		return (perspective.owner, perspective.head1, perspective.head0);
+
+		return (
+			perspective.owner,
+			perspective.base,
+			perspective.head1,
+			perspective.head0);
 	}
 
 }

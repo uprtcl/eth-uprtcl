@@ -4,6 +4,31 @@ const CID = require('cids');
 const multihashing = require('multihashing-async')
 const Buffer = require('buffer/').Buffer;
 
+const constants = [
+  ['7', 37 ],
+  ['9', 39 ],
+  ['f', 66 ],
+  ['b', 62 ],
+  ['c', 63 ],
+  ['v', 76 ],
+  ['t', 74 ],
+  ['h', 68 ],
+  ['Z', 90 ],
+  ['z', 122 ],
+  ['m', 109 ],
+  ['M', 77 ],
+  ['u', 75 ],
+  ['U', 55 ]
+];
+
+const multibaseToUint = (code) => {
+  return constants.filter(e => e[0]==code)[0][1];
+}
+
+const uintToMultibase = (number) => {
+  return constants.filter(e => e[1]==number)[0][0];
+}
+
 const generateCid = async (message) => {
   const version = 1;
   const codec = 'raw';
@@ -30,6 +55,7 @@ const generateCid = async (message) => {
 
 contract('Uprtcl', (accounts) => {
 
+  let MULTIBASE = multibaseToUint('z'); // 'Base58btc'
   let creator = accounts[0];
   let firstOwner = accounts[1];
   let secondOwner = accounts[2];
@@ -45,6 +71,8 @@ contract('Uprtcl', (accounts) => {
   afterEach(() => {}) 
 
   it('should persist a perspective and retrieve it', async () => {
+
+    debugger 
 
     const context = {
       creatorId: 'did:uport:123',
@@ -98,7 +126,7 @@ contract('Uprtcl', (accounts) => {
         assert.equal(error.reason, 'existing perspective', "unexpected reason");
         failed = true
       });
-
+      
     assert.isTrue(failed, "the perspective was recreated");
     
   });
@@ -153,8 +181,9 @@ contract('Uprtcl', (accounts) => {
     let uprtclInstance = await Uprtcl.deployed();
 
     let failed = false;
-    await uprtclInstance.methods['updateHead(bytes32,bytes32,bytes32)'](
+    await uprtclInstance.methods['updateHead(bytes32,uint8,bytes32,bytes32)'](
       '0x' + perspectiveIdHash.toString('hex'),
+      MULTIBASE,
       '0x' + headParts[0], /** this is head1 */
       '0x' + headParts[1], /** this is head0 - LSB */
       { from: creator }).catch((error) => {
@@ -200,8 +229,9 @@ contract('Uprtcl', (accounts) => {
       '0x' + new Array(64).fill('0').join(''), 
       "original head is not null"); 
 
-    let result = await uprtclInstance.methods['updateHead(bytes32,bytes32,bytes32)'](
+    let result = await uprtclInstance.methods['updateHead(bytes32,uint8,bytes32,bytes32)'](
       '0x' + perspectiveIdHash.toString('hex'),
+      MULTIBASE,
       '0x' + headParts[0], /** this is head1 */
       '0x' + headParts[1], /** this is head0 LSB */
       { from: firstOwner });
@@ -214,6 +244,11 @@ contract('Uprtcl', (accounts) => {
     let perspectiveRead = await uprtclInstance.methods['getPerspective(bytes32)'](
       '0x' + perspectiveIdHash.toString('hex'),
       { from: observer });
+
+    assert.equal(
+      perspectiveRead.base, 
+      MULTIBASE, 
+      "base is not what was expected");
 
     assert.equal(
       perspectiveRead.head1.toString(), 
@@ -297,8 +332,9 @@ contract('Uprtcl', (accounts) => {
       '0x' + head0, 
       "original head is not what expected"); 
 
-    let result = await uprtclInstance.methods['updateHead(bytes32,bytes32,bytes32)'](
+    let result = await uprtclInstance.methods['updateHead(bytes32,uint8,bytes32,bytes32)'](
       '0x' + perspectiveIdHash.toString('hex'),
+      MULTIBASE,
       '0x' + newHeadParts[0],  /** head1 */
       '0x' + newHeadParts[1],  /** head0 - LSB */
       { from: secondOwner });
@@ -359,8 +395,9 @@ contract('Uprtcl', (accounts) => {
       "original head is not what expected"); 
 
     let failed = false;
-    let result = await uprtclInstance.methods['updateHead(bytes32,bytes32,bytes32)'](
+    let result = await uprtclInstance.methods['updateHead(bytes32,uint8,bytes32,bytes32)'](
       '0x' + perspectiveIdHash.toString('hex'),
+      MULTIBASE,
       '0x' + newHeadParts[0],
       '0x' + newHeadParts[1],
       { from: firstOwner }).catch((error) => {
