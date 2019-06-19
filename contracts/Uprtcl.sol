@@ -6,8 +6,7 @@ contract Uprtcl {
 
 	struct Perspective {
 		address owner;
-		bytes32 head1; 
-		bytes32 head0; /* less significant bit */
+		string headCid;
 	}
 
 	mapping (bytes32 => Perspective) public perspectives;
@@ -16,16 +15,13 @@ contract Uprtcl {
 		bytes32 indexed perspectiveIdHash,
 		bytes32 indexed contextIdHash,
 		address owner,
-		bytes32 perspectiveCid0,
-		bytes32 perspectiveCid1);
+		string perspectiveCid);
 
 	event PerspectiveHeadUpdated(
 		bytes32 indexed perspectiveIdHash,
 		address author,
-		bytes32 previousHead1,
-		bytes32 previousHead0,
-		bytes32 newHead1,
-		bytes32 newHead0);
+		string previousHeadCid,
+		string newHeadCid);
 
 	event PerspectiveOwnerUpdated(
 		bytes32 indexed perspectiveIdHash,
@@ -38,13 +34,13 @@ contract Uprtcl {
 	/** Adds a new perspective to the mapping and sets the owner. The head pointer is initialized as null and should
 	 *  be updated independently using updateHead(). The contextId is not persisted but emited in the PerspectiveAdded
 	 *  event to enable filtering. Validation of the perspectiveId to contextId should be done externally using any
-	 * 	content addressable	storage solution for the perspectiveId. */
+	 * 	content addressable	storage solution for the perspectiveId. The perspectiveCid is emited to help perspectiveHash
+	 *  reverse mapping */
 	function addPerspective(
 		bytes32 perspectiveIdHash,
 		bytes32 contextIdHash,
 		address owner,
-		bytes32 perspectiveCid1, /** bypassed input to event to be used to reverse map the perspective hash */
-		bytes32 perspectiveCid0) /** LSB */
+		string memory perspectiveCid) /** LSB */
 		public {
 
 		Perspective storage perspective = perspectives[perspectiveIdHash];
@@ -59,32 +55,25 @@ contract Uprtcl {
 			perspectiveIdHash,
 			contextIdHash,
 			perspective.owner,
-			perspectiveCid1,
-			perspectiveCid0);
+			perspectiveCid);
 	}
 
 	/** Updates the head pointer of a given perspective. Available only to the owner of that perspective. */
 	function updateHead(
 		bytes32 perspectiveIdHash,
-		bytes32 newHead1,
-		bytes32 newHead0) public {
+		string memory newHead) public {
 
 		Perspective storage perspective = perspectives[perspectiveIdHash];
 		require(msg.sender == perspective.owner, "unauthorized access");
 
-		bytes32 parentHead1 = perspective.head1;
-		bytes32 parentHead0 = perspective.head0;
-
-		perspective.head1 = newHead1;
-		perspective.head0 = newHead0;
+		string memory parentHead = perspective.headCid;
+		perspective.headCid = newHead;
 
 		emit PerspectiveHeadUpdated(
 			perspectiveIdHash,
 			msg.sender,
-			parentHead1,
-			parentHead0,
-			perspective.head1,
-			perspective.head0);
+			parentHead,
+			perspective.headCid);
 	}
 
 	/** Changes the owner of a given perspective. Available only to the current owner of that perspective. */
@@ -104,15 +93,13 @@ contract Uprtcl {
 		public view
 		returns(
 			address owner,
-			bytes32 head1,
-			bytes32 head0) {
+			string memory headCid) {
 
 		Perspective memory perspective = perspectives[perspectiveIdHash];
 
 		return (
 			perspective.owner,
-			perspective.head1,
-			perspective.head0);
+			perspective.headCid);
 	}
 
 }
