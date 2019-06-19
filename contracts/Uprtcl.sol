@@ -15,7 +15,9 @@ contract Uprtcl {
 	event PerspectiveAdded(
 		bytes32 indexed perspectiveIdHash,
 		bytes32 indexed contextIdHash,
-		address owner);
+		address owner,
+		bytes32 perspectiveCid0,
+		bytes32 perspectiveCid1);
 
 	event PerspectiveHeadUpdated(
 		bytes32 indexed perspectiveIdHash,
@@ -40,7 +42,9 @@ contract Uprtcl {
 	function addPerspective(
 		bytes32 perspectiveIdHash,
 		bytes32 contextIdHash,
-		address owner)
+		address owner,
+		bytes32 perspectiveCid1, /** bypassed input to event to be used to reverse map the perspective hash */
+		bytes32 perspectiveCid0) /** LSB */
 		public {
 
 		Perspective storage perspective = perspectives[perspectiveIdHash];
@@ -51,7 +55,12 @@ contract Uprtcl {
 
 		perspectives[perspectiveIdHash] = perspective;
 
-		emit PerspectiveAdded(perspectiveIdHash, contextIdHash, perspective.owner);
+		emit PerspectiveAdded(
+			perspectiveIdHash,
+			contextIdHash,
+			perspective.owner,
+			perspectiveCid1,
+			perspectiveCid0);
 	}
 
 	/** Updates the head pointer of a given perspective. Available only to the owner of that perspective. */

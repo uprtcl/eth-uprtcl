@@ -134,16 +134,19 @@ contract('Uprtcl', (accounts) => {
     let perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
     /** store this string to simulate the step from string to cid */
     perspectiveCidStr = perspectiveCid.toString();
+    let perspectiveCidStrParts = cidToHeadParts(perspectiveCidStr);
     
     /** perspective and context ids are hashed to fit in bytes32
      * their multihash is hashed so different cids map to the same perspective */
     let contextIdHash = await hash(contextCid);
     let perspectiveIdHash = await hash(perspectiveCid);
     
-    let result = await uprtclInstance.methods['addPerspective(bytes32,bytes32,address)'](
+    let result = await uprtclInstance.methods['addPerspective(bytes32,bytes32,address,bytes32,bytes32)'](
       perspectiveIdHash,
       contextIdHash,
       firstOwner,
+      perspectiveCidStrParts[0],
+      perspectiveCidStrParts[1],
       { from: creator });    
 
     assert.isTrue(result.receipt.status, "status not true");
@@ -166,12 +169,15 @@ contract('Uprtcl', (accounts) => {
 
     let perspectiveIdHash = await hash(perspectiveCidStr);
     let contextIdHash = await hash(contextCidStr);
+    let perspectiveCidStrParts = cidToHeadParts(perspectiveCidStr);
 
     let failed = false;
-    await uprtclInstance.methods['addPerspective(bytes32,bytes32,address)'](
+    await uprtclInstance.methods['addPerspective(bytes32,bytes32,address,bytes32,bytes32)'](
       perspectiveIdHash,
       contextIdHash,
       creator,
+      perspectiveCidStrParts[0],
+      perspectiveCidStrParts[1],
       { from: creator }).catch((error) => {
         assert.equal(error.reason, 'existing perspective', "unexpected reason");
         failed = true
@@ -196,12 +202,15 @@ contract('Uprtcl', (accounts) => {
     
     let perspectiveIdHash2 = await hash(perspectiveCid2);
     let contextIdHash = await hash(contextCidStr);
+    let perspectiveCidStrParts = cidToHeadParts(perspectiveCid2.toString());
 
     let failed = false;
-    await uprtclInstance.methods['addPerspective(bytes32,bytes32,address)'](
+    await uprtclInstance.methods['addPerspective(bytes32,bytes32,address,bytes32,bytes32)'](
       perspectiveIdHash2,
       contextIdHash,
       '0x' + new Array(40).fill('0').join(''),
+      perspectiveCidStrParts[0],
+      perspectiveCidStrParts[1],
       { from: creator }).catch((error) => {
         assert.equal(error.reason, 'owner cant be empty', "unexpected reason");
         failed = true;
