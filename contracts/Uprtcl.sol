@@ -6,8 +6,7 @@ contract Uprtcl {
 
 	struct Perspective {
 		address owner;
-		uint8   base;  /* cid base UTF-8 code stored prevent artificial duplication of perspectives caused by base selection */
-		bytes32 head1;
+		bytes32 head1; 
 		bytes32 head0; /* less significant bit */
 	}
 
@@ -21,7 +20,6 @@ contract Uprtcl {
 	event PerspectiveHeadUpdated(
 		bytes32 indexed perspectiveIdHash,
 		address author,
-		uint8   base,
 		bytes32 previousHead1,
 		bytes32 previousHead0,
 		bytes32 newHead1,
@@ -50,7 +48,7 @@ contract Uprtcl {
 		require(address(0) == perspective.owner, "existing perspective");
 
 		perspective.owner = owner;
-		
+
 		perspectives[perspectiveIdHash] = perspective;
 
 		emit PerspectiveAdded(perspectiveIdHash, contextIdHash, perspective.owner);
@@ -59,7 +57,6 @@ contract Uprtcl {
 	/** Updates the head pointer of a given perspective. Available only to the owner of that perspective. */
 	function updateHead(
 		bytes32 perspectiveIdHash,
-		uint8   base,
 		bytes32 newHead1,
 		bytes32 newHead0) public {
 
@@ -69,14 +66,12 @@ contract Uprtcl {
 		bytes32 parentHead1 = perspective.head1;
 		bytes32 parentHead0 = perspective.head0;
 
-		perspective.base = base;
 		perspective.head1 = newHead1;
 		perspective.head0 = newHead0;
 
 		emit PerspectiveHeadUpdated(
 			perspectiveIdHash,
 			msg.sender,
-			base,
 			parentHead1,
 			parentHead0,
 			perspective.head1,
@@ -100,7 +95,6 @@ contract Uprtcl {
 		public view
 		returns(
 			address owner,
-			uint8 base,
 			bytes32 head1,
 			bytes32 head0) {
 
@@ -108,7 +102,6 @@ contract Uprtcl {
 
 		return (
 			perspective.owner,
-			perspective.base,
 			perspective.head1,
 			perspective.head0);
 	}
