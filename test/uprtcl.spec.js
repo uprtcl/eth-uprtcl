@@ -42,6 +42,11 @@ contract('Uprtcl', (accounts) => {
   let contextCidStr;
   let perspectiveCidStr;
   let headCidStr;
+
+  let context2CidStr;
+  let perspective2CidStr;
+  let head2CidStr;
+
   
   it('should persist a perspective', async () => {
     let uprtclInstance = await Uprtcl.deployed();
@@ -62,7 +67,7 @@ contract('Uprtcl', (accounts) => {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
       timestamp: 0,
-      contextId: '',
+      contextId: contextCid,
       name: 'test perspective'
     }
 
@@ -75,9 +80,10 @@ contract('Uprtcl', (accounts) => {
     let contextIdHash = await hash(contextCid);
     let perspectiveIdHash = await hash(perspectiveCid);
     
-    let result = await uprtclInstance.methods['addPerspective(bytes32,bytes32,address,string)'](
+    let result = await uprtclInstance.methods['addPerspective(bytes32,bytes32,string,address,string)'](
       perspectiveIdHash,
       contextIdHash,
+      '',
       firstOwner,
       perspectiveCidStr,
       { from: creator });    
@@ -97,6 +103,78 @@ contract('Uprtcl', (accounts) => {
     assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
   });
 
+  it('should persist a perspective with a head', async () => {
+    let uprtclInstance = await Uprtcl.deployed();
+
+    const context = {
+      creatorId: 'did:uport:123456',
+      timestamp: 0,
+      nonce: 0
+    }
+
+    let contextCid = await generateCid(JSON.stringify(context), cidConfig1);
+     /** store this string to simulate the step from string to cid */
+    context2CidStr = contextCid.toString();
+
+    const perspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123546',
+      timestamp: 0,
+      contextId: context2CidStr,
+      name: 'test perspective 2'
+    }
+
+    let perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+    /** store this string to simulate the step from string to cid */
+    perspective2CidStr = perspectiveCid.toString();
+
+    /** head */
+    const data = {
+      text: 'This is my data 2'
+    }
+
+    let dataIdCid = await generateCid(JSON.stringify(data), cidConfig1);
+
+    const head = {
+      creatorId: 'did:uport:123456',
+      timestamp: 0,
+      message: 'test commit 2',
+      parentsIds: [],
+      dataId: dataIdCid.toString()
+    }
+
+    let headCid = await generateCid(JSON.stringify(head), cidConfig1);
+    head2CidStr = headCid.toString();
+    
+    /** perspective and context ids are hashed to fit in bytes32
+     * their multihash is hashed so different cids map to the same perspective */
+    let contextIdHash = await hash(contextCid);
+    let perspectiveIdHash = await hash(perspectiveCid);
+    
+    let result = await uprtclInstance.methods['addPerspective(bytes32,bytes32,string,address,string)'](
+      perspectiveIdHash,
+      contextIdHash,
+      head2CidStr,
+      firstOwner,
+      perspectiveCidStr,
+      { from: creator });    
+
+    assert.isTrue(result.receipt.status, "status not true");
+  });
+
+  it('should retrieve the perspective from its encoded cid ', async () => {
+    let uprtclInstance = await Uprtcl.deployed();
+    
+    let perspectiveIdHash = await hash(perspective2CidStr);
+
+    let perspectiveRead = await uprtclInstance.methods['getPerspective(bytes32)'](
+      perspectiveIdHash,
+      { from: observer });
+
+    assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
+    assert.equal(perspectiveRead.headCid, head2CidStr, "head2 Cid is not what was expected");
+  });
+
   it('should not be able to persist an existing perspective', async () => {
     let uprtclInstance = await Uprtcl.deployed();
 
@@ -104,9 +182,10 @@ contract('Uprtcl', (accounts) => {
     let contextIdHash = await hash(contextCidStr);
     
     let failed = false;
-    await uprtclInstance.methods['addPerspective(bytes32,bytes32,address,string)'](
+    await uprtclInstance.methods['addPerspective(bytes32,bytes32,string,address,string)'](
       perspectiveIdHash,
       contextIdHash,
+      '',
       creator,
       perspectiveCidStr,
       { from: creator }).catch((error) => {
@@ -135,9 +214,10 @@ contract('Uprtcl', (accounts) => {
     let contextIdHash = await hash(contextCidStr);
     
     let failed = false;
-    await uprtclInstance.methods['addPerspective(bytes32,bytes32,address,string)'](
+    await uprtclInstance.methods['addPerspective(bytes32,bytes32,string,address,string)'](
       perspectiveIdHash2,
       contextIdHash,
+      '',
       '0x' + new Array(40).fill('0').join(''),
       perspectiveCid2.toString(),
       { from: creator }).catch((error) => {

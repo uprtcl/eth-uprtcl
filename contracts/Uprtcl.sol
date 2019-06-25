@@ -14,6 +14,7 @@ contract Uprtcl {
 	event PerspectiveAdded(
 		bytes32 indexed perspectiveIdHash,
 		bytes32 indexed contextIdHash,
+		string head,
 		address owner,
 		string perspectiveCid);
 
@@ -39,6 +40,7 @@ contract Uprtcl {
 	function addPerspective(
 		bytes32 perspectiveIdHash,
 		bytes32 contextIdHash,
+		string memory head,
 		address owner,
 		string memory perspectiveCid) /** LSB */
 		public {
@@ -48,12 +50,14 @@ contract Uprtcl {
 		require(address(0) == perspective.owner, "existing perspective");
 
 		perspective.owner = owner;
+		perspective.headCid = head;
 
 		perspectives[perspectiveIdHash] = perspective;
 
 		emit PerspectiveAdded(
 			perspectiveIdHash,
 			contextIdHash,
+			perspective.headCid,
 			perspective.owner,
 			perspectiveCid);
 	}
