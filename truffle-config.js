@@ -11,10 +11,11 @@ module.exports = {
     },
     rinkeby: {
       provider: () => {
-        return new PrivateKeyProvider(
+        let prov = new PrivateKeyProvider(
           process.env.PRIVATE_KEY, 
           process.env.RPC_ENDPOINT
-        );
+        )
+        return prov;
       },
       gasPrice: 25000000000,
       network_id: 4
