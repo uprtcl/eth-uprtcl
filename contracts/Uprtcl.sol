@@ -9,7 +9,19 @@ contract Uprtcl {
 		string headCid;
 	}
 
+	struct HeadUpdate {
+		bytes32 perspectiveIdHash;
+		string headCid;
+	}
+
+	struct HeadUpdateBatch {
+		HeadUpdate[]
+		owner 
+		authorized
+	}
+
 	mapping (bytes32 => Perspective) public perspectives;
+	mapping (bytes32 => HeadUpdate[]) public batches;
 
 	event PerspectiveAdded(
 		bytes32 indexed perspectiveIdHash,
@@ -104,6 +116,32 @@ contract Uprtcl {
 		return (
 			perspective.owner,
 			perspective.headCid);
+	}
+
+	function proposeBatchUpdate(Head[] memory newHeads, bytes32 batchId) {
+		assert(batches[batchId].length == 0, "Batch id not available");
+		
+		batches[batchId] = newHeads;
+
+		emit BatchCreated(batchId, msg.sender);
+	}
+
+	function authorizeBatchUpdate() {
+		for() {
+			
+		}
+	}
+
+	function executeBatchUpdate() {
+		for() {
+			updateHead()
+		}
+	}
+
+	function BatchUpdate() {
+		for() {
+			updateHead()
+		}
 	}
 
 }
