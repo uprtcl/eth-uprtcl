@@ -64,6 +64,9 @@ contract Uprtcl {
 		address indexed owner,
 		uint32 nonce);
 
+	event AddedUpdatesToBatch(
+		bytes32 indexed batchId);
+
 	/** Adds a new perspective to the mapping and sets the owner. The head pointer is initialized as null and should
 	 *  be updated independently using updateHead(). The contextId is not persisted but emited in the PerspectiveAdded
 	 *  event to enable filtering. Validation of the perspectiveId to contextId should be done externally using any
@@ -200,6 +203,8 @@ contract Uprtcl {
 			require(newPerspective.owner == batch.owner, "Batch can only store perspectives owner by its owner");
 			batch.headUpdates.push(headUpdate);
 		}
+
+		emit AddedUpdatesToBatch(batchId);
 	}
 
 	function setBatchAuthorized(bytes32 batchId, uint8 authorized) public {
