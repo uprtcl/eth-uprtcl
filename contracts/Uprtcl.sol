@@ -61,7 +61,8 @@ contract Uprtcl {
 
 	event BatchCreated(
 		bytes32 indexed batchId,
-		address indexed owner);
+		address indexed owner,
+		uint32 nonce);
 
 	/** Adds a new perspective to the mapping and sets the owner. The head pointer is initialized as null and should
 	 *  be updated independently using updateHead(). The contextId is not persisted but emited in the PerspectiveAdded
@@ -158,14 +159,14 @@ contract Uprtcl {
 		The id of the batch is derived from the message sender to prevent frontrunning attacks. */
 	function initBatch(
 		address owner,
-		uint16 nonce,
+		uint32 nonce,
 		HeadUpdate[] memory headUpdates,
 		address[] memory approvedAddresses) public {
 
 		bytes32 batchId = keccak256(abi.encodePacked(msg.sender, nonce));
 
 		/** make sure the batch does not exist */
-		require(batches[batchId].owner != address(0), "Batch already exist");
+		require(batches[batchId].owner == address(0), "batch already exist");
 		Batch storage batch = batches[batchId];
 
 		batch.owner = owner;
@@ -176,7 +177,8 @@ contract Uprtcl {
 
 		emit BatchCreated(
 			batchId,
-			batch.owner
+			batch.owner,
+			nonce
 		);
 	}
 

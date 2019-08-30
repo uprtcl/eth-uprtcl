@@ -47,11 +47,18 @@ contract('Uprtcl', (accounts) => {
   let perspective2IdStr;
   let head2IdStr;
 
+  let batchOwner = accounts[0];
+  let batchRegistrator = accounts[4];
   
-  it('should persist a perspective', async () => {
-    let uprtclInstance = await Uprtcl.deployed();
+  let batchId01;
+  let perspectiveIds01 = [];
+  let perspectiveIds02 = [];
 
-    debugger 
+  let batchId02;
+  let perspectiveIds03 = [];
+  
+  it.skip('should persist a perspective', async () => {
+    let uprtclInstance = await Uprtcl.deployed();
 
     const context = {
       creatorId: 'did:uport:123',
@@ -91,7 +98,7 @@ contract('Uprtcl', (accounts) => {
     assert.isTrue(result.receipt.status, "status not true");
   });
 
-  it('should retrieve the perspective from its encoded cid ', async () => {
+  it.skip('should retrieve the perspective from its encoded cid ', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
     let perspectiveIdHash = await hash(perspectiveIdStr);
@@ -103,7 +110,7 @@ contract('Uprtcl', (accounts) => {
     assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
   });
 
-  it('should persist a perspective with a head', async () => {
+  it.skip('should persist a perspective with a head', async () => {
     let uprtclInstance = await Uprtcl.deployed();
 
     const context = {
@@ -162,7 +169,7 @@ contract('Uprtcl', (accounts) => {
     assert.isTrue(result.receipt.status, "status not true");
   });
 
-  it('should retrieve the perspective from its encoded cid ', async () => {
+  it.skip('should retrieve the perspective from its encoded cid ', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
     let perspectiveIdHash = await hash(perspective2IdStr);
@@ -175,7 +182,7 @@ contract('Uprtcl', (accounts) => {
     assert.equal(perspectiveRead.headId, head2IdStr, "head2 Cid is not what was expected");
   });
 
-  it('should not be able to persist an existing perspective', async () => {
+  it.skip('should not be able to persist an existing perspective', async () => {
     let uprtclInstance = await Uprtcl.deployed();
 
     let perspectiveIdHash = await hash(perspectiveIdStr);
@@ -197,7 +204,7 @@ contract('Uprtcl', (accounts) => {
     
   });
 
-  it('should not be able to persist a perspective without owner', async () => {
+  it.skip('should not be able to persist a perspective without owner', async () => {
     let uprtclInstance = await Uprtcl.deployed();
 
     const perspective = {
@@ -229,7 +236,7 @@ contract('Uprtcl', (accounts) => {
     
   });
 
-  it('should not be able to update the head of a perspective if not owner', async () => {
+  it.skip('should not be able to update the head of a perspective if not owner', async () => {
     let uprtclInstance = await Uprtcl.deployed();
 
     const data = {
@@ -263,7 +270,7 @@ contract('Uprtcl', (accounts) => {
 
   });
 
-  it('should be able to update the head of a perspective if owner', async () => {
+  it.skip('should be able to update the head of a perspective if owner', async () => {
     let uprtclInstance = await Uprtcl.deployed();
 
     const data = {
@@ -310,7 +317,7 @@ contract('Uprtcl', (accounts) => {
       "new head is not what expected"); 
   });
 
-  it('should not be able to change the owner of a perspective if not the current owner', async () => {
+  it.skip('should not be able to change the owner of a perspective if not the current owner', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     let perspectiveIdHash = await hash(perspectiveIdStr); 
 
@@ -327,7 +334,7 @@ contract('Uprtcl', (accounts) => {
 
   });
 
-  it('should be able to change the owner of a perspective if it is the current owner', async () => {
+  it.skip('should be able to change the owner of a perspective if it is the current owner', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     let perspectiveIdHash = await hash(perspectiveIdStr); 
 
@@ -346,7 +353,7 @@ contract('Uprtcl', (accounts) => {
 
   });
 
-  it('should be able to update the head of a perspective as the new owner', async () => {
+  it.skip('should be able to update the head of a perspective as the new owner', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     let perspectiveIdHash = await hash(perspectiveIdStr); 
 
@@ -393,7 +400,7 @@ contract('Uprtcl', (accounts) => {
     
   });
 
-  it('should not be able to update the head of a perspective as the old owner', async () => {
+  it.skip('should not be able to update the head of a perspective as the old owner', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     let perspectiveIdHash = await hash(perspectiveIdStr); 
 
@@ -442,6 +449,213 @@ contract('Uprtcl', (accounts) => {
       perspectiveRead.headId, 
       newheadIdStr,
       "new head is not what expected"); 
+  });
+
+  it('should be able to create a new batch without update heads', async () => {
+    let uprtclInstance = await Uprtcl.deployed();
+    let nonce = 10;
+    let tx = await uprtclInstance.initBatch(
+      batchOwner, nonce, [], [batchRegistrator],
+      { from: batchRegistrator })
+    
+    let event = tx.logs[0].args;
+    assert.equal(event.owner, batchOwner, "unexpected batch owner")
+    assert.equal(event.nonce, nonce, "unexpected nonce")
+    assert.notEqual(event.batchId, '', "empty batch id")
+
+    batchId01 = event.batchId;
+
+    let batchRead = await uprtclInstance.getBatch(batchId01);
+    assert.equal(batchRead.owner, batchOwner, "unexpected batch owner")
+    assert.equal(batchRead.approvedAddresses[0], batchRegistrator, "unexpected approvedAddress")
+    assert.equal(batchRead.status, 1, "unexpected status")
+    assert.equal(batchRead.authorized, 0, "unexpected authorized")
+  });
+
+  it('should be able to add headUpdates to existing empty batch', async () => {
+    let uprtclInstance = await Uprtcl.deployed();
+    
+    /** create 10 perspectives */
+    let contextNonces = [1, 2, 3, 4, 5];
+    
+    let calls = await contextNonces.map(async (nonce) => {
+      const context = { creatorId: 'did:uport:123', timestamp: 0, nonce: nonce }
+  
+      let contextCid = await generateCid(JSON.stringify(context), cidConfig1);
+       /** store this string to simulate the step from string to cid */
+      contextIdStr = contextCid.toString();
+      
+      const perspective = {
+        origin: 'eth://contractAddress',
+        creatorId: 'did:uport:123',
+        timestamp: 0,
+        contextId: contextCid,
+        name: 'test perspective'
+      }
+  
+      let perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+      /** store this string to simulate the step from string to cid */
+      perspectiveIdStr = perspectiveCid.toString();
+      perspectiveIds01.push(perspectiveIdStr);
+      
+      /** perspective and context ids are hashed to fit in bytes32
+       * their multihash is hashed so different cids map to the same perspective */
+      let contextIdHash = await hash(contextCid);
+      let perspectiveIdHash = await hash(perspectiveCid);
+      
+      return uprtclInstance.addPerspective(
+        perspectiveIdHash,
+        contextIdHash,
+        '',
+        batchOwner,
+        perspectiveIdStr,
+        { from: batchRegistrator })
+    });
+
+    await Promise.all(calls);
+
+    /** create updateHeads pairs */
+    let headUpdatesCalls = perspectiveIds01.map(async (perspectiveId) => {
+      let perspectiveIdHash = await hash(perspectiveId); 
+
+      const data = {
+        text: Math.random().toString()
+      }
+  
+      dataId = await generateCid(JSON.stringify(data), cidConfig1);
+  
+      const head = {
+        creatorId: 'did:uport:123',
+        timestamp: 615,
+        message: 'test commit 4',
+        parentsIds: [],
+        dataId: dataId.toString()
+      }
+
+      let headId = await generateCid(JSON.stringify(head), cidConfig1);
+      headIdStr = headId.toString();
+
+      return {
+        perspectiveIdHash: perspectiveIdHash,
+        headId: headIdStr
+      }
+    })
+
+    headUpdates = await Promise.all(headUpdatesCalls);
+    
+    /** init batch with headUpdates */
+    let tx = await uprtclInstance.addUpdatesToBatch(
+      batchId01, headUpdates,
+      { from: batchRegistrator })
+    
+    let batchRead = await uprtclInstance.getBatch(batchId01);
+    assert.equal(batchRead.owner, batchOwner, "unexpected batch owner")
+    assert.equal(batchRead.approvedAddresses[0], batchRegistrator, "unexpected approvedAddress")
+    assert.equal(batchRead.status, 1, "unexpected status")
+    assert.equal(batchRead.authorized, 0, "unexpected authorized")
+    assert.equal(batchRead.headUpdates.length, perspectiveIds01.length, "unexpected number of updateHeads registered")
+    
+    batchRead.headUpdates.forEach((registeredHeadUpdate) => {
+      foundHeadUpdate = headUpdates.find(headUpdate => headUpdate.perspectiveIdHash === registeredHeadUpdate.perspectiveIdHash);
+      assert.equal(foundHeadUpdate.headId, registeredHeadUpdate.headId, "unexpected head id on headUpdate")
+    })
+  });
+
+  it('should be able to create a new batch with update heads', async () => {
+    let uprtclInstance = await Uprtcl.deployed();
+    
+    /** create 10 perspectives */
+    let contextNonces = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    
+    let calls = await contextNonces.map(async (nonce) => {
+      const context = { creatorId: 'did:uport:123', timestamp: 0, nonce: nonce }
+  
+      let contextCid = await generateCid(JSON.stringify(context), cidConfig1);
+       /** store this string to simulate the step from string to cid */
+      contextIdStr = contextCid.toString();
+      
+      const perspective = {
+        origin: 'eth://contractAddress',
+        creatorId: 'did:uport:123',
+        timestamp: 0,
+        contextId: contextCid,
+        name: 'test perspective'
+      }
+  
+      let perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+      /** store this string to simulate the step from string to cid */
+      perspectiveIdStr = perspectiveCid.toString();
+      perspectiveIds03.push(perspectiveIdStr);
+      
+      /** perspective and context ids are hashed to fit in bytes32
+       * their multihash is hashed so different cids map to the same perspective */
+      let contextIdHash = await hash(contextCid);
+      let perspectiveIdHash = await hash(perspectiveCid);
+      
+      return uprtclInstance.addPerspective(
+        perspectiveIdHash,
+        contextIdHash,
+        '',
+        batchOwner,
+        perspectiveIdStr,
+        { from: batchRegistrator })
+    });
+
+    await Promise.all(calls);
+
+    /** create 10 updateHeads pairs */
+    let headUpdatesCalls = perspectiveIds03.map(async (perspectiveId) => {
+      let perspectiveIdHash = await hash(perspectiveId); 
+
+      const data = {
+        text: Math.random().toString()
+      }
+  
+      dataId = await generateCid(JSON.stringify(data), cidConfig1);
+  
+      const head = {
+        creatorId: 'did:uport:123',
+        timestamp: 615,
+        message: 'test commit 4',
+        parentsIds: [],
+        dataId: dataId.toString()
+      }
+
+      let headId = await generateCid(JSON.stringify(head), cidConfig1);
+      headIdStr = headId.toString();
+
+      return {
+        perspectiveIdHash: perspectiveIdHash,
+        headId: headIdStr
+      }
+    })
+
+    headUpdates = await Promise.all(headUpdatesCalls);
+    
+    batchNonce = 11;
+    /** init batch with headUpdates */
+    let tx = await uprtclInstance.initBatch(
+      batchOwner, batchNonce, headUpdates, [batchRegistrator],
+      { from: batchRegistrator })
+    
+    let event = tx.logs[0].args;
+    assert.equal(event.owner, batchOwner, "unexpected batch owner")
+    assert.equal(event.nonce, batchNonce, "unexpected nonce")
+    assert.notEqual(event.batchId, '', "empty batch id")
+
+    batchId02 = event.batchId;
+
+    let batchRead = await uprtclInstance.getBatch(batchId);
+    assert.equal(batchRead.owner, batchOwner, "unexpected batch owner")
+    assert.equal(batchRead.approvedAddresses[0], batchRegistrator, "unexpected approvedAddress")
+    assert.equal(batchRead.status, 1, "unexpected status")
+    assert.equal(batchRead.authorized, 0, "unexpected authorized")
+    assert.equal(batchRead.headUpdates.length, perspectiveIds03.length, "unexpected number of updateHeads registered")
+    
+    batchRead.headUpdates.forEach((registeredHeadUpdate) => {
+      foundHeadUpdate = headUpdates.find(headUpdate => headUpdate.perspectiveIdHash === registeredHeadUpdate.perspectiveIdHash);
+      assert.equal(foundHeadUpdate.headId, registeredHeadUpdate.headId, "unexpected head id on headUpdate")
+    })
   });
 
 });
