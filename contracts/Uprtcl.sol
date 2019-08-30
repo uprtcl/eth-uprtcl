@@ -7,7 +7,7 @@ contract Uprtcl {
 
 	struct Perspective {
 		address owner;
-		string headCid;
+		string headId;
 	}
 
 	struct HeadUpdate {
@@ -46,13 +46,13 @@ contract Uprtcl {
 		bytes32 indexed contextIdHash,
 		string head,
 		address owner,
-		string perspectiveCid);
+		string perspectiveId);
 
 	event PerspectiveHeadUpdated(
 		bytes32 indexed perspectiveIdHash,
 		address author,
-		string previousHeadCid,
-		string newHeadCid);
+		string previousHeadId,
+		string newHeadId);
 
 	event PerspectiveOwnerUpdated(
 		bytes32 indexed perspectiveIdHash,
@@ -66,14 +66,14 @@ contract Uprtcl {
 	/** Adds a new perspective to the mapping and sets the owner. The head pointer is initialized as null and should
 	 *  be updated independently using updateHead(). The contextId is not persisted but emited in the PerspectiveAdded
 	 *  event to enable filtering. Validation of the perspectiveId to contextId should be done externally using any
-	 * 	content addressable	storage solution for the perspectiveId. The perspectiveCid is emited to help perspectiveHash
+	 * 	content addressable	storage solution for the perspectiveId. The perspectiveId is emited to help perspectiveHash
 	 *  reverse mapping */
 	function addPerspective(
 		bytes32 perspectiveIdHash,
 		bytes32 contextIdHash,
 		string memory head,
 		address owner,
-		string memory perspectiveCid) /** LSB */
+		string memory perspectiveId) /** LSB */
 		public {
 
 		Perspective storage perspective = perspectives[perspectiveIdHash];
@@ -81,34 +81,35 @@ contract Uprtcl {
 		require(address(0) == perspective.owner, "existing perspective");
 
 		perspective.owner = owner;
-		perspective.headCid = head;
+		perspective.headId = head;
 
 		perspectives[perspectiveIdHash] = perspective;
 
 		emit PerspectiveAdded(
 			perspectiveIdHash,
 			contextIdHash,
-			perspective.headCid,
+			perspective.headId,
 			perspective.owner,
-			perspectiveCid);
+			perspectiveId);
 	}
 
 	/** Updates the head pointer of a given perspective. It dont
-		check the owner to let a sub-contract handle permissions. */
+		check the owner to let the batch functionality do it. Its internal
+		so user should use updateHeads instead. */
 	function updateHead(
 		bytes32 perspectiveIdHash,
 		string memory newHead) private {
 
 		Perspective storage perspective = perspectives[perspectiveIdHash];
 
-		string memory parentHead = perspective.headCid;
-		perspective.headCid = newHead;
+		string memory parentHead = perspective.headId;
+		perspective.headId = newHead;
 
 		emit PerspectiveHeadUpdated(
 			perspectiveIdHash,
 			msg.sender,
 			parentHead,
-			perspective.headCid);
+			perspective.headId);
 	}
 
 	/** Changes the owner of a given perspective. Available only to the current owner of that perspective. */
@@ -128,13 +129,13 @@ contract Uprtcl {
 		public view
 		returns(
 			address owner,
-			string memory headCid) {
+			string memory headId) {
 
 		Perspective memory perspective = perspectives[perspectiveIdHash];
 
 		return (
 			perspective.owner,
-			perspective.headCid);
+			perspective.headId);
 	}
 
 	/** One method to execute the head updates directly, without creating the batch. Useful
@@ -146,7 +147,7 @@ contract Uprtcl {
 
 			/** Check the msg.sender is the owner */
 			Perspective storage perspective = perspectives[headUpdate.perspectiveIdHash];
-			require(msg.sender == perspective.owner, "Perspective not owned by msg.sender");
+			require(msg.sender == perspective.owner, "unauthorized access");
 
 			/** Update the head */
 			updateHead(headUpdate.perspectiveIdHash, headUpdate.headId);
@@ -158,8 +159,8 @@ contract Uprtcl {
 	function initBatch(
 		address owner,
 		uint16 nonce,
-		address[] memory approvedAddresses,
-		HeadUpdate[] memory headUpdates) public {
+		HeadUpdate[] memory headUpdates,
+		address[] memory approvedAddresses) public {
 
 		bytes32 batchId = keccak256(abi.encodePacked(msg.sender, nonce));
 
@@ -169,7 +170,6 @@ contract Uprtcl {
 
 		batch.owner = owner;
 		batch.approvedAddresses = approvedAddresses;
-		batch.headUpdates = headUpdates;
 		batch.status = 1;
 
 		addUpdatesToBatch(batchId, headUpdates);
