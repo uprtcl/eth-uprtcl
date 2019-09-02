@@ -193,7 +193,7 @@ contract Uprtcl {
 		Batch storage batch = batches[batchId];
 
 		/** make sure the batch is open for new elements */
-		require(batch.status != 0, "");
+		require(batch.status != 0, "Batch status is disabled");
 
 		/** initialize */
 		for (uint8 ix = 0; ix < headUpdates.length; ix++) {
@@ -223,12 +223,35 @@ contract Uprtcl {
 
 	function executeBatch(bytes32 batchId) public {
 		Batch storage batch = batches[batchId];
+
+		/** Check the msg.sender is an approved address */
+		uint8 approved = 0;
+		for (uint32 ix = 0; ix < batch.approvedAddresses.length; ix++) {
+			if (msg.sender == batch.approvedAddresses[ix]) {
+				approved = 1;
+			}
+		}
+
+		require(approved > 0, "msg.sender not an approved address");
+
 		this.executeBatchPartially(batchId, 0, batch.headUpdates.length);
 	}
 
 	function executeBatchPartially(bytes32 batchId, uint256 fromIx, uint256 toIx) public {
 		Batch storage batch = batches[batchId];
 		require(batch.authorized != 0, "Batch not authorized");
+
+		/** check msg sender is approved address unless is this contract */
+		if (msg.sender != address(this)) {
+			uint8 approved = 0;
+			for (uint32 ix = 0; ix < batch.approvedAddresses.length; ix++) {
+				if (msg.sender == batch.approvedAddresses[ix]) {
+					approved = 1;
+				}
+			}
+
+			require(approved > 0, "msg.sender not an approved address");
+		}
 
 		for (uint256 ix = fromIx; ix < toIx; ix++) {
 			HeadUpdate memory headUpdate = batch.headUpdates[ix];
