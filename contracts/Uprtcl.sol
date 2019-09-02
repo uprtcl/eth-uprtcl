@@ -13,6 +13,7 @@ contract Uprtcl {
 	struct HeadUpdate {
 		bytes32 perspectiveIdHash;
 		string headId;
+		uint8 executed;
 	}
 
 	struct Batch {
@@ -97,12 +98,12 @@ contract Uprtcl {
 			perspectiveId);
 	}
 
-	/** Updates the head pointer of a given perspective. It dont
+	/** internal function that updates the head pointer of a given perspective. It dont
 		check the owner to let the batch functionality do it. Its internal
 		so user should use updateHeads instead. */
 	function updateHead(
 		bytes32 perspectiveIdHash,
-		string memory newHead) private {
+		string memory newHead) internal {
 
 		Perspective storage perspective = perspectives[perspectiveIdHash];
 
@@ -195,9 +196,23 @@ contract Uprtcl {
 		/** make sure the batch is open for new elements */
 		require(batch.status != 0, "Batch status is disabled");
 
+		/** check msg sender is approved address unless is this contract */
+		if (msg.sender != address(this)) {
+			uint8 approved = 0;
+			for (uint32 ix = 0; ix < batch.approvedAddresses.length; ix++) {
+				if (msg.sender == batch.approvedAddresses[ix]) {
+					approved = 1;
+				}
+			}
+
+			require(approved > 0, "msg.sender not an approved address");
+		}
+
 		/** initialize */
 		for (uint8 ix = 0; ix < headUpdates.length; ix++) {
 			HeadUpdate memory headUpdate = headUpdates[ix];
+			/** head update executed property must be zero */
+			require(headUpdate.executed == 0, "head update executed property must be zero");
 			/** Only add perspectives of the same owner! */
 			Perspective storage newPerspective = perspectives[headUpdate.perspectiveIdHash];
 			require(newPerspective.owner == batch.owner, "Batch can only store perspectives owner by its owner");
@@ -233,11 +248,16 @@ contract Uprtcl {
 		}
 
 		require(approved > 0, "msg.sender not an approved address");
+		uint256[] memory indexes = new uint256[](batch.headUpdates.length);
 
-		this.executeBatchPartially(batchId, 0, batch.headUpdates.length);
+		for (uint256 ix = 0; ix < batch.headUpdates.length; ix++) {
+			indexes[ix] = ix;
+		}
+
+		this.executeBatchPartially(batchId, indexes);
 	}
 
-	function executeBatchPartially(bytes32 batchId, uint256 fromIx, uint256 toIx) public {
+	function executeBatchPartially(bytes32 batchId, uint256[] memory indexes) public {
 		Batch storage batch = batches[batchId];
 		require(batch.authorized != 0, "Batch not authorized");
 
@@ -253,8 +273,13 @@ contract Uprtcl {
 			require(approved > 0, "msg.sender not an approved address");
 		}
 
-		for (uint256 ix = fromIx; ix < toIx; ix++) {
-			HeadUpdate memory headUpdate = batch.headUpdates[ix];
+		for (uint256 ix = 0; ix < indexes.length; ix++) {
+			HeadUpdate storage headUpdate = batch.headUpdates[indexes[ix]];
+
+			require(headUpdate.executed == 0, "head update already executed");
+
+			/** mark the update as executed */
+			headUpdate.executed = 1;
 			/** Update the head */
 			updateHead(headUpdate.perspectiveIdHash, headUpdate.headId);
 		}

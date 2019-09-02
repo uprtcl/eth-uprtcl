@@ -96,7 +96,8 @@ const createNUpdateHeads = async (perspectiveIds) => {
 
     return {
       perspectiveIdHash: perspectiveIdHash,
-      headId: headIdStr
+      headId: headIdStr,
+      executed: 0
     }
   })
 
@@ -334,7 +335,7 @@ contract('Uprtcl', (accounts) => {
 
     let failed = false;
     await uprtclInstance.updateHeads(
-      [{perspectiveIdHash: perspectiveIdHash,headId:headIdStr}],
+      [{perspectiveIdHash: perspectiveIdHash,headId:headIdStr, executed: 0}],
       { from: creator }).catch((error) => {
         assert.equal(error.reason, 'unauthorized access', "unexpected reason");
         failed = true
@@ -376,7 +377,7 @@ contract('Uprtcl', (accounts) => {
       "original head is not null"); 
     
     let result = await uprtclInstance.updateHeads(
-      [{perspectiveIdHash: perspectiveIdHash,headId:headIdStr}],
+      [{perspectiveIdHash: perspectiveIdHash,headId:headIdStr, executed: 0}],
       { from: firstOwner });
 
     assert.isTrue(result.receipt.status);
@@ -458,7 +459,7 @@ contract('Uprtcl', (accounts) => {
       "original head is not what expected"); 
     
     let result = await uprtclInstance.updateHeads(
-      [{perspectiveIdHash: perspectiveIdHash,headId:newheadIdStr}],
+      [{perspectiveIdHash: perspectiveIdHash,headId:newheadIdStr, executed: 0}],
       { from: secondOwner });
 
     assert.isTrue(result.receipt.status, "the head was not updated");
@@ -506,7 +507,7 @@ contract('Uprtcl', (accounts) => {
     
     let failed = false;
     let result = await uprtclInstance.updateHeads(
-      [{perspectiveIdHash: perspectiveIdHash,headId:newBadheadIdStr}],
+      [{perspectiveIdHash: perspectiveIdHash,headId:newBadheadIdStr, executed: 0}],
       { from: firstOwner }).catch((error) => {
         assert.equal(error.reason, 'unauthorized access', "unexpected reason");
         failed = true;
@@ -844,8 +845,86 @@ contract('Uprtcl', (accounts) => {
         headUpdate.perspectiveIdHash,
         { from: observer });
       
-      assert(perspectiveRead.headId == headUpdate.headId);
+      assert(perspectiveRead.headId == headUpdate.headId, "unexpected headId");
     }
+  });
+
+  it('should be able to execute only some elements of a batch', async () => {
+    let uprtclInstance = await Uprtcl.deployed();
+    
+    let perspectiveIds = await createNPerspectives(
+      uprtclInstance, 
+      [151, 152, 153, 154, 155], 
+      batchOwner, 
+      batchRegistrator);
+
+    let headUpdates = await createNUpdateHeads(perspectiveIds);
+
+    let batchNonce = 21;
+    let tx = await uprtclInstance.initBatch(
+      batchOwner, batchNonce, headUpdates, [batchRegistrator],
+      { from: batchRegistrator })
+    
+    let event = tx.logs.find(log => log.event === 'BatchCreated').args;
+    assert.equal(event.owner, batchOwner, "unexpected batch owner")
+    assert.equal(event.nonce, batchNonce, "unexpected nonce")
+    assert.notEqual(event.batchId, '', "empty batch id")
+
+    batchId = event.batchId;
+
+    await uprtclInstance.setBatchAuthorized(
+      batchId, 1,
+      { from: batchOwner });
+
+    let indexes0 = [0, 1, 2];
+    
+    await uprtclInstance.executeBatchPartially(
+      batchId, indexes0,
+      { from: batchRegistrator });
+
+    let batchRead = await uprtclInstance.getBatch(batchId);
+
+    for (let ix = 0; ix < indexes0.length; ix++) {
+      let headUpdate = headUpdates[indexes0[ix]];
+      let perspectiveRead = await uprtclInstance.getPerspective(
+        headUpdate.perspectiveIdHash,
+        { from: observer });
+      
+      assert.equal(perspectiveRead.headId, headUpdate.headId, "unexpected headId");
+      assert.equal(batchRead.headUpdates[indexes0[ix]].executed, 1, "unexpected executed state")
+    }
+
+    let indexes1 = [3, 4];
+
+    await uprtclInstance.executeBatchPartially(
+      batchId, indexes1,
+      { from: batchRegistrator });
+      
+    let batchRead2 = await uprtclInstance.getBatch(batchId);
+      
+    for (let ix = 0; ix < indexes1.length; ix++) {
+      let headUpdate = headUpdates[indexes1[ix]];
+      let perspectiveRead = await uprtclInstance.getPerspective(
+        headUpdate.perspectiveIdHash,
+        { from: observer });
+      
+      assert.equal(perspectiveRead.headId, headUpdate.headId, "unexpected headId");
+      assert.equal(batchRead2.headUpdates[indexes1[ix]].executed, 1, "unexpected executed state")
+    }
+
+    /** and should not work again */
+    let indexes2 = [3, 4];
+    
+    let failed = false;
+    await uprtclInstance.executeBatchPartially(
+      batchId, indexes2,
+      { from: batchRegistrator }).catch((error) => {
+        assert.equal(error.reason, 'head update already executed', "unexpected reason");
+        failed = true;
+      });
+
+    assert.isTrue(failed, "head update executed twice");
+
   });
 
 });
