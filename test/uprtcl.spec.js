@@ -45,7 +45,7 @@ const createNPerspectives = async (uprtclInstance, contextNonces, owner, creator
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
       timestamp: 0,
-      contextId: contextCid,
+      context: contextCid.toString(),
       name: 'test perspective'
     }
 
@@ -149,7 +149,7 @@ contract('Uprtcl', (accounts) => {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
       timestamp: 0,
-      contextId: contextCid,
+      context: contextIdStr,
       name: 'test perspective'
     }
 
@@ -202,7 +202,7 @@ contract('Uprtcl', (accounts) => {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123546',
       timestamp: 0,
-      contextId: context2IdStr,
+      context: context2IdStr,
       name: 'test perspective 2'
     }
 
@@ -286,7 +286,7 @@ contract('Uprtcl', (accounts) => {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
       timestamp: 2,
-      contextId: '',
+      context: '',
       name: 'test perspective 2'
     }
 
