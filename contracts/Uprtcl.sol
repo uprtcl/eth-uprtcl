@@ -16,35 +16,36 @@ contract Uprtcl {
 		uint8 executed;
 	}
 
-	struct Batch {
+	struct MergeRequest {
+
+		/** All perspectives in the headUpdates must be owned by the
+			owner of this perspective */
+		bytes32 toPerspectiveIdHash;
+		bytes32 fromPerspectiveIdHash;
 
 		/** Approved addresses can add new HeadUpdate elements to this
 		list as long as they are all from the same owner and this owner is
 		the same as the one of existing HeadUpdates. */
 		HeadUpdate[] headUpdates;
 
-		/** store the owner of this batch. All perspectives in the headUpdates
-		must be owner by this owner. */
-		address owner;
-
 		address[] approvedAddresses;
 
-		/** Status of the batch. New headUpdates can be added by approved
+		/** Status of the request. New headUpdates can be added by approved
 		addreses as long as status != 0. */
 		uint8 status;
 
-		/** Authorizing the batch lets anyone run one or more of
-		the head updates in the batch in any order. It can only be called
-		by the owner of all the perspectives in the batch. */
+		/** Authorizing the request lets anyone run one or more of
+		the head updates in the request in any order. It can only be called
+		by the owner of all the perspectives in the request. */
 		uint8 authorized;
 	}
 
 	mapping (bytes32 => Perspective) public perspectives;
-	mapping (bytes32 => Batch) public batches;
+	mapping (bytes32 => MergeRequest) public requests;
 
 	event PerspectiveAdded(
 		bytes32 indexed perspectiveIdHash,
-		bytes32 indexed contextIdHash,
+		bytes32 indexed contextHash,
 		string head,
 		address owner,
 		string perspectiveId);
@@ -60,22 +61,22 @@ contract Uprtcl {
 		address newOwner,
 		address previousOwner);
 
-	event BatchCreated(
-		bytes32 indexed batchId,
-		address indexed owner,
-		uint32 nonce);
+	event MergeRequestCreated(
+		bytes32 indexed toPerspectiveId,
+		bytes32 indexed fromPerspectiveId,
+		bytes32 requestId);
 
-	event AddedUpdatesToBatch(
-		bytes32 indexed batchId);
+	event AddedUpdatesToRequest(
+		bytes32 indexed requestId);
 
 	/** Adds a new perspective to the mapping and sets the owner. The head pointer is initialized as null and should
-	 *  be updated independently using updateHead(). The contextId is not persisted but emited in the PerspectiveAdded
-	 *  event to enable filtering. Validation of the perspectiveId to contextId should be done externally using any
+	 *  be updated independently using updateHead(). The contextHash is not persisted but emited in the PerspectiveAdded
+	 *  event to enable filtering. Validation of the perspectiveId to contextHash should be done externally using any
 	 * 	content addressable	storage solution for the perspectiveId. The perspectiveId is emited to help perspectiveHash
 	 *  reverse mapping */
 	function addPerspective(
 		bytes32 perspectiveIdHash,
-		bytes32 contextIdHash,
+		bytes32 contextHash,
 		string memory head,
 		address owner,
 		string memory perspectiveId) /** LSB */
@@ -92,14 +93,14 @@ contract Uprtcl {
 
 		emit PerspectiveAdded(
 			perspectiveIdHash,
-			contextIdHash,
+			contextHash,
 			perspective.headId,
 			perspective.owner,
 			perspectiveId);
 	}
 
 	/** internal function that updates the head pointer of a given perspective. It dont
-		check the owner to let the batch functionality do it. Its internal
+		check the owner to let the request functionality do it. Its internal
 		so user should use updateHeads instead. */
 	function updateHead(
 		bytes32 perspectiveIdHash,
@@ -143,8 +144,8 @@ contract Uprtcl {
 			perspective.headId);
 	}
 
-	/** One method to execute the head updates directly, without creating the batch. Useful
-		if the owner dont want to use the batch authorization feature.
+	/** One method to execute the head updates directly, without creating the request. Useful
+		if the owner dont want to use the request authorization feature.
 		It also works for updating one single perspective */
 	function updateHeads(HeadUpdate[] memory headUpdates) public {
 		for (uint8 ix = 0; ix < headUpdates.length; ix++) {
@@ -159,48 +160,48 @@ contract Uprtcl {
 		}
 	}
 
-	/** Creates a new batch owned and initialize its properties.
-		The id of the batch is derived from the message sender to prevent frontrunning attacks. */
-	function initBatch(
-		address owner,
+	/** Creates a new request owned and initialize its properties.
+		The id of the request is derived from the message sender to prevent frontrunning attacks. */
+	function initMergeRequest(
+		bytes32 toPerspectiveIdHash,
+		bytes32 fromPerspectiveIdHash,
 		uint32 nonce,
 		HeadUpdate[] memory headUpdates,
 		address[] memory approvedAddresses) public {
 
-		bytes32 batchId = keccak256(abi.encodePacked(msg.sender, nonce));
+		bytes32 requestId = keccak256(abi.encodePacked(toPerspectiveIdHash, fromPerspectiveIdHash, nonce));
 
-		/** make sure the batch does not exist */
-		require(batches[batchId].owner == address(0), "batch already exist");
-		Batch storage batch = batches[batchId];
+		/** make sure the request does not exist */
+		require(requests[requestId].owner == address(0), "request already exist");
+		MergeRequest storage request = requests[requestId];
 
-		batch.owner = owner;
-		batch.approvedAddresses = approvedAddresses;
-		batch.status = 1;
+		request.approvedAddresses = approvedAddresses;
+		request.status = 1;
 
-		addUpdatesToBatch(batchId, headUpdates);
+		addUpdatesToRequest(requestId, headUpdates);
 
-		emit BatchCreated(
-			batchId,
-			batch.owner,
-			nonce
+		emit MergeRequestCreated(
+			toPerspectiveIdHash,
+			fromPerspectiveIdHash,
+			requestId
 		);
 	}
 
-	/** Add one or more headUpdate elements to an existing batch */
-	function addUpdatesToBatch(
-		bytes32 batchId,
+	/** Add one or more headUpdate elements to an existing request */
+	function addUpdatesToRequest(
+		bytes32 requestId,
 		HeadUpdate[] memory headUpdates) public {
 
-		Batch storage batch = batches[batchId];
+		MergeRequest storage request = requests[requestId];
 
-		/** make sure the batch is open for new elements */
-		require(batch.status != 0, "Batch status is disabled");
+		/** make sure the request is open for new elements */
+		require(request.status != 0, "request status is disabled");
 
 		/** check msg sender is approved address unless is this contract */
 		if (msg.sender != address(this)) {
 			uint8 approved = 0;
-			for (uint32 ix = 0; ix < batch.approvedAddresses.length; ix++) {
-				if (msg.sender == batch.approvedAddresses[ix]) {
+			for (uint32 ix = 0; ix < request.approvedAddresses.length; ix++) {
+				if (msg.sender == request.approvedAddresses[ix]) {
 					approved = 1;
 				}
 			}
@@ -215,11 +216,19 @@ contract Uprtcl {
 			require(headUpdate.executed == 0, "head update executed property must be zero");
 			/** Only add perspectives of the same owner! */
 			Perspective storage newPerspective = perspectives[headUpdate.perspectiveIdHash];
-			require(newPerspective.owner == batch.owner, "Batch can only store perspectives owner by its owner");
-			batch.headUpdates.push(headUpdate);
+			require(newPerspective.owner == getOwner(requestId), "Batch can only store perspectives owner by its owner");
+			request.headUpdates.push(headUpdate);
 		}
 
 		emit AddedUpdatesToBatch(batchId);
+	}
+
+	function getOwner(bytes32 requestId) public view {
+		MergeRequest storage request = requests[requestId];
+		Perspective storage toPerspective = perspectives[request.toPerspectiveId];
+		return toPerspective.owner;
+
+		...WIP
 	}
 
 	function setBatchAuthorized(bytes32 batchId, uint8 authorized) public {
@@ -286,9 +295,9 @@ contract Uprtcl {
 	}
 
 	/** Get the perspective owner and head from its ID */
-	function getBatch(bytes32 batchId)
+	function getMergeRequest(bytes32 batchId)
 		public view
-		returns(Batch memory batch) {
+		returns(MergeRequest memory batch) {
 		return (batches[batchId]);
 	}
 }
