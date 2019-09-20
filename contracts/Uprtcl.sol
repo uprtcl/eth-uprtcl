@@ -69,6 +69,16 @@ contract Uprtcl {
 	event AddedUpdatesToRequest(
 		bytes32 indexed requestId);
 
+
+	function isApproved(MergeRequest memory request, address value) private pure returns(uint8 approved){
+		for (uint32 ix = 0; ix < request.approvedAddresses.length; ix++) {
+			if (value == request.approvedAddresses[ix]) {
+				approved = 1;
+			}
+		}
+		return approved;
+	}
+
 	/** Adds a new perspective to the mapping and sets the owner. The head pointer is initialized as null and should
 	 *  be updated independently using updateHead(). The contextHash is not persisted but emited in the PerspectiveAdded
 	 *  event to enable filtering. Validation of the perspectiveId to contextHash should be done externally using any
@@ -172,7 +182,7 @@ contract Uprtcl {
 		bytes32 requestId = keccak256(abi.encodePacked(toPerspectiveIdHash, fromPerspectiveIdHash, nonce));
 
 		/** make sure the request does not exist */
-		require(requests[requestId].owner == address(0), "request already exist");
+		require(getOwner(requestId) == address(0), "request already exist");
 		MergeRequest storage request = requests[requestId];
 
 		request.approvedAddresses = approvedAddresses;
@@ -220,70 +230,61 @@ contract Uprtcl {
 			request.headUpdates.push(headUpdate);
 		}
 
-		emit AddedUpdatesToBatch(batchId);
+		emit AddedUpdatesToRequest(requestId);
 	}
 
-	function getOwner(bytes32 requestId) public view {
+	function getOwner(bytes32 requestId) public view returns(address owner) {
 		MergeRequest storage request = requests[requestId];
-		Perspective storage toPerspective = perspectives[request.toPerspectiveId];
-		return toPerspective.owner;
-
-		...WIP
+		Perspective storage toPerspective = perspectives[request.toPerspectiveIdHash];
+		owner = toPerspective.owner;
+		return owner;
 	}
 
-	function setBatchAuthorized(bytes32 batchId, uint8 authorized) public {
-		Batch storage batch = batches[batchId];
-		require(msg.sender == batch.owner, "Batch can only by athorized by its owner");
-		/** by default the batch is closed once it is authorized. */
-		batch.status = 0;
-		batch.authorized = authorized;
+	function setRequestAuthorized(bytes32 requestId, uint8 authorized) public {
+		MergeRequest storage request = requests[requestId];
+		require(msg.sender == getOwner(requestId), "Request can only by authorized by its owner");
+		/** by default the request is closed once it is authorized. */
+		if (authorized > 0) request.status = 0;
+		request.authorized = authorized;
 	}
 
-	function setBatchStatus(bytes32 batchId, uint8 status) public {
-		Batch storage batch = batches[batchId];
-		require(msg.sender == batch.owner, "Batch status can only by set by its owner");
-		batch.status = status;
+	function setRequestStatus(bytes32 requestId, uint8 status) public {
+		MergeRequest storage request = requests[requestId];
+		require(msg.sender == getOwner(requestId), "Request status can only by set by its owner");
+		request.status = status;
 	}
 
-	function executeBatch(bytes32 batchId) public {
-		Batch storage batch = batches[batchId];
+	/** set the status to disabled (0) and can be called by any authorized address */
+	function disabledRequest(bytes32 requestId) public {
+		MergeRequest storage request = requests[requestId];
+		/** Check the msg.sender is an approved address */
+		require(isApproved(request, msg.sender) > 0, "msg.sender not an approved address");
+		request.status = 0;
+	}
+
+	function executeRequest(bytes32 requestId) public {
+		MergeRequest storage request = requests[requestId];
 
 		/** Check the msg.sender is an approved address */
-		uint8 approved = 0;
-		for (uint32 ix = 0; ix < batch.approvedAddresses.length; ix++) {
-			if (msg.sender == batch.approvedAddresses[ix]) {
-				approved = 1;
-			}
-		}
+		require(isApproved(request, msg.sender) > 0, "msg.sender not an approved address");
 
-		require(approved > 0, "msg.sender not an approved address");
-		uint256[] memory indexes = new uint256[](batch.headUpdates.length);
-
-		for (uint256 ix = 0; ix < batch.headUpdates.length; ix++) {
+		uint256[] memory indexes = new uint256[](request.headUpdates.length);
+		for (uint256 ix = 0; ix < request.headUpdates.length; ix++) {
 			indexes[ix] = ix;
 		}
 
-		this.executeBatchPartially(batchId, indexes);
+		this.executeRequestPartially(requestId, indexes);
 	}
 
-	function executeBatchPartially(bytes32 batchId, uint256[] memory indexes) public {
-		Batch storage batch = batches[batchId];
-		require(batch.authorized != 0, "Batch not authorized");
+	function executeRequestPartially(bytes32 requestId, uint256[] memory indexes) public {
+		MergeRequest storage request = requests[requestId];
+		require(request.authorized != 0, "Request not authorized");
 
 		/** check msg sender is approved address unless is this contract */
-		if (msg.sender != address(this)) {
-			uint8 approved = 0;
-			for (uint32 ix = 0; ix < batch.approvedAddresses.length; ix++) {
-				if (msg.sender == batch.approvedAddresses[ix]) {
-					approved = 1;
-				}
-			}
-
-			require(approved > 0, "msg.sender not an approved address");
-		}
+		require(isApproved(request, msg.sender) > 0, "msg.sender not an approved address");
 
 		for (uint256 ix = 0; ix < indexes.length; ix++) {
-			HeadUpdate storage headUpdate = batch.headUpdates[indexes[ix]];
+			HeadUpdate storage headUpdate = request.headUpdates[indexes[ix]];
 
 			require(headUpdate.executed == 0, "head update already executed");
 
@@ -298,6 +299,7 @@ contract Uprtcl {
 	function getMergeRequest(bytes32 batchId)
 		public view
 		returns(MergeRequest memory batch) {
-		return (batches[batchId]);
+		return (requests[batchId]);
 	}
+
 }

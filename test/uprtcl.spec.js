@@ -120,12 +120,12 @@ contract('Uprtcl', (accounts) => {
   let perspective2IdStr;
   let head2IdStr;
 
-  let batchOwner = accounts[0];
+  let requestOwner = accounts[0];
   let perspectiveOwner = accounts[1];
-  let batchRegistrator = accounts[4];
+  let requestRegistrator = accounts[4];
   
-  let batchId01;
-  let batchId02;
+  let requestId01;
+  let requestId02;
 
   let perspectiveIds01;
   let perspectiveIds001;
@@ -526,54 +526,54 @@ contract('Uprtcl', (accounts) => {
       "new head is not what expected"); 
   });
 
-  it('should be able to create a new batch without update heads', async () => {
+  it('should be able to create a new request without update heads', async () => {
     let uprtclInstance = await Uprtcl.deployed();
-    let batchNonce = 10;
-    let tx = await uprtclInstance.initBatch(
-      batchOwner, batchNonce, [], [batchRegistrator],
-      { from: batchRegistrator })
+    let requestNonce = 10;
+    let tx = await uprtclInstance.initRequest(
+      requestOwner, requestNonce, [], [requestRegistrator],
+      { from: requestRegistrator })
     
-    let event = tx.logs.find(log => log.event === 'BatchCreated').args;
-    assert.equal(event.owner, batchOwner, "unexpected batch owner")
-    assert.equal(event.nonce, batchNonce, "unexpected nonce")
-    assert.notEqual(event.batchId, '', "empty batch id")
+    let event = tx.logs.find(log => log.event === 'RequestCreated').args;
+    assert.equal(event.owner, requestOwner, "unexpected request owner")
+    assert.equal(event.nonce, requestNonce, "unexpected nonce")
+    assert.notEqual(event.requestId, '', "empty request id")
 
-    batchId01 = event.batchId;
+    requestId01 = event.requestId;
 
-    let batchRead = await uprtclInstance.getBatch(batchId01);
-    assert.equal(batchRead.owner, batchOwner, "unexpected batch owner")
-    assert.equal(batchRead.approvedAddresses[0], batchRegistrator, "unexpected approvedAddress")
-    assert.equal(batchRead.status, 1, "unexpected status")
-    assert.equal(batchRead.authorized, 0, "unexpected authorized")
+    let requestRead = await uprtclInstance.getRequest(requestId01);
+    assert.equal(requestRead.owner, requestOwner, "unexpected request owner")
+    assert.equal(requestRead.approvedAddresses[0], requestRegistrator, "unexpected approvedAddress")
+    assert.equal(requestRead.status, 1, "unexpected status")
+    assert.equal(requestRead.authorized, 0, "unexpected authorized")
   });
 
-  it('should not be able to add headUpdates to batch if perspective owner is not batch owner', async () => {
+  it('should not be able to add headUpdates to request if perspective owner is not request owner', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
-    /** create a perspective not owner by batchId01 owner */
+    /** create a perspective not owner by requestId01 owner */
     let perspectiveIds = await createNPerspectives(
       uprtclInstance, 
       [23], 
       perspectiveOwner, 
-      batchRegistrator);
+      requestRegistrator);
 
     perspectiveIds001 = perspectiveIds;
 
     let headUpdates = await createNUpdateHeads(perspectiveIds);
     
-    /** init batch with headUpdates */
+    /** init request with headUpdates */
     let failed = false;
-    let tx = await uprtclInstance.addUpdatesToBatch(
-      batchId01, headUpdates,
-      { from: batchRegistrator }).catch((error) => {
-        assert.equal(error.reason, 'Batch can only store perspectives owner by its owner', "unexpected reason");
+    let tx = await uprtclInstance.addUpdatesToRequest(
+      requestId01, headUpdates,
+      { from: requestRegistrator }).catch((error) => {
+        assert.equal(error.reason, 'Request can only store perspectives owner by its owner', "unexpected reason");
         failed = true;
       })
     
-    assert.isTrue(failed, "added update to batch for perspective not owned by batch owner");
+    assert.isTrue(failed, "added update to request for perspective not owned by request owner");
   });
 
-  it('should be able to add headUpdates to existing batch if perpsective owned by batch owner', async () => {
+  it('should be able to add headUpdates to existing request if perpsective owned by request owner', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
     for (let ix = 0; ix < perspectiveIds001.length; ix++) {
@@ -581,138 +581,138 @@ contract('Uprtcl', (accounts) => {
 
       await uprtclInstance.changeOwner(
         perspectiveIdsHash,
-        batchOwner,
+        requestOwner,
         { from: perspectiveOwner });
     }
     
-    /** init batch with headUpdates */
-    await uprtclInstance.addUpdatesToBatch(
-      batchId01, headUpdates,
-      { from: batchRegistrator });
+    /** init request with headUpdates */
+    await uprtclInstance.addUpdatesToRequest(
+      requestId01, headUpdates,
+      { from: requestRegistrator });
     
-    let batchRead = await uprtclInstance.getBatch(batchId01);
+    let requestRead = await uprtclInstance.getRequest(requestId01);
 
     for (let ix = 0; ix < perspectiveIds001.length; ix++) {
       let perspectiveIdHash = await hash(perspectiveIds001[ix]);
-      let headUpdate = batchRead.headUpdates[batchRead.headUpdates.length - perspectiveIds001.length + ix];
+      let headUpdate = requestRead.headUpdates[requestRead.headUpdates.length - perspectiveIds001.length + ix];
       assert.equal(headUpdate.perspectiveIdHash, perspectiveIdHash, "unexpected update head perspective id hash");
     }
 
   });
   
-  it('should be able to add headUpdates to existing empty batch', async () => {
+  it('should be able to add headUpdates to existing empty request', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
-    let batchNonce = 51;
-    let tx = await uprtclInstance.initBatch(
-      batchOwner, batchNonce, [], [batchRegistrator],
-      { from: batchRegistrator })
+    let requestNonce = 51;
+    let tx = await uprtclInstance.initRequest(
+      requestOwner, requestNonce, [], [requestRegistrator],
+      { from: requestRegistrator })
     
-    let event = tx.logs.find(log => log.event === 'BatchCreated').args;
-    assert.equal(event.owner, batchOwner, "unexpected batch owner")
-    assert.equal(event.nonce, batchNonce, "unexpected nonce")
-    assert.notEqual(event.batchId, '', "empty batch id")
+    let event = tx.logs.find(log => log.event === 'RequestCreated').args;
+    assert.equal(event.owner, requestOwner, "unexpected request owner")
+    assert.equal(event.nonce, requestNonce, "unexpected nonce")
+    assert.notEqual(event.requestId, '', "empty request id")
 
-    batchId = event.batchId;
+    requestId = event.requestId;
 
     let perspectiveIds = await createNPerspectives(
       uprtclInstance, 
       [101, 102, 103, 104, 105], 
-      batchOwner, 
-      batchRegistrator);
+      requestOwner, 
+      requestRegistrator);
 
     let headUpdates = await createNUpdateHeads(perspectiveIds);
 
-    /** init batch with headUpdates */
-    await uprtclInstance.addUpdatesToBatch(
-      batchId, headUpdates,
-      { from: batchRegistrator })
+    /** init request with headUpdates */
+    await uprtclInstance.addUpdatesToRequest(
+      requestId, headUpdates,
+      { from: requestRegistrator })
     
-    let batchRead = await uprtclInstance.getBatch(batchId);
-    assert.equal(batchRead.owner, batchOwner, "unexpected batch owner")
-    assert.equal(batchRead.approvedAddresses[0], batchRegistrator, "unexpected approvedAddress")
-    assert.equal(batchRead.status, 1, "unexpected status")
-    assert.equal(batchRead.authorized, 0, "unexpected authorized")
-    assert.equal(batchRead.headUpdates.length, perspectiveIds.length, "unexpected number of updateHeads registered")
+    let requestRead = await uprtclInstance.getRequest(requestId);
+    assert.equal(requestRead.owner, requestOwner, "unexpected request owner")
+    assert.equal(requestRead.approvedAddresses[0], requestRegistrator, "unexpected approvedAddress")
+    assert.equal(requestRead.status, 1, "unexpected status")
+    assert.equal(requestRead.authorized, 0, "unexpected authorized")
+    assert.equal(requestRead.headUpdates.length, perspectiveIds.length, "unexpected number of updateHeads registered")
     
-    batchRead.headUpdates.forEach((registeredHeadUpdate) => {
+    requestRead.headUpdates.forEach((registeredHeadUpdate) => {
       foundHeadUpdate = headUpdates.find(headUpdate => headUpdate.perspectiveIdHash === registeredHeadUpdate.perspectiveIdHash);
       assert.equal(foundHeadUpdate.headId, registeredHeadUpdate.headId, "unexpected head id on headUpdate")
     })
   });
 
-  it('should be able to create a new batch with update heads', async () => {
+  it('should be able to create a new request with update heads', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
     /** create 10 perspectives */
     let perspectiveIds = await createNPerspectives(
       uprtclInstance, 
       [11, 12, 13, 14, 15], 
-      batchOwner, 
-      batchRegistrator);
+      requestOwner, 
+      requestRegistrator);
 
     let headUpdates = await createNUpdateHeads(perspectiveIds);
     
     perspectiveIds02 = perspectiveIds;
     headUpdates02 = headUpdates;
     
-    batchNonce = 11;
-    /** init batch with headUpdates */
-    let tx = await uprtclInstance.initBatch(
-      batchOwner, batchNonce, headUpdates, [batchRegistrator],
-      { from: batchRegistrator })
+    requestNonce = 11;
+    /** init request with headUpdates */
+    let tx = await uprtclInstance.initRequest(
+      requestOwner, requestNonce, headUpdates, [requestRegistrator],
+      { from: requestRegistrator })
     
-    let event = tx.logs.find(log => log.event === 'BatchCreated').args;
-    assert.equal(event.owner, batchOwner, "unexpected batch owner")
-    assert.equal(event.nonce, batchNonce, "unexpected nonce")
-    assert.notEqual(event.batchId, '', "empty batch id")
+    let event = tx.logs.find(log => log.event === 'RequestCreated').args;
+    assert.equal(event.owner, requestOwner, "unexpected request owner")
+    assert.equal(event.nonce, requestNonce, "unexpected nonce")
+    assert.notEqual(event.requestId, '', "empty request id")
 
-    batchId02 = event.batchId;
+    requestId02 = event.requestId;
 
-    let batchRead = await uprtclInstance.getBatch(batchId02);
-    assert.equal(batchRead.owner, batchOwner, "unexpected batch owner")
-    assert.equal(batchRead.approvedAddresses[0], batchRegistrator, "unexpected approvedAddress")
-    assert.equal(batchRead.status, 1, "unexpected status")
-    assert.equal(batchRead.authorized, 0, "unexpected authorized")
-    assert.equal(batchRead.headUpdates.length, perspectiveIds.length, "unexpected number of updateHeads registered")
+    let requestRead = await uprtclInstance.getRequest(requestId02);
+    assert.equal(requestRead.owner, requestOwner, "unexpected request owner")
+    assert.equal(requestRead.approvedAddresses[0], requestRegistrator, "unexpected approvedAddress")
+    assert.equal(requestRead.status, 1, "unexpected status")
+    assert.equal(requestRead.authorized, 0, "unexpected authorized")
+    assert.equal(requestRead.headUpdates.length, perspectiveIds.length, "unexpected number of updateHeads registered")
     
-    batchRead.headUpdates.forEach((registeredHeadUpdate) => {
+    requestRead.headUpdates.forEach((registeredHeadUpdate) => {
       foundHeadUpdate = headUpdates.find(headUpdate => headUpdate.perspectiveIdHash === registeredHeadUpdate.perspectiveIdHash);
       assert.equal(foundHeadUpdate.headId, registeredHeadUpdate.headId, "unexpected head id on headUpdate")
     })
   });
 
-  it('should be able to add headUpdates to existing full batch', async () => {
+  it('should be able to add headUpdates to existing full request', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
     let perspectiveIds = await createNPerspectives(
       uprtclInstance, 
       [16, 17, 18, 19, 20], 
-      batchOwner, 
-      batchRegistrator);
+      requestOwner, 
+      requestRegistrator);
     let headUpdates = await createNUpdateHeads(perspectiveIds);
     
     perspectiveIds03 = perspectiveIds;
     headUpdates03 = headUpdates;
 
-    /** init batch with headUpdates */
-    let tx = await uprtclInstance.addUpdatesToBatch(
-      batchId02, headUpdates,
-      { from: batchRegistrator })
+    /** init request with headUpdates */
+    let tx = await uprtclInstance.addUpdatesToRequest(
+      requestId02, headUpdates,
+      { from: requestRegistrator })
     
-    let batchRead = await uprtclInstance.getBatch(batchId02);
+    let requestRead = await uprtclInstance.getRequest(requestId02);
 
-    assert.equal(batchRead.owner, batchOwner, "unexpected batch owner")
-    assert.equal(batchRead.approvedAddresses[0], batchRegistrator, "unexpected approvedAddress")
-    assert.equal(batchRead.status, 1, "unexpected status")
-    assert.equal(batchRead.authorized, 0, "unexpected authorized")
+    assert.equal(requestRead.owner, requestOwner, "unexpected request owner")
+    assert.equal(requestRead.approvedAddresses[0], requestRegistrator, "unexpected approvedAddress")
+    assert.equal(requestRead.status, 1, "unexpected status")
+    assert.equal(requestRead.authorized, 0, "unexpected authorized")
     assert.equal(
-      batchRead.headUpdates.length, 
+      requestRead.headUpdates.length, 
       perspectiveIds02.length + perspectiveIds.length, 
       "unexpected number of updateHeads registered")
     
-    for (let ix = 0; ix < batchRead.headUpdates.length; ix++) {
-      headUpdate = batchRead.headUpdates[ix];
+    for (let ix = 0; ix < requestRead.headUpdates.length; ix++) {
+      headUpdate = requestRead.headUpdates[ix];
       if (ix < perspectiveIds02.length) {
         assert.equal(
           headUpdate.headId, 
@@ -731,10 +731,10 @@ contract('Uprtcl', (accounts) => {
     let uprtclInstance = await Uprtcl.deployed();
     
     let failed = false;
-    let tx = await uprtclInstance.setBatchStatus(
-      batchId02, 0,
-      { from: batchRegistrator }).catch((error) => {
-        assert.equal(error.reason, 'Batch status can only by set by its owner', "unexpected reason");
+    let tx = await uprtclInstance.setRequestStatus(
+      requestId02, 0,
+      { from: requestRegistrator }).catch((error) => {
+        assert.equal(error.reason, 'Request status can only by set by its owner', "unexpected reason");
         failed = true;
       })
 
@@ -744,86 +744,86 @@ contract('Uprtcl', (accounts) => {
   it('should be able set status if owner', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
-    await uprtclInstance.setBatchStatus(
-      batchId02, 0,
-      { from: batchOwner });
+    await uprtclInstance.setRequestStatus(
+      requestId02, 0,
+      { from: requestOwner });
 
-    let batchRead = await uprtclInstance.getBatch(batchId02);
-    assert.equal(batchRead.owner, batchOwner, "unexpected batch owner")
-    assert.equal(batchRead.status, 0, "unexpected status")
+    let requestRead = await uprtclInstance.getRequest(requestId02);
+    assert.equal(requestRead.owner, requestOwner, "unexpected request owner")
+    assert.equal(requestRead.status, 0, "unexpected status")
   });
 
   it('should not be able add new head updates with status 0', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
     let failed = false;
-    await uprtclInstance.addUpdatesToBatch(
-      batchId02, headUpdates,
-      { from: batchRegistrator }).catch((error) => {
-        assert.equal(error.reason, 'Batch status is disabled', "unexpected reason");
+    await uprtclInstance.addUpdatesToRequest(
+      requestId02, headUpdates,
+      { from: requestRegistrator }).catch((error) => {
+        assert.equal(error.reason, 'Request status is disabled', "unexpected reason");
         failed = true;
       })
 
     assert.isTrue(failed, "head udates were added when disabled");
   });
 
-  it('should not be able to execute a batch if it has not being authorized', async () => {
+  it('should not be able to execute a request if it has not being authorized', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
     let failed = false;
-    await uprtclInstance.executeBatch(
-      batchId02, { from: batchRegistrator }).catch((error) => {
-        assert.equal(error.reason, 'Batch not authorized', "unexpected reason");
+    await uprtclInstance.executeRequest(
+      requestId02, { from: requestRegistrator }).catch((error) => {
+        assert.equal(error.reason, 'Request not authorized', "unexpected reason");
         failed = true;
       })
 
-    assert.isTrue(failed, "batch executed without an authorization. Tishhhh.");
+    assert.isTrue(failed, "request executed without an authorization. Tishhhh.");
   });
 
-  it('should not be able authorize batch if not owner', async () => {
+  it('should not be able authorize request if not owner', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
     let failed = false;
-    let tx = await uprtclInstance.setBatchAuthorized(
-      batchId02, 1,
-      { from: batchRegistrator }).catch((error) => {
-        assert.equal(error.reason, 'Batch can only by athorized by its owner', "unexpected reason");
+    let tx = await uprtclInstance.setRequestAuthorized(
+      requestId02, 1,
+      { from: requestRegistrator }).catch((error) => {
+        assert.equal(error.reason, 'Request can only by athorized by its owner', "unexpected reason");
         failed = true;
       })
 
     assert.isTrue(failed, "authorization was given by a not owner");
   });
 
-  it('should be able authorize batch if owner', async () => {
+  it('should be able authorize request if owner', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
-    await uprtclInstance.setBatchAuthorized(
-      batchId02, 1,
-      { from: batchOwner });
+    await uprtclInstance.setRequestAuthorized(
+      requestId02, 1,
+      { from: requestOwner });
 
-    let batchRead = await uprtclInstance.getBatch(batchId02);
-    assert.equal(batchRead.owner, batchOwner, "unexpected batch owner")
-    assert.equal(batchRead.authorized, 1, "unexpected authorized state")
+    let requestRead = await uprtclInstance.getRequest(requestId02);
+    assert.equal(requestRead.owner, requestOwner, "unexpected request owner")
+    assert.equal(requestRead.authorized, 1, "unexpected authorized state")
   });
 
-  it('should not be able to execute batch if not an approved address', async () => {
+  it('should not be able to execute request if not an approved address', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
     let failed = false;
-    await uprtclInstance.executeBatch(
-      batchId02, { from: observer }).catch((error) => {
+    await uprtclInstance.executeRequest(
+      requestId02, { from: observer }).catch((error) => {
         assert.equal(error.reason, 'msg.sender not an approved address', "unexpected reason");
         failed = true;
       })
 
-    assert.isTrue(failed, "batch executed by a non approved addres..");
+    assert.isTrue(failed, "request executed by a non approved addres..");
   });
 
-  it('should be able to execute batch if approved address', async () => {
+  it('should be able to execute request if approved address', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
-    let batchRead = await uprtclInstance.getBatch(batchId02);
-    let headUpdates = batchRead.headUpdates;
+    let requestRead = await uprtclInstance.getRequest(requestId02);
+    let headUpdates = requestRead.headUpdates;
 
     /** make sure current head is not the value to be set */
     for (let ix = 0; ix < headUpdates.length; ix++) {
@@ -835,8 +835,8 @@ contract('Uprtcl', (accounts) => {
       assert(perspectiveRead.headId != headUpdate.headId);
     }
 
-    await uprtclInstance.executeBatch(
-      batchId02, { from: batchRegistrator });
+    await uprtclInstance.executeRequest(
+      requestId02, { from: requestRegistrator });
 
     /** make sure current head is not the value to be set */
     for (let ix = 0; ix < headUpdates.length; ix++) {
@@ -849,40 +849,40 @@ contract('Uprtcl', (accounts) => {
     }
   });
 
-  it('should be able to execute only some elements of a batch', async () => {
+  it('should be able to execute only some elements of a request', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
     let perspectiveIds = await createNPerspectives(
       uprtclInstance, 
       [151, 152, 153, 154, 155], 
-      batchOwner, 
-      batchRegistrator);
+      requestOwner, 
+      requestRegistrator);
 
     let headUpdates = await createNUpdateHeads(perspectiveIds);
 
-    let batchNonce = 21;
-    let tx = await uprtclInstance.initBatch(
-      batchOwner, batchNonce, headUpdates, [batchRegistrator],
-      { from: batchRegistrator })
+    let requestNonce = 21;
+    let tx = await uprtclInstance.initRequest(
+      requestOwner, requestNonce, headUpdates, [requestRegistrator],
+      { from: requestRegistrator })
     
-    let event = tx.logs.find(log => log.event === 'BatchCreated').args;
-    assert.equal(event.owner, batchOwner, "unexpected batch owner")
-    assert.equal(event.nonce, batchNonce, "unexpected nonce")
-    assert.notEqual(event.batchId, '', "empty batch id")
+    let event = tx.logs.find(log => log.event === 'RequestCreated').args;
+    assert.equal(event.owner, requestOwner, "unexpected request owner")
+    assert.equal(event.nonce, requestNonce, "unexpected nonce")
+    assert.notEqual(event.requestId, '', "empty request id")
 
-    batchId = event.batchId;
+    requestId = event.requestId;
 
-    await uprtclInstance.setBatchAuthorized(
-      batchId, 1,
-      { from: batchOwner });
+    await uprtclInstance.setRequestAuthorized(
+      requestId, 1,
+      { from: requestOwner });
 
     let indexes0 = [0, 1, 2];
     
-    await uprtclInstance.executeBatchPartially(
-      batchId, indexes0,
-      { from: batchRegistrator });
+    await uprtclInstance.executeRequestPartially(
+      requestId, indexes0,
+      { from: requestRegistrator });
 
-    let batchRead = await uprtclInstance.getBatch(batchId);
+    let requestRead = await uprtclInstance.getRequest(requestId);
 
     for (let ix = 0; ix < indexes0.length; ix++) {
       let headUpdate = headUpdates[indexes0[ix]];
@@ -891,16 +891,16 @@ contract('Uprtcl', (accounts) => {
         { from: observer });
       
       assert.equal(perspectiveRead.headId, headUpdate.headId, "unexpected headId");
-      assert.equal(batchRead.headUpdates[indexes0[ix]].executed, 1, "unexpected executed state")
+      assert.equal(requestRead.headUpdates[indexes0[ix]].executed, 1, "unexpected executed state")
     }
 
     let indexes1 = [3, 4];
 
-    await uprtclInstance.executeBatchPartially(
-      batchId, indexes1,
-      { from: batchRegistrator });
+    await uprtclInstance.executeRequestPartially(
+      requestId, indexes1,
+      { from: requestRegistrator });
       
-    let batchRead2 = await uprtclInstance.getBatch(batchId);
+    let requestRead2 = await uprtclInstance.getRequest(requestId);
       
     for (let ix = 0; ix < indexes1.length; ix++) {
       let headUpdate = headUpdates[indexes1[ix]];
@@ -909,16 +909,16 @@ contract('Uprtcl', (accounts) => {
         { from: observer });
       
       assert.equal(perspectiveRead.headId, headUpdate.headId, "unexpected headId");
-      assert.equal(batchRead2.headUpdates[indexes1[ix]].executed, 1, "unexpected executed state")
+      assert.equal(requestRead2.headUpdates[indexes1[ix]].executed, 1, "unexpected executed state")
     }
 
     /** and should not work again */
     let indexes2 = [3, 4];
     
     let failed = false;
-    await uprtclInstance.executeBatchPartially(
-      batchId, indexes2,
-      { from: batchRegistrator }).catch((error) => {
+    await uprtclInstance.executeRequestPartially(
+      requestId, indexes2,
+      { from: requestRegistrator }).catch((error) => {
         assert.equal(error.reason, 'head update already executed', "unexpected reason");
         failed = true;
       });
