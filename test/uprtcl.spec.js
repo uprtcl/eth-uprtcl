@@ -35,7 +35,7 @@ const hash = async (perspectiveIdStr) => {
 const createNPerspectives = async (uprtclInstance, contextNonces, owner, creator) => {
   let perspectiveIds = [];
   let calls = contextNonces.map(async (nonce) => {
-    const context = { creatorId: 'did:uport:123', timestamp: 0, nonce: nonce }
+    const context = { creatorId: 'did:uport:123', timestamp: Date.now(), nonce: nonce }
 
     let contextCid = await generateCid(JSON.stringify(context), cidConfig1);
      /** store this string to simulate the step from string to cid */
@@ -44,7 +44,7 @@ const createNPerspectives = async (uprtclInstance, contextNonces, owner, creator
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
-      timestamp: 0,
+      timestamp: Date.now(),
       context: contextCid.toString(),
       name: 'test perspective'
     }
@@ -85,7 +85,7 @@ const createNUpdateHeads = async (perspectiveIds) => {
 
     const head = {
       creatorId: 'did:uport:123',
-      timestamp: 615,
+      timestamp: Date.now(),
       message: 'test commit 4',
       parentsIds: [],
       dataId: dataId.toString()
@@ -137,7 +137,7 @@ contract('Uprtcl', (accounts) => {
 
     const context = {
       creatorId: 'did:uport:123',
-      timestamp: 0,
+      timestamp: Date.now(),
       nonce: 0
     }
 
@@ -148,7 +148,7 @@ contract('Uprtcl', (accounts) => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
-      timestamp: 0,
+      timestamp: Date.now(),
       context: contextIdStr,
       name: 'test perspective'
     }
@@ -190,7 +190,7 @@ contract('Uprtcl', (accounts) => {
 
     const context = {
       creatorId: 'did:uport:123456',
-      timestamp: 0,
+      timestamp: Date.now(),
       nonce: 0
     }
 
@@ -201,7 +201,7 @@ contract('Uprtcl', (accounts) => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123546',
-      timestamp: 0,
+      timestamp: Date.now(),
       context: context2IdStr,
       name: 'test perspective 2'
     }
@@ -219,7 +219,7 @@ contract('Uprtcl', (accounts) => {
 
     const head = {
       creatorId: 'did:uport:123456',
-      timestamp: 0,
+      timestamp: Date.now(),
       message: 'test commit 2',
       parentsIds: [],
       dataId: dataId.toString()
@@ -285,7 +285,7 @@ contract('Uprtcl', (accounts) => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
-      timestamp: 2,
+      timestamp: Date.now(),
       context: '',
       name: 'test perspective 2'
     }
@@ -322,7 +322,7 @@ contract('Uprtcl', (accounts) => {
 
     const head = {
       creatorId: 'did:uport:123',
-      timestamp: 0,
+      timestamp: Date.now(),
       message: 'test commit',
       parentsIds: [],
       dataId: dataId.toString()
@@ -356,7 +356,7 @@ contract('Uprtcl', (accounts) => {
 
     const head = {
       creatorId: 'did:uport:123',
-      timestamp: 8787,
+      timestamp: Date.now(),
       message: 'test commit new',
       parentsIds: [],
       dataId: dataId.toString()
@@ -440,7 +440,7 @@ contract('Uprtcl', (accounts) => {
 
     const head = {
       creatorId: 'did:uport:123',
-      timestamp: 615,
+      timestamp: Date.now(),
       message: 'test commit 4',
       parentsIds: [],
       dataId: dataId.toString()
@@ -487,7 +487,7 @@ contract('Uprtcl', (accounts) => {
 
     const head = {
       creatorId: 'did:uport:123',
-      timestamp: 822,
+      timestamp: Date.now(),
       message: 'test commit 587',
       parentsIds: [],
       dataId: dataId.toString()
@@ -528,17 +528,18 @@ contract('Uprtcl', (accounts) => {
 
   it('should be able to create a new request without update heads', async () => {
     let uprtclInstance = await Uprtcl.deployed();
+    let toPerspectiveIdHash = await hash(perspectiveIdStr);
+    let fromPerspectiveIdHash = await hash(perspective2IdStr);
     let requestNonce = 10;
-    let tx = await uprtclInstance.initRequest(
-      requestOwner, requestNonce, [], [requestRegistrator],
+
+    await uprtclInstance.initRequest(
+      toPerspectiveIdHash, fromPerspectiveIdHash, requestOwner, requestNonce, [], [requestRegistrator],
       { from: requestRegistrator })
     
-    let event = tx.logs.find(log => log.event === 'RequestCreated').args;
-    assert.equal(event.owner, requestOwner, "unexpected request owner")
-    assert.equal(event.nonce, requestNonce, "unexpected nonce")
-    assert.notEqual(event.requestId, '', "empty request id")
-
-    requestId01 = event.requestId;
+    requestId01 = await uprtclInstance.getRequestId(
+      toPerspectiveIdHash,
+      fromPerspectiveIdHash,
+      requestNonce);
 
     let requestRead = await uprtclInstance.getRequest(requestId01);
     assert.equal(requestRead.owner, requestOwner, "unexpected request owner")
@@ -566,7 +567,7 @@ contract('Uprtcl', (accounts) => {
     let tx = await uprtclInstance.addUpdatesToRequest(
       requestId01, headUpdates,
       { from: requestRegistrator }).catch((error) => {
-        assert.equal(error.reason, 'Request can only store perspectives owner by its owner', "unexpected reason");
+        assert.equal(error.reason, 'request can only store perspectives owner by its owner', "unexpected reason");
         failed = true;
       })
     
@@ -603,17 +604,18 @@ contract('Uprtcl', (accounts) => {
   it('should be able to add headUpdates to existing empty request', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
+    let toPerspectiveIdHash = await hash(perspectiveIdStr);
+    let fromPerspectiveIdHash = await hash(perspective2IdStr);
     let requestNonce = 51;
-    let tx = await uprtclInstance.initRequest(
-      requestOwner, requestNonce, [], [requestRegistrator],
+
+    await uprtclInstance.initRequest(
+      toPerspectiveIdHash, fromPerspectiveIdHash, requestOwner, requestNonce, [], [requestRegistrator],
       { from: requestRegistrator })
     
-    let event = tx.logs.find(log => log.event === 'RequestCreated').args;
-    assert.equal(event.owner, requestOwner, "unexpected request owner")
-    assert.equal(event.nonce, requestNonce, "unexpected nonce")
-    assert.notEqual(event.requestId, '', "empty request id")
-
-    requestId = event.requestId;
+    let requestId = await uprtclInstance.getRequestId(
+      toPerspectiveIdHash,
+      fromPerspectiveIdHash,
+      requestNonce);
 
     let perspectiveIds = await createNPerspectives(
       uprtclInstance, 
@@ -655,19 +657,19 @@ contract('Uprtcl', (accounts) => {
     
     perspectiveIds02 = perspectiveIds;
     headUpdates02 = headUpdates;
+
+    let toPerspectiveIdHash = await hash(perspectiveIdStr);
+    let fromPerspectiveIdHash = await hash(perspective2IdStr);
+    let requestNonce = 11;
     
-    requestNonce = 11;
-    /** init request with headUpdates */
-    let tx = await uprtclInstance.initRequest(
-      requestOwner, requestNonce, headUpdates, [requestRegistrator],
+    await uprtclInstance.initRequest(
+      toPerspectiveIdHash, fromPerspectiveIdHash, requestOwner, requestNonce, headUpdates02, [requestRegistrator],
       { from: requestRegistrator })
     
-    let event = tx.logs.find(log => log.event === 'RequestCreated').args;
-    assert.equal(event.owner, requestOwner, "unexpected request owner")
-    assert.equal(event.nonce, requestNonce, "unexpected nonce")
-    assert.notEqual(event.requestId, '', "empty request id")
-
-    requestId02 = event.requestId;
+    requestId02 = await uprtclInstance.getRequestId(
+        toPerspectiveIdHash,
+        fromPerspectiveIdHash,
+        requestNonce);
 
     let requestRead = await uprtclInstance.getRequest(requestId02);
     assert.equal(requestRead.owner, requestOwner, "unexpected request owner")
@@ -753,6 +755,25 @@ contract('Uprtcl', (accounts) => {
     assert.equal(requestRead.status, 0, "unexpected status")
   });
 
+  it('should be able set status to disabled if approved', async () => {
+    let uprtclInstance = await Uprtcl.deployed();
+
+    await uprtclInstance.setRequestStatus(
+      requestId02, 1,
+      { from: requestOwner });
+
+    let requestRead01 = await uprtclInstance.getRequest(requestId02);
+    assert.equal(requestRead01.status, 1, "unexpected status")
+    
+    await uprtclInstance.closeRequest(
+      requestId02,
+      { from: requestRegistrator });
+
+    let requestRead02 = await uprtclInstance.getRequest(requestId02);
+    assert.equal(requestRead02.owner, requestOwner, "unexpected request owner")
+    assert.equal(requestRead02.status, 0, "unexpected status")
+  });
+
   it('should not be able add new head updates with status 0', async () => {
     let uprtclInstance = await Uprtcl.deployed();
     
@@ -760,7 +781,7 @@ contract('Uprtcl', (accounts) => {
     await uprtclInstance.addUpdatesToRequest(
       requestId02, headUpdates,
       { from: requestRegistrator }).catch((error) => {
-        assert.equal(error.reason, 'Request status is disabled', "unexpected reason");
+        assert.equal(error.reason, 'request status is disabled', "unexpected reason");
         failed = true;
       })
 
@@ -787,7 +808,7 @@ contract('Uprtcl', (accounts) => {
     let tx = await uprtclInstance.setRequestAuthorized(
       requestId02, 1,
       { from: requestRegistrator }).catch((error) => {
-        assert.equal(error.reason, 'Request can only by athorized by its owner', "unexpected reason");
+        assert.equal(error.reason, 'Request can only by authorized by its owner', "unexpected reason");
         failed = true;
       })
 
@@ -825,6 +846,8 @@ contract('Uprtcl', (accounts) => {
     let requestRead = await uprtclInstance.getRequest(requestId02);
     let headUpdates = requestRead.headUpdates;
 
+    assert(requestRead.approvedAddresses[0] === requestRegistrator);
+
     /** make sure current head is not the value to be set */
     for (let ix = 0; ix < headUpdates.length; ix++) {
       let headUpdate = headUpdates[ix];
@@ -860,18 +883,19 @@ contract('Uprtcl', (accounts) => {
 
     let headUpdates = await createNUpdateHeads(perspectiveIds);
 
+    let toPerspectiveIdHash = await hash(perspectiveIdStr);
+    let fromPerspectiveIdHash = await hash(perspective2IdStr);
     let requestNonce = 21;
-    let tx = await uprtclInstance.initRequest(
-      requestOwner, requestNonce, headUpdates, [requestRegistrator],
+
+    await uprtclInstance.initRequest(
+      toPerspectiveIdHash, fromPerspectiveIdHash, requestOwner, requestNonce, headUpdates, [requestRegistrator],
       { from: requestRegistrator })
+
+    let requestId = await uprtclInstance.getRequestId(
+        toPerspectiveIdHash,
+        fromPerspectiveIdHash,
+        requestNonce);
     
-    let event = tx.logs.find(log => log.event === 'RequestCreated').args;
-    assert.equal(event.owner, requestOwner, "unexpected request owner")
-    assert.equal(event.nonce, requestNonce, "unexpected nonce")
-    assert.notEqual(event.requestId, '', "empty request id")
-
-    requestId = event.requestId;
-
     await uprtclInstance.setRequestAuthorized(
       requestId, 1,
       { from: requestOwner });

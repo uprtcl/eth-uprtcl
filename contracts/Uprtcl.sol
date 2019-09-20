@@ -18,10 +18,11 @@ contract Uprtcl {
 
 	struct MergeRequest {
 
-		/** All perspectives in the headUpdates must be owned by the
-			owner of this perspective */
 		bytes32 toPerspectiveIdHash;
 		bytes32 fromPerspectiveIdHash;
+
+		/** All perspectives in headUpdates must be owned by this owner */
+		address owner;
 
 		/** Approved addresses can add new HeadUpdate elements to this
 		list as long as they are all from the same owner and this owner is
@@ -64,7 +65,7 @@ contract Uprtcl {
 	event MergeRequestCreated(
 		bytes32 indexed toPerspectiveId,
 		bytes32 indexed fromPerspectiveId,
-		bytes32 requestId);
+		uint32 nonce);
 
 	event AddedUpdatesToRequest(
 		bytes32 indexed requestId);
@@ -74,9 +75,10 @@ contract Uprtcl {
 		for (uint32 ix = 0; ix < request.approvedAddresses.length; ix++) {
 			if (value == request.approvedAddresses[ix]) {
 				approved = 1;
+				return approved;
 			}
 		}
-		return approved;
+		approved = 0;
 	}
 
 	/** Adds a new perspective to the mapping and sets the owner. The head pointer is initialized as null and should
@@ -170,21 +172,39 @@ contract Uprtcl {
 		}
 	}
 
-	/** Creates a new request owned and initialize its properties.
-		The id of the request is derived from the message sender to prevent frontrunning attacks. */
-	function initMergeRequest(
+	function getRequestId(
 		bytes32 toPerspectiveIdHash,
 		bytes32 fromPerspectiveIdHash,
+		uint32 nonce)
+		public pure
+		returns(bytes32 requestId) {
+
+		requestId = keccak256(
+			abi.encodePacked(
+				toPerspectiveIdHash,
+				fromPerspectiveIdHash,
+				nonce));
+	}
+
+	/** Creates a new request owned and initialize its properties.
+		The id of the request is derived from the message sender to prevent frontrunning attacks. */
+	function initRequest(
+		bytes32 toPerspectiveIdHash,
+		bytes32 fromPerspectiveIdHash,
+		address owner,
 		uint32 nonce,
 		HeadUpdate[] memory headUpdates,
 		address[] memory approvedAddresses) public {
 
-		bytes32 requestId = keccak256(abi.encodePacked(toPerspectiveIdHash, fromPerspectiveIdHash, nonce));
+		bytes32 requestId = getRequestId(toPerspectiveIdHash, fromPerspectiveIdHash, nonce);
 
 		/** make sure the request does not exist */
-		require(getOwner(requestId) == address(0), "request already exist");
 		MergeRequest storage request = requests[requestId];
+		require(request.owner == address(0), "request already exist");
 
+		request.toPerspectiveIdHash = toPerspectiveIdHash;
+		request.fromPerspectiveIdHash = fromPerspectiveIdHash;
+		request.owner = owner;
 		request.approvedAddresses = approvedAddresses;
 		request.status = 1;
 
@@ -193,7 +213,7 @@ contract Uprtcl {
 		emit MergeRequestCreated(
 			toPerspectiveIdHash,
 			fromPerspectiveIdHash,
-			requestId
+			nonce
 		);
 	}
 
@@ -208,41 +228,25 @@ contract Uprtcl {
 		require(request.status != 0, "request status is disabled");
 
 		/** check msg sender is approved address unless is this contract */
-		if (msg.sender != address(this)) {
-			uint8 approved = 0;
-			for (uint32 ix = 0; ix < request.approvedAddresses.length; ix++) {
-				if (msg.sender == request.approvedAddresses[ix]) {
-					approved = 1;
-				}
-			}
-
-			require(approved > 0, "msg.sender not an approved address");
-		}
+		require(isApproved(request, msg.sender) > 0, "msg.sender not an approved address");
 
 		/** initialize */
 		for (uint8 ix = 0; ix < headUpdates.length; ix++) {
 			HeadUpdate memory headUpdate = headUpdates[ix];
 			/** head update executed property must be zero */
 			require(headUpdate.executed == 0, "head update executed property must be zero");
-			/** Only add perspectives of the same owner! */
+			/** Only add perspectives of the same owner as the request */
 			Perspective storage newPerspective = perspectives[headUpdate.perspectiveIdHash];
-			require(newPerspective.owner == getOwner(requestId), "Batch can only store perspectives owner by its owner");
+			require(newPerspective.owner == request.owner, "request can only store perspectives owner by its owner");
 			request.headUpdates.push(headUpdate);
 		}
 
 		emit AddedUpdatesToRequest(requestId);
 	}
 
-	function getOwner(bytes32 requestId) public view returns(address owner) {
-		MergeRequest storage request = requests[requestId];
-		Perspective storage toPerspective = perspectives[request.toPerspectiveIdHash];
-		owner = toPerspective.owner;
-		return owner;
-	}
-
 	function setRequestAuthorized(bytes32 requestId, uint8 authorized) public {
 		MergeRequest storage request = requests[requestId];
-		require(msg.sender == getOwner(requestId), "Request can only by authorized by its owner");
+		require(msg.sender == request.owner, "Request can only by authorized by its owner");
 		/** by default the request is closed once it is authorized. */
 		if (authorized > 0) request.status = 0;
 		request.authorized = authorized;
@@ -250,12 +254,12 @@ contract Uprtcl {
 
 	function setRequestStatus(bytes32 requestId, uint8 status) public {
 		MergeRequest storage request = requests[requestId];
-		require(msg.sender == getOwner(requestId), "Request status can only by set by its owner");
+		require(msg.sender == request.owner, "Request status can only by set by its owner");
 		request.status = status;
 	}
 
 	/** set the status to disabled (0) and can be called by any authorized address */
-	function disabledRequest(bytes32 requestId) public {
+	function closeRequest(bytes32 requestId) public {
 		MergeRequest storage request = requests[requestId];
 		/** Check the msg.sender is an approved address */
 		require(isApproved(request, msg.sender) > 0, "msg.sender not an approved address");
@@ -273,15 +277,22 @@ contract Uprtcl {
 			indexes[ix] = ix;
 		}
 
-		this.executeRequestPartially(requestId, indexes);
+		executeRequestPartiallyInternal(requestId, indexes, msg.sender);
 	}
 
 	function executeRequestPartially(bytes32 requestId, uint256[] memory indexes) public {
+		executeRequestPartiallyInternal(requestId, indexes, msg.sender);
+	}
+
+	function executeRequestPartiallyInternal(
+		bytes32 requestId,
+		uint256[] memory indexes,
+		address msgSender) private {
+
 		MergeRequest storage request = requests[requestId];
 		require(request.authorized != 0, "Request not authorized");
 
-		/** check msg sender is approved address unless is this contract */
-		require(isApproved(request, msg.sender) > 0, "msg.sender not an approved address");
+		require(isApproved(request, msgSender) > 0, "msg.sender not an approved address");
 
 		for (uint256 ix = 0; ix < indexes.length; ix++) {
 			HeadUpdate storage headUpdate = request.headUpdates[indexes[ix]];
@@ -296,7 +307,7 @@ contract Uprtcl {
 	}
 
 	/** Get the perspective owner and head from its ID */
-	function getMergeRequest(bytes32 batchId)
+	function getRequest(bytes32 batchId)
 		public view
 		returns(MergeRequest memory batch) {
 		return (requests[batchId]);
