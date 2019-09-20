@@ -533,7 +533,14 @@ contract('Uprtcl', (accounts) => {
     let requestNonce = 10;
 
     await uprtclInstance.initRequest(
-      toPerspectiveIdHash, fromPerspectiveIdHash, requestOwner, requestNonce, [], [requestRegistrator],
+      toPerspectiveIdHash, 
+      fromPerspectiveIdHash, 
+      requestOwner, 
+      requestNonce, 
+      [], 
+      [requestRegistrator],
+      perspectiveIdStr,
+      perspective2IdStr,
       { from: requestRegistrator })
     
     requestId01 = await uprtclInstance.getRequestId(
@@ -609,7 +616,14 @@ contract('Uprtcl', (accounts) => {
     let requestNonce = 51;
 
     await uprtclInstance.initRequest(
-      toPerspectiveIdHash, fromPerspectiveIdHash, requestOwner, requestNonce, [], [requestRegistrator],
+      toPerspectiveIdHash, 
+      fromPerspectiveIdHash, 
+      requestOwner, 
+      requestNonce, 
+      [], 
+      [requestRegistrator],
+      perspectiveIdStr,
+      perspective2IdStr,
       { from: requestRegistrator })
     
     let requestId = await uprtclInstance.getRequestId(
@@ -663,7 +677,14 @@ contract('Uprtcl', (accounts) => {
     let requestNonce = 11;
     
     await uprtclInstance.initRequest(
-      toPerspectiveIdHash, fromPerspectiveIdHash, requestOwner, requestNonce, headUpdates02, [requestRegistrator],
+      toPerspectiveIdHash, 
+      fromPerspectiveIdHash, 
+      requestOwner, 
+      requestNonce, 
+      headUpdates02, 
+      [requestRegistrator],
+      perspectiveIdStr,
+      perspective2IdStr,
       { from: requestRegistrator })
     
     requestId02 = await uprtclInstance.getRequestId(
@@ -888,7 +909,14 @@ contract('Uprtcl', (accounts) => {
     let requestNonce = 21;
 
     await uprtclInstance.initRequest(
-      toPerspectiveIdHash, fromPerspectiveIdHash, requestOwner, requestNonce, headUpdates, [requestRegistrator],
+      toPerspectiveIdHash, 
+      fromPerspectiveIdHash, 
+      requestOwner, 
+      requestNonce, 
+      headUpdates, 
+      [requestRegistrator], 
+      perspectiveIdStr, 
+      perspective2IdStr,
       { from: requestRegistrator })
 
     let requestId = await uprtclInstance.getRequestId(

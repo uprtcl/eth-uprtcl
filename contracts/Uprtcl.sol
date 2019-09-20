@@ -63,9 +63,12 @@ contract Uprtcl {
 		address previousOwner);
 
 	event MergeRequestCreated(
-		bytes32 indexed toPerspectiveId,
-		bytes32 indexed fromPerspectiveId,
-		uint32 nonce);
+		bytes32 indexed toPerspectiveIdHash,
+		bytes32 indexed fromPerspectiveIdHash,
+		uint32 nonce,
+		bytes32 indexed requestId,
+		string toPerspectiveId,
+		string fromPerspectiveId);
 
 	event AddedUpdatesToRequest(
 		bytes32 indexed requestId);
@@ -194,7 +197,9 @@ contract Uprtcl {
 		address owner,
 		uint32 nonce,
 		HeadUpdate[] memory headUpdates,
-		address[] memory approvedAddresses) public {
+		address[] memory approvedAddresses,
+		string memory toPerspectiveId,
+		string memory fromPerspectiveId) public {
 
 		bytes32 requestId = getRequestId(toPerspectiveIdHash, fromPerspectiveIdHash, nonce);
 
@@ -213,7 +218,10 @@ contract Uprtcl {
 		emit MergeRequestCreated(
 			toPerspectiveIdHash,
 			fromPerspectiveIdHash,
-			nonce
+			nonce,
+			requestId,
+			toPerspectiveId,
+			fromPerspectiveId
 		);
 	}
 
