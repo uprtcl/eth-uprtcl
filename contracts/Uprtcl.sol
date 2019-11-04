@@ -203,7 +203,7 @@ contract Uprtcl {
 	}
 
 	/** Get the perspective owner and details from its ID */
-	function getPerspective(bytes32 perspectiveIdHash)
+	function getPerspectiveDetails(bytes32 perspectiveIdHash)
 		public view
 		returns(
 			address owner,
@@ -226,10 +226,6 @@ contract Uprtcl {
 	function updateHeads(HeadUpdate[] memory headUpdates) public {
 		for (uint8 ix = 0; ix < headUpdates.length; ix++) {
 			HeadUpdate memory headUpdate = headUpdates[ix];
-
-			/** Check the msg.sender is the owner */
-			Perspective storage perspective = perspectives[headUpdate.perspectiveIdHash];
-			require(msg.sender == perspective.owner, "unauthorized access");
 
 			/** Update the head */
 			updatePerspectiveDetails(headUpdate.perspectiveIdHash, headUpdate.headId, "", "");

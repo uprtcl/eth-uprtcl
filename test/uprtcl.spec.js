@@ -178,7 +178,7 @@ contract('Uprtcl', (accounts) => {
     
     let perspectiveIdHash = await hash(perspectiveIdStr);
 
-    let perspectiveRead = await uprtclInstance.getPerspective(
+    let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash,
       { from: observer });
 
@@ -249,7 +249,7 @@ contract('Uprtcl', (accounts) => {
     
     let perspectiveIdHash = await hash(perspective2IdStr);
 
-    let perspectiveRead = await uprtclInstance.getPerspective(
+    let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash,
       { from: observer });
 
@@ -339,7 +339,7 @@ contract('Uprtcl', (accounts) => {
     await uprtclInstance.updateHeads(
       [{perspectiveIdHash: perspectiveIdHash,headId:headIdStr, executed: 0}],
       { from: creator }).catch((error) => {
-        assert.equal(error.reason, 'unauthorized access', "unexpected reason");
+        assert.equal(error.reason, 'only the owner can update the perspective', "unexpected reason");
         failed = true
       });
 
@@ -369,7 +369,7 @@ contract('Uprtcl', (accounts) => {
 
     let perspectiveIdHash = await hash(perspectiveIdStr); 
 
-    let perspectiveReadBefore = await uprtclInstance.getPerspective(
+    let perspectiveReadBefore = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash,
       { from: observer });
 
@@ -384,7 +384,7 @@ contract('Uprtcl', (accounts) => {
 
     assert.isTrue(result.receipt.status);
 
-    let perspectiveRead = await uprtclInstance.getPerspective(
+    let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash,
       { from: observer });
 
@@ -422,7 +422,7 @@ contract('Uprtcl', (accounts) => {
       
     assert.isTrue(result.receipt.status, "the tx was not sent");
 
-    let perspectiveRead = await uprtclInstance.getPerspective(
+    let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash,
       { from: observer });
 
@@ -451,7 +451,7 @@ contract('Uprtcl', (accounts) => {
     let newheadId = await generateCid(JSON.stringify(head), cidConfig1);
     newheadIdStr = newheadId.toString();
     
-    let perspectiveReadBefore = await uprtclInstance.getPerspective(
+    let perspectiveReadBefore = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash,
       { from: observer });
 
@@ -466,7 +466,7 @@ contract('Uprtcl', (accounts) => {
 
     assert.isTrue(result.receipt.status, "the head was not updated");
 
-    let perspectiveRead = await uprtclInstance.getPerspective(
+    let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash.toString('hex'),
       { from: observer });
 
@@ -498,7 +498,7 @@ contract('Uprtcl', (accounts) => {
     let newBadheadId = await generateCid(JSON.stringify(head), cidConfig1);
     let newBadheadIdStr = newBadheadId.toString();
     
-    let perspectiveReadBefore = await uprtclInstance.getPerspective(
+    let perspectiveReadBefore = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash,
       { from: observer });
 
@@ -511,14 +511,14 @@ contract('Uprtcl', (accounts) => {
     let result = await uprtclInstance.updateHeads(
       [{perspectiveIdHash: perspectiveIdHash,headId:newBadheadIdStr, executed: 0}],
       { from: firstOwner }).catch((error) => {
-        assert.equal(error.reason, 'unauthorized access', "unexpected reason");
+        assert.equal(error.reason, 'only the owner can update the perspective', "unexpected reason");
         failed = true;
       });
 
     assert.isTrue(failed, "the head was updated");
 
     /** review that the head did not changed */
-    let perspectiveRead = await uprtclInstance.getPerspective(
+    let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash,
       { from: observer });
 
@@ -874,7 +874,7 @@ contract('Uprtcl', (accounts) => {
     /** make sure current head is not the value to be set */
     for (let ix = 0; ix < headUpdates.length; ix++) {
       let headUpdate = headUpdates[ix];
-      let perspectiveRead = await uprtclInstance.getPerspective(
+      let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
         headUpdate.perspectiveIdHash,
         { from: observer });
       
@@ -887,7 +887,7 @@ contract('Uprtcl', (accounts) => {
     /** make sure current head is not the value to be set */
     for (let ix = 0; ix < headUpdates.length; ix++) {
       let headUpdate = headUpdates[ix];
-      let perspectiveRead = await uprtclInstance.getPerspective(
+      let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
         headUpdate.perspectiveIdHash,
         { from: observer });
       
@@ -940,7 +940,7 @@ contract('Uprtcl', (accounts) => {
 
     for (let ix = 0; ix < indexes0.length; ix++) {
       let headUpdate = headUpdates[indexes0[ix]];
-      let perspectiveRead = await uprtclInstance.getPerspective(
+      let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
         headUpdate.perspectiveIdHash,
         { from: observer });
       
@@ -958,7 +958,7 @@ contract('Uprtcl', (accounts) => {
       
     for (let ix = 0; ix < indexes1.length; ix++) {
       let headUpdate = headUpdates[indexes1[ix]];
-      let perspectiveRead = await uprtclInstance.getPerspective(
+      let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
         headUpdate.perspectiveIdHash,
         { from: observer });
       
