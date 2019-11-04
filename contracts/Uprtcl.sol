@@ -8,6 +8,8 @@ contract Uprtcl {
 	struct Perspective {
 		address owner;
 		string headId;
+		string name;
+		string context;
 	}
 
 	struct HeadUpdate {
@@ -48,14 +50,20 @@ contract Uprtcl {
 		bytes32 indexed perspectiveIdHash,
 		bytes32 indexed contextHash,
 		string head,
+		string context,
+		string name,
 		address owner,
 		string perspectiveId);
 
-	event PerspectiveHeadUpdated(
+	event PerspectiveDetailsUpdated(
 		bytes32 indexed perspectiveIdHash,
 		address author,
 		string previousHeadId,
-		string newHeadId);
+		string newHeadId,
+		string previousContext,
+		string newContext,
+		string previousName,
+		string newName);
 
 	event PerspectiveOwnerUpdated(
 		bytes32 indexed perspectiveIdHash,
@@ -84,15 +92,16 @@ contract Uprtcl {
 		approved = 0;
 	}
 
-	/** Adds a new perspective to the mapping and sets the owner. The head pointer is initialized as null and should
-	 *  be updated independently using updateHead(). The contextHash is not persisted but emited in the PerspectiveAdded
-	 *  event to enable filtering. Validation of the perspectiveId to contextHash should be done externally using any
-	 * 	content addressable	storage solution for the perspectiveId. The perspectiveId is emited to help perspectiveHash
-	 *  reverse mapping */
+	/** Adds a new perspective to the mapping and sets the owner. The head pointer, the context and the name of the perspective are initialized
+	 *  but can be updated independently using updatePerspectiveDetails(). Validation of the perspectiveId to contextHash should be done
+	 *  externally using any content addressable storage solution for the perspectiveId.
+	 *  The perspectiveId is emited to help perspectiveHash reverse mapping */
 	function addPerspective(
 		bytes32 perspectiveIdHash,
 		bytes32 contextHash,
-		string memory head,
+		string memory headId,
+		string memory context,
+		string memory name,
 		address owner,
 		string memory perspectiveId) /** LSB */
 		public {
@@ -102,7 +111,9 @@ contract Uprtcl {
 		require(address(0) == perspective.owner, "existing perspective");
 
 		perspective.owner = owner;
-		perspective.headId = head;
+		perspective.headId = headId;
+		perspective.context = context;
+		perspective.name = name;
 
 		perspectives[perspectiveIdHash] = perspective;
 
@@ -110,8 +121,50 @@ contract Uprtcl {
 			perspectiveIdHash,
 			contextHash,
 			perspective.headId,
+			perspective.context,
+			perspective.name,
 			perspective.owner,
 			perspectiveId);
+	}
+
+	function updatePerspectiveDetails(
+		bytes32 perspectiveIdHash,
+		string memory headId,
+		string memory context,
+		string memory name) public {
+
+		Perspective storage perspective = perspectives[perspectiveIdHash];
+
+		require(perspective.owner == msg.sender, "only the owner can update the perspective");
+
+		string memory previousHead = perspective.headId;
+		string memory previousContext = perspective.context;
+		string memory previousName = perspective.name;
+
+		bytes memory testHeadId = bytes(headId);
+		if (testHeadId.length != 0) {
+			perspective.headId = headId;
+		}
+
+		bytes memory testContext = bytes(context);
+		if (testContext.length != 0) {
+			perspective.context = context;
+		}
+
+		bytes memory testName = bytes(name);
+		if (testName.length != 0) {
+			perspective.name = name;
+		}
+
+		emit PerspectiveDetailsUpdated(
+			perspectiveIdHash,
+			msg.sender,
+			previousHead,
+			perspective.headId,
+			previousContext,
+			perspective.context,
+			previousName,
+			perspective.name);
 	}
 
 	/** internal function that updates the head pointer of a given perspective. It dont
@@ -123,14 +176,18 @@ contract Uprtcl {
 
 		Perspective storage perspective = perspectives[perspectiveIdHash];
 
-		string memory parentHead = perspective.headId;
+		string memory previousHead = perspective.headId;
 		perspective.headId = newHead;
 
-		emit PerspectiveHeadUpdated(
+		emit PerspectiveDetailsUpdated(
 			perspectiveIdHash,
 			msg.sender,
-			parentHead,
-			perspective.headId);
+			previousHead,
+			perspective.headId,
+			perspective.context,
+			perspective.context,
+			perspective.name,
+			perspective.name);
 	}
 
 	/** Changes the owner of a given perspective. Available only to the current owner of that perspective. */
@@ -145,18 +202,22 @@ contract Uprtcl {
 		emit PerspectiveOwnerUpdated(perspectiveIdHash, perspective.owner, previousOwner);
 	}
 
-	/** Get the perspective owner and head from its ID */
+	/** Get the perspective owner and details from its ID */
 	function getPerspective(bytes32 perspectiveIdHash)
 		public view
 		returns(
 			address owner,
-			string memory headId) {
+			string memory headId,
+			string memory context,
+			string memory name) {
 
 		Perspective memory perspective = perspectives[perspectiveIdHash];
 
 		return (
 			perspective.owner,
-			perspective.headId);
+			perspective.headId,
+			perspective.context,
+			perspective.name);
 	}
 
 	/** One method to execute the head updates directly, without creating the request. Useful
@@ -171,7 +232,7 @@ contract Uprtcl {
 			require(msg.sender == perspective.owner, "unauthorized access");
 
 			/** Update the head */
-			updateHead(headUpdate.perspectiveIdHash, headUpdate.headId);
+			updatePerspectiveDetails(headUpdate.perspectiveIdHash, headUpdate.headId, "", "");
 		}
 	}
 

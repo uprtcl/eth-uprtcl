@@ -44,9 +44,7 @@ const createNPerspectives = async (uprtclInstance, contextNonces, owner, creator
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
-      timestamp: Date.now(),
-      context: contextCid.toString(),
-      name: 'test perspective'
+      timestamp: Date.now() + Math.random(),
     }
 
     let perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
@@ -62,6 +60,8 @@ const createNPerspectives = async (uprtclInstance, contextNonces, owner, creator
     return uprtclInstance.addPerspective(
       perspectiveIdHash,
       contextIdHash,
+      '',
+      '',
       '',
       owner,
       perspectiveIdStr,
@@ -148,9 +148,7 @@ contract('Uprtcl', (accounts) => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
-      timestamp: Date.now(),
-      context: contextIdStr,
-      name: 'test perspective'
+      timestamp: Date.now()
     }
 
     let perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
@@ -165,6 +163,8 @@ contract('Uprtcl', (accounts) => {
     let result = await uprtclInstance.addPerspective(
       perspectiveIdHash,
       contextIdHash,
+      '',
+      '',
       '',
       firstOwner,
       perspectiveIdStr,
@@ -202,8 +202,6 @@ contract('Uprtcl', (accounts) => {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123546',
       timestamp: Date.now(),
-      context: context2IdStr,
-      name: 'test perspective 2'
     }
 
     let perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
@@ -237,6 +235,8 @@ contract('Uprtcl', (accounts) => {
       perspectiveIdHash,
       contextIdHash,
       head2IdStr,
+      '',
+      '',
       firstOwner,
       perspectiveIdStr,
       { from: creator });    
@@ -268,6 +268,8 @@ contract('Uprtcl', (accounts) => {
       perspectiveIdHash,
       contextIdHash,
       '',
+      '',
+      '',
       creator,
       perspectiveIdStr,
       { from: creator }).catch((error) => {
@@ -286,8 +288,6 @@ contract('Uprtcl', (accounts) => {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
       timestamp: Date.now(),
-      context: '',
-      name: 'test perspective 2'
     }
 
     let perspectiveCid2 = await generateCid(JSON.stringify(perspective), cidConfig1);
@@ -299,6 +299,8 @@ contract('Uprtcl', (accounts) => {
     await uprtclInstance.addPerspective(
       perspectiveIdHash2,
       contextIdHash,
+      '',
+      '',
       '',
       '0x' + new Array(40).fill('0').join(''),
       perspectiveCid2.toString(),
@@ -387,7 +389,7 @@ contract('Uprtcl', (accounts) => {
       { from: observer });
 
     assert.equal(
-      perspectiveRead.headId, 
+      perspectiveRead.headId,
       headIdStr, 
       "new head is not what expected"); 
   });
