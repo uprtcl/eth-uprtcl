@@ -107,7 +107,7 @@ contract Uprtcl {
 		public {
 
 		Perspective storage perspective = perspectives[perspectiveIdHash];
-		require(address(0) != owner, "owner cant be empty");
+		require(address(0) != owner, "owner cannot be empty");
 		require(address(0) == perspective.owner, "existing perspective");
 
 		perspective.owner = owner;
