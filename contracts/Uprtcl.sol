@@ -51,8 +51,10 @@ contract Uprtcl {
       return homePerspectives[owner];
   }
 
-  function setHomePerspective(address owner, bytes32 pidHome) public {
-      homePerspectives[owner] = pidHome;
+  function setHomePerspective(bytes32 perspectiveIdHash, bytes32 pidHome) public {
+      require(perspectives[perspectiveIdHash].owner == msg.sender && homePerspectives[msg.sender] == bytes4(0x0),
+      "Only the owner of the perspective can set the home of it");
+      homePerspectives[msg.sender] = pidHome;
   }
 
   function changeHomePerspective(bytes32 perspectiveIdHash, bytes32 pidHome) internal {
