@@ -43,8 +43,30 @@ contract Uprtcl {
 		uint8 authorized;
 	}
 
-	mapping (bytes32 => Perspective) public perspectives;
-	mapping (bytes32 => MergeRequest) public requests;
+  mapping (bytes32 => Perspective) public perspectives;
+  mapping (bytes32 => MergeRequest) public requests;
+  mapping (address => bytes32) public homePerspectives;
+
+  function getHomePerspective(address owner) public view returns (bytes32) {
+      return homePerspectives[owner];
+  }
+
+  function setHomePerspective(bytes32 perspectiveIdHash, bytes32 pidHome) public {
+      require(perspectives[perspectiveIdHash].owner == msg.sender && homePerspectives[msg.sender] == bytes4(0x0),
+      "Only the owner of the perspective can set the home of it");
+      homePerspectives[msg.sender] = pidHome;
+  }
+
+  function changeHomePerspective(bytes32 perspectiveIdHash, bytes32 pidHome) internal {
+      require(perspectives[perspectiveIdHash].owner == msg.sender, "Only the owner of the perspective can change the home of it");
+      homePerspectives[msg.sender] = pidHome;
+      emit homePerspectiveChanged(perspectiveIdHash, pidHome);
+  }
+
+  event homePerspectiveChanged(
+    bytes32 perspectiveIdHash,
+    bytes32 pidHome
+  );
 
 	event PerspectiveAdded(
 		bytes32 indexed perspectiveIdHash,
