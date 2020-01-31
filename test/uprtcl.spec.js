@@ -305,7 +305,7 @@ contract('Uprtcl', (accounts) => {
       '0x' + new Array(40).fill('0').join(''),
       perspectiveCid2.toString(),
       { from: creator }).catch((error) => {
-        assert.equal(error.reason, 'owner cant be empty', "unexpected reason");
+        assert.equal(error.reason, 'owner cannot be empty', "unexpected reason");
         failed = true;
       });    
 
