@@ -61,7 +61,7 @@ contract Uprtcl {
 		string previousHeadId,
 		string newHeadId,
 		string previousContext,
-		string newContext,
+		string indexed newContext,
 		string previousName,
 		string newName);
 
