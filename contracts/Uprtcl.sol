@@ -54,11 +54,12 @@ contract Uprtcl {
 
     event PerspectiveDetailsUpdated(
         bytes32 indexed perspectiveIdHash,
+        bytes32 indexed newContextHash,
         address author,
         string previousHeadId,
         string newHeadId,
         string previousContext,
-        string indexed newContext,
+        string newContext,
         string previousName,
         string newName
     );
@@ -75,12 +76,13 @@ contract Uprtcl {
         uint32 nonce,
         bytes32 indexed requestId,
         string toPerspectiveId,
-        string fromPerspectiveId
+        string fromPerspectiveId,
+        address creator
     );
 
     event AddedUpdatesToRequest(bytes32 indexed requestId);
 
-	
+
 
     /** Adds a new perspective to the mapping and sets the owner. The head pointer, the context and the name of the perspective are initialized
 	 *  but can be updated independently using updatePerspectiveDetails(). Validation of the perspectiveId to contextHash should be done
@@ -119,6 +121,7 @@ contract Uprtcl {
 
     function updatePerspectiveDetails(
         bytes32 perspectiveIdHash,
+        bytes32 newContextHash, /** used for indexing */
         string memory headId,
         string memory context,
         string memory name
@@ -151,6 +154,7 @@ contract Uprtcl {
 
         emit PerspectiveDetailsUpdated(
             perspectiveIdHash,
+            newContextHash,
             msg.sender,
             previousHead,
             perspective.headId,
@@ -174,6 +178,7 @@ contract Uprtcl {
 
         emit PerspectiveDetailsUpdated(
             perspectiveIdHash,
+            bytes32(0),
             msg.sender,
             previousHead,
             perspective.headId,
@@ -230,6 +235,7 @@ contract Uprtcl {
             /** Update the head */
             updatePerspectiveDetails(
                 headUpdate.perspectiveIdHash,
+                bytes32(0),
                 headUpdate.headId,
                 "",
                 ""
@@ -283,7 +289,8 @@ contract Uprtcl {
             nonce,
             requestId,
             toPerspectiveId,
-            fromPerspectiveId
+            fromPerspectiveId,
+            msg.sender
         );
     }
 
@@ -296,7 +303,7 @@ contract Uprtcl {
 			approved = 1;
 			return approved;
 		}
-		
+
         for (uint32 ix = 0; ix < request.approvedAddresses.length; ix++) {
             if (value == request.approvedAddresses[ix]) {
                 approved = 1;
