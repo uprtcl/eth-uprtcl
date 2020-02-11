@@ -17,6 +17,16 @@ contract Uprtcl {
         uint8 executed;
     }
 
+    struct NewPerspectiveData {
+        bytes32 perspectiveIdHash;
+        bytes32 contextHash;
+        string headId;
+        string context;
+        string name;
+        address owner;
+        string perspectiveId;
+    }
+
     struct MergeRequest {
         bytes32 toPerspectiveIdHash;
         bytes32 fromPerspectiveIdHash;
@@ -84,10 +94,6 @@ contract Uprtcl {
 
 
 
-    /** Adds a new perspective to the mapping and sets the owner. The head pointer, the context and the name of the perspective are initialized
-	 *  but can be updated independently using updatePerspectiveDetails(). Validation of the perspectiveId to contextHash should be done
-	 *  externally using any content addressable storage solution for the perspectiveId.
-	 *  The perspectiveId is emited to help perspectiveHash reverse mapping */
     function addPerspective(
         bytes32 perspectiveIdHash,
         bytes32 contextHash,
@@ -95,8 +101,36 @@ contract Uprtcl {
         string memory context,
         string memory name,
         address owner,
-        string memory perspectiveId /** LSB */
+        string memory perspectiveId
     ) public {
+        NewPerspectiveData memory newPerspectivesData;
+        newPerspectivesData.perspectiveIdHash = perspectiveIdHash;
+        newPerspectivesData.contextHash = contextHash;
+        newPerspectivesData.headId = headId;
+        newPerspectivesData.context = context;
+        newPerspectivesData.name = name;
+        newPerspectivesData.owner = owner;
+        newPerspectivesData.perspectiveId = perspectiveId;
+
+        addPerspectiveStr(newPerspectivesData);
+    }
+
+    /** Adds a new perspective to the mapping and sets the owner. The head pointer, the context and the name of the perspective are initialized
+	 *  but can be updated independently using updatePerspectiveDetails(). Validation of the perspectiveId to contextHash should be done
+	 *  externally using any content addressable storage solution for the perspectiveId.
+	 *  The perspectiveId is emited to help perspectiveHash reverse mapping */
+    function addPerspectiveStr(
+        NewPerspectiveData memory newPerspectivesData
+    ) public {
+
+        bytes32 perspectiveIdHash = newPerspectivesData.perspectiveIdHash;
+        bytes32 contextHash = newPerspectivesData.contextHash;
+        string memory headId = newPerspectivesData.headId;
+        string memory context = newPerspectivesData.context;
+        string memory name = newPerspectivesData.name;
+        address owner = newPerspectivesData.owner;
+        string memory perspectiveId = newPerspectivesData.perspectiveId;
+
         Perspective storage perspective = perspectives[perspectiveIdHash];
         require(address(0) != owner, "owner cannot be empty");
         require(address(0) == perspective.owner, "existing perspective");
@@ -117,6 +151,14 @@ contract Uprtcl {
             perspective.owner,
             perspectiveId
         );
+    }
+
+    function addPerspectiveBatch(
+        NewPerspectiveData[] memory newPerspectivesData
+    ) public {
+        for (uint256 ix = 0; ix < newPerspectivesData.length; ix++) {
+            addPerspectiveStr(newPerspectivesData[ix]);
+        }
     }
 
     function updatePerspectiveDetails(
