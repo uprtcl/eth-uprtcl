@@ -168,7 +168,9 @@ contract('Uprtcl', (accounts) => {
       '',
       firstOwner,
       perspectiveIdStr,
-      { from: creator });    
+      { from: creator });
+      
+    console.log(`addPerspective gas cost: ${result.receipt.gasUsed}`)
 
     assert.isTrue(result.receipt.status, "status not true");
   });
@@ -241,6 +243,8 @@ contract('Uprtcl', (accounts) => {
       perspectiveIdStr,
       { from: creator });    
 
+    console.log(`addPerspective with head gas cost: ${result.receipt.gasUsed}`)
+
     assert.isTrue(result.receipt.status, "status not true");
   });
 
@@ -255,6 +259,82 @@ contract('Uprtcl', (accounts) => {
 
     assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
     assert.equal(perspectiveRead.headId, head2IdStr, "head2 Cid is not what was expected");
+  });
+
+  it('should persist a batch of perspectives', async () => {
+    const uprtclInstance = await Uprtcl.deployed();
+
+    const timestamps = [Date.now(), Date.now() + 1, Date.now() + 2];
+
+    debugger
+
+    const buildPerspectivesDataPromises = timestamps.map(async (timestamp) => {
+      const context = {
+        creatorId: 'did:uport:123',
+        timestamp: timestamp,
+        nonce: 0
+      }
+
+      const contextCid = await generateCid(JSON.stringify(context), cidConfig1);
+      /** store this string to simulate the step from string to cid */
+      contextIdStr = contextCid.toString();
+
+      const perspective = {
+        origin: 'eth://contractAddress',
+        creatorId: 'did:uport:123',
+        timestamp: timestamp
+      }
+
+      const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+      /** store this string to simulate the step from string to cid */
+      return { 
+        perspectiveId: perspectiveCid.toString(), 
+        context: contextIdStr
+      }
+    });
+
+    const perspectivesData = await Promise.all(buildPerspectivesDataPromises);
+
+    const buildPerspectivesPromises = perspectivesData.map(async (perspectivesData) => {
+      
+      const contextCid = perspectivesData.context;
+      const perspectiveCid = perspectivesData.perspectiveId;
+      
+      /** perspective and context ids are hashed to fit in bytes32
+       * their multihash is hashed so different cids map to the same perspective */
+      let contextIdHash = await hash(contextCid);
+      let perspectiveIdHash = await hash(perspectiveCid);
+
+      return {
+        perspectiveIdHash: perspectiveIdHash,
+        contextHash: contextIdHash,
+        headId: '',
+        context: '',
+        name: '',
+        owner: firstOwner,
+        perspectiveId: perspectiveIdStr        
+      }
+    });
+
+    const perspectives = await Promise.all(buildPerspectivesPromises);
+    
+    let result = await uprtclInstance.addPerspectiveBatch(
+      perspectives, { from: creator} );
+      
+    console.log(`addPerspectiveBatch gas cost: ${result.receipt.gasUsed}`)
+
+    assert.isTrue(result.receipt.status, "status not true");
+
+    const checkOwnersPromises = await perspectivesData.map(async (perspectiveData) => {
+      const perspectiveIdHash = await hash(perspectiveData.perspectiveId);
+      let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
+        perspectiveIdHash,
+        { from: observer });
+  
+      assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
+    })
+
+    await Promise.all(checkOwnersPromises);
   });
 
   it('should not be able to persist an existing perspective', async () => {
@@ -382,6 +462,8 @@ contract('Uprtcl', (accounts) => {
       [{perspectiveIdHash: perspectiveIdHash,headId:headIdStr, executed: 0}],
       { from: firstOwner });
 
+    console.log(`updateHeads gas cost: ${result.receipt.gasUsed}`)
+
     assert.isTrue(result.receipt.status);
 
     let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
@@ -419,6 +501,8 @@ contract('Uprtcl', (accounts) => {
       perspectiveIdHash,
       secondOwner,
       { from: firstOwner });
+
+    console.log(`changeOwner gas cost: ${result.receipt.gasUsed}`)
       
     assert.isTrue(result.receipt.status, "the tx was not sent");
 
@@ -534,7 +618,7 @@ contract('Uprtcl', (accounts) => {
     let fromPerspectiveIdHash = await hash(perspective2IdStr);
     let requestNonce = 10;
 
-    await uprtclInstance.initRequest(
+    const result = await uprtclInstance.initRequest(
       toPerspectiveIdHash, 
       fromPerspectiveIdHash, 
       requestOwner, 
@@ -544,6 +628,8 @@ contract('Uprtcl', (accounts) => {
       perspectiveIdStr,
       perspective2IdStr,
       { from: requestRegistrator })
+
+    console.log(`initRequest gas cost: ${result.receipt.gasUsed}`)
     
     requestId01 = await uprtclInstance.getRequestId(
       toPerspectiveIdHash,
@@ -596,9 +682,11 @@ contract('Uprtcl', (accounts) => {
     }
     
     /** init request with headUpdates */
-    await uprtclInstance.addUpdatesToRequest(
+    const result = await uprtclInstance.addUpdatesToRequest(
       requestId01, headUpdates,
       { from: requestRegistrator });
+
+    console.log(`addUpdatesToRequest gas cost: ${result.receipt.gasUsed}`)
     
     let requestRead = await uprtclInstance.getRequest(requestId01);
 
@@ -678,7 +766,7 @@ contract('Uprtcl', (accounts) => {
     let fromPerspectiveIdHash = await hash(perspective2IdStr);
     let requestNonce = 11;
     
-    await uprtclInstance.initRequest(
+    const result = await uprtclInstance.initRequest(
       toPerspectiveIdHash, 
       fromPerspectiveIdHash, 
       requestOwner, 
@@ -688,6 +776,8 @@ contract('Uprtcl', (accounts) => {
       perspectiveIdStr,
       perspective2IdStr,
       { from: requestRegistrator })
+
+    console.log(`initRequest gas cost: ${result.receipt.gasUsed}`)
     
     requestId02 = await uprtclInstance.getRequestId(
         toPerspectiveIdHash,

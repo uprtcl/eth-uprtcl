@@ -1,5 +1,5 @@
 require('dotenv').config();
-const PrivateKeyProvider = require('truffle-privatekey-provider');
+const HDWalletProvider = require("truffle-hdwallet-provider");
 
 module.exports = {
 
@@ -11,11 +11,7 @@ module.exports = {
     },
     rinkeby: {
       provider: () => {
-        let prov = new PrivateKeyProvider(
-          process.env.PRIVATE_KEY, 
-          process.env.RPC_ENDPOINT
-        )
-        return prov;
+        return new HDWalletProvider(process.env.mnemonic, process.env.endpoint)
       },
       gasPrice: 25000000000,
       network_id: 4

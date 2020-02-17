@@ -231,10 +231,9 @@ contract Uprtcl {
         );
     }
 
-    /** Changes the owner of a given perspective. Available only to the current owner of that perspective. */
-    function changeOwner(bytes32 perspectiveIdHash, address newOwner) public {
+    function changeOwnerInternal(bytes32 perspectiveIdHash, address newOwner, address sender) private {
         Perspective storage perspective = perspectives[perspectiveIdHash];
-        require(msg.sender == perspective.owner, "unauthorized access");
+        require(sender == perspective.owner, "unauthorized access");
 
         address previousOwner = perspective.owner;
         perspective.owner = newOwner;
@@ -244,6 +243,20 @@ contract Uprtcl {
             perspective.owner,
             previousOwner
         );
+    }
+
+    /** Changes the owner of a given perspective. Available only to the current owner of that perspective. */
+    function changeOwner(bytes32 perspectiveIdHash, address newOwner) public {
+        changeOwnerInternal(perspectiveIdHash, newOwner, msg.sender);
+    }
+
+    function changeOwnerBatch(
+        bytes32[] memory perspectivesIdsHashes,
+        address newOwner
+    ) public {
+        for (uint256 ix = 0; ix < perspectivesIdsHashes.length; ix++) {
+            changeOwnerInternal(perspectivesIdsHashes[ix], newOwner, msg.sender);
+        }
     }
 
     /** Get the perspective owner and details from its ID */
