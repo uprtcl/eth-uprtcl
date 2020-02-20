@@ -11,8 +11,7 @@ contract Uprtcl {
     }
 
     struct NewPerspective {
-        bytes32 perspectiveCid1;
-        bytes32 perspectiveCid0;
+        bytes32 perspectiveIdHash;
         bytes32 headCid1;
         bytes32 headCid0;
         address owner;
@@ -31,7 +30,7 @@ contract Uprtcl {
         NewPerspective memory newPerspective
     ) public {
 
-        bytes32 perspectiveIdHash = keccak256(abi.encodePacked(newPerspective.perspectiveCid1, newPerspective.perspectiveCid0));
+        bytes32 perspectiveIdHash = newPerspective.perspectiveIdHash;
 
         Perspective storage perspective = perspectives[perspectiveIdHash];
         require(address(0) != newPerspective.owner, "owner cannot be empty");

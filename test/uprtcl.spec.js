@@ -171,11 +171,11 @@ contract('Uprtcl', (accounts) => {
     const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
     /** store this string to simulate the step from string to cid */
     const perspectiveCidStr = perspectiveCid.toString();
-    const perspectiveCidStrParts = cidToHex32(perspectiveCidStr);
+
+    let perspectiveIdHash = await hash2x32(perspectiveCidStr);
     
     const newPerspective = {
-      perspectiveCid1: perspectiveCidStrParts[0],
-      perspectiveCid0: perspectiveCidStrParts[1],
+      perspectiveIdHash: perspectiveIdHash,
       headCid1: ZERO_HEX_32,
       headCid0: ZERO_HEX_32,
       owner: firstOwner
@@ -186,8 +186,7 @@ contract('Uprtcl', (accounts) => {
       { from: creator });
 
     console.log(`addPerspective gas cost: ${result.receipt.gasUsed}`);
-    let perspectiveIdHash = await hash2x32(perspectiveCidStr);
-
+    
     let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash,
       { from: observer });
@@ -209,7 +208,6 @@ contract('Uprtcl', (accounts) => {
     const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
     /** store this string to simulate the step from string to cid */
     const perspectiveCidStr = perspectiveCid.toString();
-    const perspectiveCidStrParts = cidToHex32(perspectiveCidStr);
 
     /** head */
     const data = {
@@ -229,10 +227,11 @@ contract('Uprtcl', (accounts) => {
     const headId = await generateCid(JSON.stringify(head), cidConfig1);
     const headCidStr = headId.toString();
     const headCidParts = cidToHex32(headCidStr);
+
+    let perspectiveIdHash = await hash2x32(perspectiveCidStr);
     
     const newPerspective = {
-      perspectiveCid1: perspectiveCidStrParts[0],
-      perspectiveCid0: perspectiveCidStrParts[1],
+      perspectiveIdHash: perspectiveIdHash,
       headCid1: headCidParts[0],
       headCid0: headCidParts[1],
       owner: firstOwner
@@ -243,7 +242,6 @@ contract('Uprtcl', (accounts) => {
       { from: creator });
 
     console.log(`addPerspective with head gas cost: ${result.receipt.gasUsed}`);
-    let perspectiveIdHash = await hash2x32(perspectiveCidStr);
 
     let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash,
