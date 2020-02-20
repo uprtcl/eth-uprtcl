@@ -8,20 +8,17 @@ contract Uprtcl {
         address owner;
         bytes32 headCid1;
         bytes32 headCid0;
-        bytes32 context1;
-        bytes32 context0;
+    }
+
+    struct NewPerspective {
+        bytes32 perspectiveCid1;
+        bytes32 perspectiveCid0;
+        bytes32 headCid1;
+        bytes32 headCid0;
+        address owner;
     }
 
     mapping(bytes32 => Perspective) public perspectives;
-
-    event PerspectiveAdded(
-        bytes32 indexed perspectiveIdHash,
-        bytes32 indexed context0
-    );
-
-    event PerspectiveUpdated(
-        bytes32 indexed perspectiveIdHash
-    );
 
     event PerspectiveOwnerUpdated(
         bytes32 indexed perspectiveIdHash,
@@ -31,41 +28,26 @@ contract Uprtcl {
 
     /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
     function addPerspective(
-        bytes32 perspectiveCid1,
-        bytes32 perspectiveCid0,
-        bytes32 context1,
-        bytes32 context0,
-        bytes32 headCid1,
-        bytes32 headCid0,
-        address owner
+        NewPerspective memory newPerspective
     ) public {
 
-        bytes32 perspectiveIdHash = keccak256(abi.encodePacked(perspectiveCid1, perspectiveCid0));
+        bytes32 perspectiveIdHash = keccak256(abi.encodePacked(newPerspective.perspectiveCid1, newPerspective.perspectiveCid0));
 
         Perspective storage perspective = perspectives[perspectiveIdHash];
-        require(address(0) != owner, "owner cannot be empty");
+        require(address(0) != newPerspective.owner, "owner cannot be empty");
         require(address(0) == perspective.owner, "existing perspective");
 
-        perspective.owner = owner;
-        perspective.headCid1 = headCid1;
-        perspective.headCid0 = headCid0;
-        perspective.context1 = context1;
-        perspective.context0 = context0;
+        perspective.owner = newPerspective.owner;
+        perspective.headCid1 = newPerspective.headCid1;
+        perspective.headCid0 = newPerspective.headCid0;
 
         perspectives[perspectiveIdHash] = perspective;
-
-        emit PerspectiveAdded(
-            perspectiveIdHash,
-            context0
-        );
     }
 
     function updatePerspectiveDetails(
         bytes32 perspectiveIdHash,
         bytes32 newHeadCid1,
-        bytes32 newHeadCid0,
-        bytes32 newContext1,
-        bytes32 newContext0
+        bytes32 newHeadCid0
     ) public {
         Perspective storage perspective = perspectives[perspectiveIdHash];
 
@@ -78,15 +60,6 @@ contract Uprtcl {
             perspective.headCid0 = newHeadCid0;
             perspective.headCid1 = newHeadCid1;
         }
-
-        if (newContext0 != bytes32(0)) {
-            perspective.context0 = newContext0;
-            perspective.context1 = newContext1;
-        }
-
-        emit PerspectiveUpdated(
-            perspectiveIdHash
-        );
     }
 
     function changeOwnerInternal(
@@ -122,9 +95,7 @@ contract Uprtcl {
         returns (
             address owner,
             bytes32 headCid1,
-            bytes32 headCid0,
-            bytes32 context1,
-            bytes32 context0
+            bytes32 headCid0
         )
     {
         Perspective memory perspective = perspectives[perspectiveIdHash];
@@ -132,9 +103,7 @@ contract Uprtcl {
         return (
             perspective.owner,
             perspective.headCid1,
-            perspective.headCid0,
-            perspective.context1,
-            perspective.context0
+            perspective.headCid0
         );
     }
 

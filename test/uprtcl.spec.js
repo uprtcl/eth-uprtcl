@@ -176,21 +176,13 @@ contract('Uprtcl', (accounts) => {
     const newPerspective = {
       perspectiveCid1: perspectiveCidStrParts[0],
       perspectiveCid0: perspectiveCidStrParts[1],
-      context1: ZERO_HEX_32,
-      context0: ZERO_HEX_32,
       headCid1: ZERO_HEX_32,
       headCid0: ZERO_HEX_32,
       owner: firstOwner
     }
 
     const result = await uprtclInstance.addPerspective(
-      perspectiveCidStrParts[0],
-      perspectiveCidStrParts[1],
-      ZERO_HEX_32,
-      ZERO_HEX_32,
-      ZERO_HEX_32,
-      ZERO_HEX_32,
-      firstOwner,
+      newPerspective,
       { from: creator });
 
     console.log(`addPerspective gas cost: ${result.receipt.gasUsed}`);
