@@ -147,10 +147,10 @@ const generateCid = async (message, cidConfig) => {
 }
 
 /** hashes the cid to fit in a bytes32 word */
-const hash = async (perspectiveIdStr) => {
-  const cid = new CID(perspectiveIdStr)
-  const encoded = await multihashing.digest(cid.buffer, 'sha3-256');
-  return '0x' + encoded.toString('hex');
+const hash2x32 = async (cid) => {
+  const cidStrParts = cidToHex32(cid);
+  const hash = web3.utils.keccak256(cidStrParts[0] + cidStrParts[1].slice(2), { encoding: 'hex' });
+  return hash;
 }
 
 contract('Uprtcl', (accounts) => {
@@ -165,7 +165,7 @@ contract('Uprtcl', (accounts) => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
-      timestamp: Date.now()
+      timestamp: 123456
     }
 
     const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
@@ -184,10 +184,23 @@ contract('Uprtcl', (accounts) => {
     }
 
     const result = await uprtclInstance.addPerspective(
-      newPerspective,
+      perspectiveCidStrParts[0],
+      perspectiveCidStrParts[1],
+      ZERO_HEX_32,
+      ZERO_HEX_32,
+      ZERO_HEX_32,
+      ZERO_HEX_32,
+      firstOwner,
       { from: creator });
 
-    console.log(`addPerspective gas cost: ${result.receipt.gasUsed}`)
+    console.log(`addPerspective gas cost: ${result.receipt.gasUsed}`);
+    let perspectiveIdHash = await hash2x32(perspectiveCidStr);
+
+    let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
+      perspectiveIdHash,
+      { from: observer });
+
+    assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
   });
 
 });

@@ -12,16 +12,6 @@ contract Uprtcl {
         bytes32 context0;
     }
 
-    struct NewPerspectiveData {
-        bytes32 perspectiveCid1;
-        bytes32 perspectiveCid0;
-        bytes32 context1;
-        bytes32 context0;
-        bytes32 headCid1;
-        bytes32 headCid0;
-        address owner;
-    }
-
     mapping(bytes32 => Perspective) public perspectives;
 
     event PerspectiveAdded(
@@ -41,35 +31,33 @@ contract Uprtcl {
 
     /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
     function addPerspective(
-        NewPerspectiveData memory newPerspectivesData
+        bytes32 perspectiveCid1,
+        bytes32 perspectiveCid0,
+        bytes32 context1,
+        bytes32 context0,
+        bytes32 headCid1,
+        bytes32 headCid0,
+        address owner
     ) public {
 
-        bytes32 perspectiveIdHash = keccak256(abi.encodePacked(newPerspectivesData.perspectiveCid1, newPerspectivesData.perspectiveCid0));
+        bytes32 perspectiveIdHash = keccak256(abi.encodePacked(perspectiveCid1, perspectiveCid0));
 
         Perspective storage perspective = perspectives[perspectiveIdHash];
-        require(address(0) != newPerspectivesData.owner, "owner cannot be empty");
+        require(address(0) != owner, "owner cannot be empty");
         require(address(0) == perspective.owner, "existing perspective");
 
-        perspective.owner = newPerspectivesData.owner;
-        perspective.headCid1 = newPerspectivesData.headCid1;
-        perspective.headCid0 = newPerspectivesData.headCid0;
-        perspective.context1 = newPerspectivesData.context1;
-        perspective.context0 = newPerspectivesData.context0;
+        perspective.owner = owner;
+        perspective.headCid1 = headCid1;
+        perspective.headCid0 = headCid0;
+        perspective.context1 = context1;
+        perspective.context0 = context0;
 
         perspectives[perspectiveIdHash] = perspective;
 
         emit PerspectiveAdded(
             perspectiveIdHash,
-            newPerspectivesData.context0
+            context0
         );
-    }
-
-    function addPerspectiveBatch(
-        NewPerspectiveData[] memory newPerspectivesData
-    ) public {
-        for (uint256 ix = 0; ix < newPerspectivesData.length; ix++) {
-            addPerspective(newPerspectivesData[ix]);
-        }
     }
 
     function updatePerspectiveDetails(
