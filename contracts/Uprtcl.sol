@@ -1,9 +1,15 @@
 pragma solidity >=0.5.0 <0.6.0;
 pragma experimental ABIEncoderV2;
 
+import "./Toll.sol";
+import "./SafeMath.sol";
+
 /** Underscore Protocol Ethereum Service used to store the content of
 * _Prtcl perspectives */
-contract Uprtcl {
+contract Uprtcl is Toll {
+
+    using SafeMath for uint256;
+
     struct Perspective {
         address owner;
         bytes32 headCid1;
@@ -26,9 +32,9 @@ contract Uprtcl {
     );
 
     /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
-    function addPerspective(
+    function addPerspectiveInternal(
         NewPerspective memory newPerspective
-    ) public {
+    ) private {
 
         bytes32 perspectiveIdHash = newPerspective.perspectiveIdHash;
 
@@ -43,11 +49,28 @@ contract Uprtcl {
         perspectives[perspectiveIdHash] = perspective;
     }
 
-    function updatePerspectiveDetails(
+    function addPerspective(NewPerspective memory newPerspective) public payable {
+        require(msg.value >= getAddFee(), "add fee not enough");
+        addPerspectiveInternal(newPerspective);
+    }
+
+    function addPerspectiveBatch(NewPerspective[] memory newPerspectives) public payable {
+        uint256 nPerspectives = newPerspectives.length;
+
+        require(msg.value >= (getAddFee().mul(nPerspectives)), "add fee not enough");
+
+        for (uint256 ix = 0; ix < nPerspectives; ix++) {
+            addPerspectiveInternal(newPerspectives[ix]);
+        }
+    }
+
+    function updateHead(
         bytes32 perspectiveIdHash,
         bytes32 newHeadCid1,
         bytes32 newHeadCid0
-    ) public {
+    ) public payable {
+        require(msg.value >= getUpdateFee(), "update fee not added");
+
         Perspective storage perspective = perspectives[perspectiveIdHash];
 
         require(

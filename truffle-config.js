@@ -7,7 +7,8 @@ module.exports = {
     development: {
       host: "127.0.0.1",
       port: 8545,
-      network_id: "*"
+      network_id: "*",
+      from: '0x1dF62f291b2E969fB0849d99D9Ce41e2F137006e' // -d [9]
     },
     rinkeby: {
       provider: () => {

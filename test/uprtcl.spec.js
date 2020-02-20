@@ -4,6 +4,7 @@ const CID = require('cids');
 const multihashing = require('multihashing-async')
 const Buffer = require('buffer/').Buffer;
 const toBuffer = require('typedarray-to-buffer')
+var seedrandom = require('seedrandom');
 
 cidConfig1 = {
   version: 1,
@@ -16,6 +17,18 @@ cidConfig2 = {
   codec: 'raw',
   type: 'sha3-256',
   base: 'base58btc',
+}
+
+
+var rng = seedrandom('randomseed');
+
+const randomInt = () => {
+  return Math.floor(rng()*1000000000);
+}
+
+const randomVec = (size) => {
+  const vec = Array(size).fill(0);
+  return vec.map(e => randomInt());
 }
 
 const ZERO_HEX_32 = '0x' + Array(64).fill(0).join('');
@@ -155,9 +168,49 @@ const hash2x32 = async (cid) => {
 
 contract('Uprtcl', (accounts) => {
 
-  let creator = accounts[0];
-  let firstOwner = accounts[1];
-  let observer = accounts[3];
+  const creator = accounts[0];
+  const firstOwner = accounts[1];
+  const observer = accounts[3];
+  const owner = accounts[9];
+  const newOwner = accounts[8];
+
+  const ADD_FEE = 500000000000000;
+  const UPDATED_FEE = 500000000000000;
+
+  it('should be able to set the fees', async () => {
+    const uprtclInstance = await Uprtcl.deployed();
+
+    const result = await uprtclInstance.owner({ from: observer });
+    assert.equal(result, owner, "owner not as expected");
+
+    let failed = false;
+    await uprtclInstance.setFees(ADD_FEE, UPDATED_FEE, { from: accounts[0] }).catch((error) => {
+      assert.equal(error.reason, 'Ownable: caller is not the owner', "unexpected reason");
+      failed = true
+    });
+
+    assert.isTrue(failed, "fees set did not failed");
+
+    failed = false;
+    await uprtclInstance.transferOwnership(accounts[1], { from: observer }).catch((error) => {
+      assert.equal(error.reason, 'Ownable: caller is not the owner', "unexpected reason");
+      failed = true
+    });
+
+    assert.isTrue(failed, "owner transfer did not failed");
+
+    await uprtclInstance.transferOwnership(newOwner, { from: owner });
+
+    const result2 = await uprtclInstance.owner({ from: observer });
+    assert.equal(result2, newOwner, "owner not as expected");
+
+    failed = false;
+    await uprtclInstance.transferOwnership(observer, { from: owner }).catch((error) => {
+      assert.equal(error.reason, 'Ownable: caller is not the owner', "unexpected reason");
+      failed = true
+    });
+    assert.isTrue(failed, "owner transfer did not failed");
+  })
 
   it('should persist and read a perspective', async () => {
     const uprtclInstance = await Uprtcl.deployed();
@@ -165,7 +218,7 @@ contract('Uprtcl', (accounts) => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
-      timestamp: 123456
+      timestamp: randomInt()
     }
 
     const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
@@ -183,7 +236,7 @@ contract('Uprtcl', (accounts) => {
 
     const result = await uprtclInstance.addPerspective(
       newPerspective,
-      { from: creator });
+      { from: creator, value: ADD_FEE });
 
     console.log(`addPerspective gas cost: ${result.receipt.gasUsed}`);
     
@@ -202,7 +255,7 @@ contract('Uprtcl', (accounts) => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
-      timestamp: 889651
+      timestamp: randomInt()
     }
 
     const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
@@ -218,7 +271,7 @@ contract('Uprtcl', (accounts) => {
 
     const head = {
       creatorId: 'did:uport:123456',
-      timestamp: 8987436,
+      timestamp: randomInt(),
       message: 'test commit 2',
       parentsIds: [],
       dataId: dataId.toString()
@@ -239,7 +292,7 @@ contract('Uprtcl', (accounts) => {
 
     const result = await uprtclInstance.addPerspective(
       newPerspective,
-      { from: creator });
+      { from: creator, value: ADD_FEE });
 
     console.log(`addPerspective with head gas cost: ${result.receipt.gasUsed}`);
 
@@ -251,5 +304,139 @@ contract('Uprtcl', (accounts) => {
     assert.equal(perspectiveRead.headCid0, headCidParts[1], "head is not what was expected");
     assert.equal(perspectiveRead.headCid1, headCidParts[0], "head is not what was expected");
   });
+  
+  it('should persist and update a perspective', async () => {
+    const uprtclInstance = await Uprtcl.deployed();
 
+    const perspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123',
+      timestamp: randomInt()
+    }
+
+    const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+    /** store this string to simulate the step from string to cid */
+    const perspectiveCidStr = perspectiveCid.toString();
+
+    let perspectiveIdHash = await hash2x32(perspectiveCidStr);
+    
+    const newPerspective = {
+      perspectiveIdHash: perspectiveIdHash,
+      headCid1: ZERO_HEX_32,
+      headCid0: ZERO_HEX_32,
+      owner: firstOwner
+    }
+
+    await uprtclInstance.addPerspective(
+      newPerspective,
+      { from: creator, value: ADD_FEE });
+
+    let perspectiveRead1 = await uprtclInstance.getPerspectiveDetails(
+      perspectiveIdHash,
+      { from: observer });
+
+    assert.equal(perspectiveRead1.owner, firstOwner, "owner is not what was expected");
+    assert.equal(perspectiveRead1.headCid0, ZERO_HEX_32, "head is not what was expected");
+    assert.equal(perspectiveRead1.headCid1, ZERO_HEX_32, "head is not what was expected");
+
+    const data = {
+      text: 'This is my data ads'
+    }
+
+    const dataId = await generateCid(JSON.stringify(data), cidConfig1);
+
+    const head = {
+      creatorId: 'did:uport:123',
+      timestamp: randomInt(),
+      message: 'test commit new',
+      parentsIds: [],
+      dataId: dataId.toString()
+    }
+
+    const headId = await generateCid(JSON.stringify(head), cidConfig1);
+    const headCidStr = headId.toString();
+    const headCidParts = cidToHex32(headCidStr);
+
+    let failed = false;
+    await uprtclInstance.updateHead(
+      perspectiveIdHash, headCidParts[0], headCidParts[1],
+      { from: observer })
+    .catch((error) => {
+      assert.equal(error.reason, 'only the owner can update the perspective', "unexpected reason");
+      failed = true
+    });
+
+    assert.isTrue(failed, "update the perspective did not failed");
+
+    const result = await uprtclInstance.updateHead(
+      perspectiveIdHash, headCidParts[0], headCidParts[1],
+      { from: firstOwner });
+
+    console.log(`updateHead gas cost: ${result.receipt.gasUsed}`);
+
+    let perspectiveRead2 = await uprtclInstance.getPerspectiveDetails(
+      perspectiveIdHash,
+      { from: observer });
+
+    assert.equal(perspectiveRead2.owner, firstOwner, "owner is not what was expected");
+    assert.equal(perspectiveRead2.headCid0, headCidParts[1], "head is not what was expected");
+    assert.equal(perspectiveRead2.headCid1, headCidParts[0], "head is not what was expected");
+  });
+
+  it('should be able to add a batch of perspectives', async () => {
+    const uprtclInstance = await Uprtcl.deployed();
+
+    const timestamps = randomVec(210);
+
+    const buildPerspectivesDataPromises = timestamps.map(async (timestamp) => {
+      const perspective = {
+        origin: 'eth://contractAddress',
+        creatorId: 'did:uport:123',
+        timestamp: timestamp
+      }
+
+      const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+      /** store this string to simulate the step from string to cid */
+      return { 
+        perspectiveId: perspectiveCid.toString()
+      }
+    });
+
+    const perspectivesData = await Promise.all(buildPerspectivesDataPromises);
+
+    const buildPerspectivesPromises = perspectivesData.map(async (perspectivesData) => {
+      
+      const perspectiveCid = perspectivesData.perspectiveId;
+      
+      /** perspective and context ids are hashed to fit in bytes32
+       * their multihash is hashed so different cids map to the same perspective */
+      let perspectiveIdHash = await hash2x32(perspectiveCid);
+
+      return {
+        perspectiveIdHash: perspectiveIdHash,
+        headCid1: ZERO_HEX_32,
+        headCid0: ZERO_HEX_32,
+        owner: firstOwner
+      }
+    });
+
+    const perspectives = await Promise.all(buildPerspectivesPromises);
+
+    let result = await uprtclInstance.addPerspectiveBatch(
+      perspectives, { from: creator} );
+
+    console.log(`addPerspectiveBatch gas cost: ${result.receipt.gasUsed}`)
+
+    const checkOwnersPromises = await perspectivesData.map(async (perspectiveData) => {
+      const perspectiveIdHash = await hash2x32(perspectiveData.perspectiveId);
+      let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
+        perspectiveIdHash,
+        { from: observer });
+  
+      assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
+    })
+
+    await Promise.all(checkOwnersPromises);
+
+  });
 });

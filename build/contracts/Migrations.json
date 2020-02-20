@@ -1383,12 +1383,13 @@
     "3333": {
       "events": {},
       "links": {},
-      "address": "0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab",
-      "transactionHash": "0x2dc588a80551eef17055ebda39d44ce9fd10943b2bbc87534831f174ac95119d"
+      "address": "0xBe0B0f08A599F07699E98A9D001084e97b9a900A",
+      "transactionHash": "0x83f7e962684799b5303166658740a260a7d0887c9c25a958daff3b71ac8ea48f"
     }
   },
-  "schemaVersion": "3.0.11",
-  "updatedAt": "2020-02-19T09:04:25.738Z",
+  "schemaVersion": "3.0.23",
+  "updatedAt": "2020-02-20T13:01:56.754Z",
+  "networkType": "ethereum",
   "devdoc": {
     "methods": {}
   },
