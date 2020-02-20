@@ -4,7 +4,7 @@
     "test": "truffle test",
     "migrate": "truffle migrate",
     "migrate-rinkeby": "truffle migrate --network rinkeby",
-    "dev": "concurrently \"ganache-cli --networkId 3333 --blockTime 1 --deterministic\" \"npm run migrate\" "
+    "dev": "concurrently \"ganache-cli --networkId 3333 --blockTime 5 --deterministic\" \"npm run migrate\" "
   },
   "dependencies": {
     "@types/node": "^12.0.8",
