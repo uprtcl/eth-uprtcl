@@ -391,7 +391,7 @@ contract('Uprtcl', (accounts) => {
   it('should be able to add a batch of perspectives', async () => {
     const uprtclInstance = await Uprtcl.deployed();
 
-    const timestamps = randomVec(10);
+    const timestamps = randomVec(50);
 
     const buildPerspectivesPromises = timestamps.map(async (timestamp) => {
 
