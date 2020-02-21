@@ -175,24 +175,34 @@ contract('Uprtcl', (accounts) => {
   const newOwner = accounts[8];
 
   const ADD_FEE = 500000000000000;
-  const UPDATED_FEE = 500000000000000;
+  const UPDATE_FEE = 200000000000000;
 
   it('should be able to set the fees', async () => {
     const uprtclInstance = await Uprtcl.deployed();
 
-    const result = await uprtclInstance.owner({ from: observer });
-    assert.equal(result, owner, "owner not as expected");
+    const ownerRead = await uprtclInstance.owner({ from: observer });
+    assert.equal(ownerRead, owner, "owner not as expected");
+
+    const fees = await uprtclInstance.getFees({ from: observer });
+    assert.equal(fees.addFee, 0, 'add fee not zero');
+    assert.equal(fees.updateFee, 0, 'update fee not zero');
 
     let failed = false;
-    await uprtclInstance.setFees(ADD_FEE, UPDATED_FEE, { from: accounts[0] }).catch((error) => {
+    await uprtclInstance.setFees(ADD_FEE, UPDATE_FEE, { from: observer }).catch((error) => {
       assert.equal(error.reason, 'Ownable: caller is not the owner', "unexpected reason");
       failed = true
     });
 
     assert.isTrue(failed, "fees set did not failed");
 
+    await uprtclInstance.setFees(ADD_FEE, UPDATE_FEE, { from: owner })
+    
+    const fees2 = await uprtclInstance.getFees({ from: observer });
+    assert.equal(fees2.addFee, ADD_FEE, 'add fee not zero');
+    assert.equal(fees2.updateFee, UPDATE_FEE, 'update fee not zero');
+
     failed = false;
-    await uprtclInstance.transferOwnership(accounts[1], { from: observer }).catch((error) => {
+    await uprtclInstance.transferOwnership(newOwner, { from: observer }).catch((error) => {
       assert.equal(error.reason, 'Ownable: caller is not the owner', "unexpected reason");
       failed = true
     });
@@ -360,7 +370,7 @@ contract('Uprtcl', (accounts) => {
     let failed = false;
     await uprtclInstance.updateHead(
       perspectiveIdHash, headCidParts[0], headCidParts[1],
-      { from: observer })
+      { from: observer, value: UPDATE_FEE })
     .catch((error) => {
       assert.equal(error.reason, 'only the owner can update the perspective', "unexpected reason");
       failed = true
@@ -370,7 +380,7 @@ contract('Uprtcl', (accounts) => {
 
     const result = await uprtclInstance.updateHead(
       perspectiveIdHash, headCidParts[0], headCidParts[1],
-      { from: firstOwner });
+      { from: firstOwner, value: UPDATE_FEE });
 
     console.log(`updateHead gas cost: ${result.receipt.gasUsed}`);
 
@@ -386,7 +396,7 @@ contract('Uprtcl', (accounts) => {
   it('should be able to add a batch of perspectives', async () => {
     const uprtclInstance = await Uprtcl.deployed();
 
-    const timestamps = randomVec(210);
+    const timestamps = randomVec(10);
 
     const buildPerspectivesDataPromises = timestamps.map(async (timestamp) => {
       const perspective = {
@@ -423,7 +433,7 @@ contract('Uprtcl', (accounts) => {
     const perspectives = await Promise.all(buildPerspectivesPromises);
 
     let result = await uprtclInstance.addPerspectiveBatch(
-      perspectives, { from: creator} );
+      perspectives, { from: creator, value: ADD_FEE*perspectives.length } );
 
     console.log(`addPerspectiveBatch gas cost: ${result.receipt.gasUsed}`)
 

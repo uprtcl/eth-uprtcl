@@ -23,6 +23,10 @@ contract Toll is Ownable {
         fees[1] = updateFee;
     }
 
+    function getFees() public view returns (uint256 addFee, uint256 updateFee) {
+        return (fees[0], fees[1]);
+    }
+
     function getAddFee() public view returns (uint256) {
         return fees[0];
     }
