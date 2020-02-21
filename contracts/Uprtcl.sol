@@ -12,14 +12,12 @@ contract Uprtcl is Toll {
 
     struct Perspective {
         address owner;
-        bytes32 headCid1;
-        bytes32 headCid0;
+        string headCid;
     }
 
     struct NewPerspective {
         bytes32 perspectiveIdHash;
-        bytes32 headCid1;
-        bytes32 headCid0;
+        string headCid;
         address owner;
     }
 
@@ -43,9 +41,8 @@ contract Uprtcl is Toll {
         require(address(0) == perspective.owner, "existing perspective");
 
         perspective.owner = newPerspective.owner;
-        perspective.headCid1 = newPerspective.headCid1;
-        perspective.headCid0 = newPerspective.headCid0;
-
+        perspective.headCid = newPerspective.headCid;
+        
         perspectives[perspectiveIdHash] = perspective;
     }
 
@@ -66,8 +63,7 @@ contract Uprtcl is Toll {
 
     function updateHead(
         bytes32 perspectiveIdHash,
-        bytes32 newHeadCid1,
-        bytes32 newHeadCid0
+        string memory newHeadCid
     ) public payable {
         require(msg.value >= getUpdateFee(), "update fee not added");
 
@@ -78,10 +74,7 @@ contract Uprtcl is Toll {
             "only the owner can update the perspective"
         );
 
-        if (newHeadCid0 != bytes32(0)) {
-            perspective.headCid0 = newHeadCid0;
-            perspective.headCid1 = newHeadCid1;
-        }
+        perspective.headCid = newHeadCid;
     }
 
     function changeOwnerInternal(
@@ -116,16 +109,14 @@ contract Uprtcl is Toll {
         view
         returns (
             address owner,
-            bytes32 headCid1,
-            bytes32 headCid0
+            string memory headCid
         )
     {
         Perspective memory perspective = perspectives[perspectiveIdHash];
 
         return (
             perspective.owner,
-            perspective.headCid1,
-            perspective.headCid0
+            perspective.headCid
         );
     }
 
