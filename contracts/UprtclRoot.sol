@@ -6,7 +6,7 @@ import "./SafeMath.sol";
 
 /** Underscore Protocol Ethereum Service used to store the content of
 * _Prtcl perspectives */
-contract Uprtcl is Toll {
+contract UprtclRoot is Toll {
 
     using SafeMath for uint256;
 
@@ -126,6 +126,22 @@ contract Uprtcl is Toll {
             perspective.owner,
             perspective.headCid1,
             perspective.headCid0
+        );
+    }
+
+    /** Get the perspective owner and details from its ID */
+    function getPerspectiveOwner(
+        bytes32 perspectiveIdHash)
+        public
+        view
+        returns (
+            address owner
+        )
+    {
+        Perspective memory perspective = perspectives[perspectiveIdHash];
+
+        return (
+            perspective.owner
         );
     }
 

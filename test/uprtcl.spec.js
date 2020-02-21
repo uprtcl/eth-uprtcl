@@ -1,4 +1,5 @@
-const Uprtcl = artifacts.require("Uprtcl");
+const UprtclRoot = artifacts.require("UprtclRoot");
+const UprtclDetails = artifacts.require("UprtclDetails");
 
 const CID = require('cids');
 const multihashing = require('multihashing-async')
@@ -166,7 +167,7 @@ const hash2x32 = async (cid) => {
   return hash;
 }
 
-contract('Uprtcl', (accounts) => {
+contract('UprtclRoot', (accounts) => {
 
   const creator = accounts[0];
   const firstOwner = accounts[1];
@@ -178,7 +179,7 @@ contract('Uprtcl', (accounts) => {
   const UPDATE_FEE = 200000000000000;
 
   it('should be able to set the fees', async () => {
-    const uprtclInstance = await Uprtcl.deployed();
+    const uprtclInstance = await UprtclRoot.deployed();
 
     const ownerRead = await uprtclInstance.owner({ from: observer });
     assert.equal(ownerRead, owner, "owner not as expected");
@@ -223,7 +224,7 @@ contract('Uprtcl', (accounts) => {
   })
 
   it('should persist and read a perspective', async () => {
-    const uprtclInstance = await Uprtcl.deployed();
+    const uprtclInstance = await UprtclRoot.deployed();
 
     const perspective = {
       origin: 'eth://contractAddress',
@@ -260,7 +261,7 @@ contract('Uprtcl', (accounts) => {
   });
 
   it('should persist and read a perspective with head', async () => {
-    const uprtclInstance = await Uprtcl.deployed();
+    const uprtclInstance = await UprtclRoot.deployed();
 
     const perspective = {
       origin: 'eth://contractAddress',
@@ -316,7 +317,7 @@ contract('Uprtcl', (accounts) => {
   });
   
   it('should persist and update a perspective', async () => {
-    const uprtclInstance = await Uprtcl.deployed();
+    const uprtclInstance = await UprtclRoot.deployed();
 
     const perspective = {
       origin: 'eth://contractAddress',
@@ -394,7 +395,7 @@ contract('Uprtcl', (accounts) => {
   });
 
   it('should be able to add a batch of perspectives', async () => {
-    const uprtclInstance = await Uprtcl.deployed();
+    const uprtclInstance = await UprtclRoot.deployed();
 
     const timestamps = randomVec(50);
 
@@ -463,6 +464,106 @@ contract('Uprtcl', (accounts) => {
     })
 
     await Promise.all(checkOwnersPromises);
+
+  });
+
+  it('should be able to set the details of a persective', async () => {
+    const uprtclInstance = await UprtclRoot.deployed();
+    const detailsInstance = await UprtclDetails.deployed();
+
+    const perspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123',
+      timestamp: randomInt()
+    }
+
+    const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+    /** store this string to simulate the step from string to cid */
+    const perspectiveCidStr = perspectiveCid.toString();
+
+    let perspectiveIdHash = await hash2x32(perspectiveCidStr);
+    
+    const newPerspective = {
+      perspectiveIdHash: perspectiveIdHash,
+      headCid1: ZERO_HEX_32,
+      headCid0: ZERO_HEX_32,
+      owner: firstOwner
+    }
+
+    await uprtclInstance.addPerspective(
+      newPerspective,
+      { from: creator, value: ADD_FEE });
+
+    const currentDetails = await detailsInstance.getPerspectiveDetails(perspectiveIdHash);
+    
+    assert.equal(currentDetails.name, '', "wrong name");
+    assert.equal(currentDetails.context, '', "wrong context");
+
+    const details = {
+      name: 'my-name',
+      context: 'my-context'
+    };
+
+    let failed = false;
+    await detailsInstance.setPerspectiveDetails(
+      perspectiveIdHash,
+      details,
+      { from: observer } )
+    .catch((error) => {
+      assert.equal(error.reason, 'details can only by set by perspective owner', "unexpected reason");
+      failed = true
+    });
+
+    assert.isTrue(failed, "set details did not fail");
+    
+    await detailsInstance.setPerspectiveDetails(
+        perspectiveIdHash,
+        details,
+        { from: firstOwner } )
+
+    const newDetails = await detailsInstance.getPerspectiveDetails(perspectiveIdHash);
+
+    assert.equal(newDetails.name, 'my-name', "wrong name");
+    assert.equal(newDetails.context, 'my-context', "wrong context");
+
+  });
+
+  it('should be able to init a persective with head and details', async () => {
+    const detailsInstance = await UprtclDetails.deployed();
+
+    const perspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123',
+      timestamp: randomInt()
+    }
+
+    const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+    /** store this string to simulate the step from string to cid */
+    const perspectiveCidStr = perspectiveCid.toString();
+
+    let perspectiveIdHash = await hash2x32(perspectiveCidStr);
+    
+    const newPerspective = {
+      perspectiveIdHash: perspectiveIdHash,
+      headCid1: ZERO_HEX_32,
+      headCid0: ZERO_HEX_32,
+      owner: firstOwner
+    }
+
+    const details = {
+      name: 'my-name',
+      context: 'my-context'
+    };
+
+    await detailsInstance.initPerspective(
+        newPerspective,
+        details,
+        { from: firstOwner, value: ADD_FEE } )
+
+    const newDetails = await detailsInstance.getPerspectiveDetails(perspectiveIdHash);
+
+    assert.equal(newDetails.name, 'my-name', "wrong name");
+    assert.equal(newDetails.context, 'my-context', "wrong context");
 
   });
 });

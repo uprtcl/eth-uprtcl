@@ -1,0 +1,2438 @@
+{
+  "contractName": "UprtclDetails",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract UprtclRoot",
+          "name": "_uprtclRoot",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "perspectivesDetails",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "context",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "perspectiveIdHash",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "context",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct UprtclDetails.PerspectiveDetails",
+          "name": "newDetails",
+          "type": "tuple"
+        }
+      ],
+      "name": "setPerspectiveDetails",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "perspectiveIdHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getPerspectiveDetails",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "context",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract UprtclRoot\",\"name\":\"_uprtclRoot\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"perspectiveIdHash\",\"type\":\"bytes32\"}],\"name\":\"getPerspectiveDetails\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"context\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"perspectivesDetails\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"context\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"perspectiveIdHash\",\"type\":\"bytes32\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"context\",\"type\":\"string\"}],\"internalType\":\"struct UprtclDetails.PerspectiveDetails\",\"name\":\"newDetails\",\"type\":\"tuple\"}],\"name\":\"setPerspectiveDetails\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{\"setPerspectiveDetails(bytes32,(string,string))\":{\"notice\":\"Adds a new perspective to the mapping and sets the owner. The head pointer and the context. \"}}}},\"settings\":{\"compilationTarget\":{\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/UprtclDetails.sol\":\"UprtclDetails\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Context.sol\":{\"keccak256\":\"0x90a3995645af7562d84b9d69363ffa5ae7217714ab61e951bf7bc450f40e4061\",\"urls\":[\"bzz-raw://216ef9d6b614db4eb46970b4e84903f2534a45572dd30a79f0041f1a5830f436\",\"dweb:/ipfs/QmNPrJ4MWKUAWzKXpUqeyKRUfosaoANZAqXgvepdrCwZAG\"]},\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Ownable.sol\":{\"keccak256\":\"0x4c324cbeb9fb22b32c1896024abfe04737c7634ed7e0aa7792d3e23f6f036ea7\",\"urls\":[\"bzz-raw://1302316b694a6904e1023402ad87d744596e0531ffc6431e079c9e1afade5699\",\"dweb:/ipfs/QmTXjKwKbgrXZbJ3TZEjxzxuL6pTeLB2q6siSzFUXNvqXw\"]},\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/SafeMath.sol\":{\"keccak256\":\"0x640b6dee7a4b830bdfd52b5031a07fc2b12209f5b2e29e5d364a7d37f69d8076\",\"urls\":[\"bzz-raw://31113152e1ddb78fe7a4197f247591ca894e93f916867beb708d8e747b6cc74f\",\"dweb:/ipfs/QmbZaJyXdpsYGykVhHH9qpVGQg9DGCxE2QufbCUy3daTgq\"]},\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Toll.sol\":{\"keccak256\":\"0x527d5fbc80f87ea926de2e23ba8b3a31ebf1cecdaf50a4c222e8b2330a840088\",\"urls\":[\"bzz-raw://58b061527c86c7f5afaaa7a6d993895b2f5e5b27da8e088538fda857aadc3f76\",\"dweb:/ipfs/QmdrL1ahqweFNyguaCBZc96YeswhyMi6itSDZ4tt3SP3J6\"]},\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/UprtclDetails.sol\":{\"keccak256\":\"0x206aa5f53d6aa6584729b2e95c5aa81e6f2250574bc575d43236ccb1ac6e85c2\",\"urls\":[\"bzz-raw://fe8bbe23dbdef18dbeacc259b9bde2fabbf8f59c96a8a6bef14632daba00a746\",\"dweb:/ipfs/QmYkGArR2UxNFWjqT3FHb4C1CQBxemXNGVs9d6u3wvtUEg\"]},\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/UprtclRoot.sol\":{\"keccak256\":\"0x2ffa33b621b2867c9a8a6741afcf38eb412de5a4eaa9bbc235320f925316a317\",\"urls\":[\"bzz-raw://aa148a2b52e2be5d3db2d04f1a8a3150b19a545eb742198e00e1cc0a4bd381b2\",\"dweb:/ipfs/QmfR8N9GMzjVQRDVS6rGnS8ryRPcrpGcHBNBcrGfX2k8GT\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506040516109f03803806109f083398101604081905261002f91610065565b600180546001600160a01b0319166001600160a01b03929092169190911790556100c4565b805161005f816100ad565b92915050565b60006020828403121561007757600080fd5b60006100838484610054565b949350505050565b600061005f826100a1565b600061005f8261008b565b6001600160a01b031690565b6100b681610096565b81146100c157600080fd5b50565b61091d806100d36000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c806376914ecf14610046578063c08b985d14610070578063cf29e96914610085575b600080fd5b6100596100543660046106bf565b610098565b6040516100679291906107d2565b60405180910390f35b61008361007e3660046106dd565b6101fd565b005b6100596100933660046106bf565b61034d565b6060806100a3610489565b600084815260208181526040918290208251815460026001821615610100026000190190911604601f810184900490930281016060908101855293810183815290939192849284919084018282801561013d5780601f106101125761010080835404028352916020019161013d565b820191906000526020600020905b81548152906001019060200180831161012057829003601f168201915b50505050508152602001600182018054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156101df5780601f106101b4576101008083540402835291602001916101df565b820191906000526020600020905b8154815290600101906020018083116101c257829003601f168201915b50505091909252505081516020909201519194509092505050915091565b600154604051631393bbf560e01b815233916001600160a01b031690631393bbf59061022d9086906004016107c4565b60206040518083038186803b15801561024557600080fd5b505afa158015610259573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525061027d9190810190610699565b6001600160a01b0316146102ac5760405162461bcd60e51b81526004016102a3906107f7565b60405180910390fd5b6000828152602081815260409091208251805191926102d0928492909101906104a3565b5060208083015180516102e992600185019201906104a3565b506000838152602081905260409020815482919061031d908290849060026000196101006001841615020190911604610521565b5060018201816001019080546001816001161561010002031660029004610345929190610521565b505050505050565b6000602081815291815260409081902080548251601f6002600019610100600186161502019093169290920491820185900485028101850190935280835290928391908301828280156103e15780601f106103b6576101008083540402835291602001916103e1565b820191906000526020600020905b8154815290600101906020018083116103c457829003601f168201915b505050505090806001018054600181600116156101000203166002900480601f01602080910402602001604051908101604052809291908181526020018280546001816001161561010002031660029004801561047f5780601f106104545761010080835404028352916020019161047f565b820191906000526020600020905b81548152906001019060200180831161046257829003601f168201915b5050505050905082565b604051806040016040528060608152602001606081525090565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f106104e457805160ff1916838001178555610511565b82800160010185558215610511579182015b828111156105115782518255916020019190600101906104f6565b5061051d929150610596565b5090565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061055a5780548555610511565b8280016001018555821561051157600052602060002091601f016020900482015b8281111561051157825482559160010191906001019061057b565b6105b091905b8082111561051d576000815560010161059c565b90565b80516105be816108ba565b92915050565b80356105be816108d1565b600082601f8301126105e057600080fd5b81356105f36105ee8261082e565b610807565b9150808252602083016020830185838301111561060f57600080fd5b61061a838284610874565b50505092915050565b60006040828403121561063557600080fd5b61063f6040610807565b9050813567ffffffffffffffff81111561065857600080fd5b610664848285016105cf565b825250602082013567ffffffffffffffff81111561068157600080fd5b61068d848285016105cf565b60208301525092915050565b6000602082840312156106ab57600080fd5b60006106b784846105b3565b949350505050565b6000602082840312156106d157600080fd5b60006106b784846105c4565b600080604083850312156106f057600080fd5b60006106fc85856105c4565b925050602083013567ffffffffffffffff81111561071957600080fd5b61072585828601610623565b9150509250929050565b610738816105b0565b82525050565b600061074982610856565b610753818561085a565b9350610763818560208601610880565b61076c816108b0565b9093019392505050565b6000610783602c8361085a565b7f64657461696c732063616e206f6e6c792062792073657420627920706572737081526b32b1ba34bb329037bbb732b960a11b602082015260400192915050565b602081016105be828461072f565b604080825281016107e3818561073e565b905081810360208301526106b7818461073e565b602080825281016105be81610776565b60405181810167ffffffffffffffff8111828210171561082657600080fd5b604052919050565b600067ffffffffffffffff82111561084557600080fd5b506020601f91909101601f19160190565b5190565b90815260200190565b60006001600160a01b0382166105be565b82818337506000910152565b60005b8381101561089b578181015183820152602001610883565b838111156108aa576000848401525b50505050565b601f01601f191690565b6108c381610863565b81146108ce57600080fd5b50565b6108c3816105b056fea365627a7a723158202e39e66f671dc79bdc60bb0c73a33607c5da550b8e47094741131d7b0a5eab466c6578706572696d656e74616cf564736f6c63430005100040",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100415760003560e01c806376914ecf14610046578063c08b985d14610070578063cf29e96914610085575b600080fd5b6100596100543660046106bf565b610098565b6040516100679291906107d2565b60405180910390f35b61008361007e3660046106dd565b6101fd565b005b6100596100933660046106bf565b61034d565b6060806100a3610489565b600084815260208181526040918290208251815460026001821615610100026000190190911604601f810184900490930281016060908101855293810183815290939192849284919084018282801561013d5780601f106101125761010080835404028352916020019161013d565b820191906000526020600020905b81548152906001019060200180831161012057829003601f168201915b50505050508152602001600182018054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156101df5780601f106101b4576101008083540402835291602001916101df565b820191906000526020600020905b8154815290600101906020018083116101c257829003601f168201915b50505091909252505081516020909201519194509092505050915091565b600154604051631393bbf560e01b815233916001600160a01b031690631393bbf59061022d9086906004016107c4565b60206040518083038186803b15801561024557600080fd5b505afa158015610259573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525061027d9190810190610699565b6001600160a01b0316146102ac5760405162461bcd60e51b81526004016102a3906107f7565b60405180910390fd5b6000828152602081815260409091208251805191926102d0928492909101906104a3565b5060208083015180516102e992600185019201906104a3565b506000838152602081905260409020815482919061031d908290849060026000196101006001841615020190911604610521565b5060018201816001019080546001816001161561010002031660029004610345929190610521565b505050505050565b6000602081815291815260409081902080548251601f6002600019610100600186161502019093169290920491820185900485028101850190935280835290928391908301828280156103e15780601f106103b6576101008083540402835291602001916103e1565b820191906000526020600020905b8154815290600101906020018083116103c457829003601f168201915b505050505090806001018054600181600116156101000203166002900480601f01602080910402602001604051908101604052809291908181526020018280546001816001161561010002031660029004801561047f5780601f106104545761010080835404028352916020019161047f565b820191906000526020600020905b81548152906001019060200180831161046257829003601f168201915b5050505050905082565b604051806040016040528060608152602001606081525090565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f106104e457805160ff1916838001178555610511565b82800160010185558215610511579182015b828111156105115782518255916020019190600101906104f6565b5061051d929150610596565b5090565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061055a5780548555610511565b8280016001018555821561051157600052602060002091601f016020900482015b8281111561051157825482559160010191906001019061057b565b6105b091905b8082111561051d576000815560010161059c565b90565b80516105be816108ba565b92915050565b80356105be816108d1565b600082601f8301126105e057600080fd5b81356105f36105ee8261082e565b610807565b9150808252602083016020830185838301111561060f57600080fd5b61061a838284610874565b50505092915050565b60006040828403121561063557600080fd5b61063f6040610807565b9050813567ffffffffffffffff81111561065857600080fd5b610664848285016105cf565b825250602082013567ffffffffffffffff81111561068157600080fd5b61068d848285016105cf565b60208301525092915050565b6000602082840312156106ab57600080fd5b60006106b784846105b3565b949350505050565b6000602082840312156106d157600080fd5b60006106b784846105c4565b600080604083850312156106f057600080fd5b60006106fc85856105c4565b925050602083013567ffffffffffffffff81111561071957600080fd5b61072585828601610623565b9150509250929050565b610738816105b0565b82525050565b600061074982610856565b610753818561085a565b9350610763818560208601610880565b61076c816108b0565b9093019392505050565b6000610783602c8361085a565b7f64657461696c732063616e206f6e6c792062792073657420627920706572737081526b32b1ba34bb329037bbb732b960a11b602082015260400192915050565b602081016105be828461072f565b604080825281016107e3818561073e565b905081810360208301526106b7818461073e565b602080825281016105be81610776565b60405181810167ffffffffffffffff8111828210171561082657600080fd5b604052919050565b600067ffffffffffffffff82111561084557600080fd5b506020601f91909101601f19160190565b5190565b90815260200190565b60006001600160a01b0382166105be565b82818337506000910152565b60005b8381101561089b578181015183820152602001610883565b838111156108aa576000848401525b50505050565b601f01601f191690565b6108c381610863565b81146108ce57600080fd5b50565b6108c3816105b056fea365627a7a723158202e39e66f671dc79bdc60bb0c73a33607c5da550b8e47094741131d7b0a5eab466c6578706572696d656e74616cf564736f6c63430005100040",
+  "sourceMap": "95:1171:5:-;;;309:84;8:9:-1;5:2;;;30:1;27;20:12;5:2;309:84:5;;;;;;;;;;;;;;;;;;;;;362:10;:24;;-1:-1:-1;;;;;;362:24:5;-1:-1:-1;;;;;362:24:5;;;;;;;;;;95:1171;;5:170:-1;101:13;;119:51;101:13;119:51;;;86:89;;;;;182:299;;315:2;303:9;294:7;290:23;286:32;283:2;;;331:1;328;321:12;283:2;366:1;383:82;457:7;437:9;383:82;;;373:92;277:204;-1:-1;;;;277:204;488:91;;550:24;568:5;550:24;;586:109;;666:24;684:5;666:24;;702:121;-1:-1;;;;;764:54;;747:76;830:153;917:42;953:5;917:42;;;910:5;907:53;897:2;;974:1;971;964:12;897:2;891:92;;;95:1171:5;;;;;;",
+  "deployedSourceMap": "95:1171:5:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;95:1171:5;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1002:261;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;502:494;;;;;;;;;:::i;:::-;;209:65;;;;;;;;;:::i;1002:261::-;1081:18;1101:21;1134:33;;:::i;:::-;1170:19;:38;;;;;;;;;;;;1134:74;;;;;;;;;;;-1:-1:-1;;1134:74:5;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1170:38;;1134:74;;1170:38;;1134:74;;;1170:38;1134:74;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;1134:74:5;;;;-1:-1:-1;;1226:12:5;;1240:15;;;;;1226:12;;-1:-1:-1;1240:15:5;;-1:-1:-1;;;1002:261:5;;;:::o;502:494::-;645:10;;:49;;-1:-1:-1;;;645:49:5;;698:10;;-1:-1:-1;;;;;645:10:5;;:30;;:49;;676:17;;645:49;;;;;;;;;;;;;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;645:49:5;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;645:49:5;;;;;;;101:4:-1;97:9;90:4;84;80:15;76:31;69:5;65:43;126:6;120:4;113:20;0:138;645:49:5;;;;;;;;;-1:-1:-1;;;;;645:63:5;;637:120;;;;-1:-1:-1;;;637:120:5;;;;;;;;;;;;;;;;;768:34;805:38;;;;;;;;;;;869:15;;854:30;;805:38;;854:30;;805:38;;854:30;;;;;:::i;:::-;-1:-1:-1;912:18:5;;;;;894:36;;;;:15;;;;:36;;;:::i;:::-;-1:-1:-1;941:19:5;:38;;;;;;;;;;:48;;982:7;;941:38;:48;;:38;;982:7;;941:48;-1:-1:-1;;941:48:5;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;-1:-1:-1;;;;;;502:494:5:o;209:65::-;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;209:65:5;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;95:1171::-;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;95:1171:5;;;-1:-1:-1;95:1171:5;:::i;:::-;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;5:134:-1:-;83:13;;101:33;83:13;101:33;;;68:71;;;;;146:130;213:20;;238:33;213:20;238:33;;284:434;;382:3;375:4;367:6;363:17;359:27;349:2;;400:1;397;390:12;349:2;437:6;424:20;459:61;474:45;512:6;474:45;;;459:61;;;450:70;;540:6;533:5;526:21;576:4;568:6;564:17;609:4;602:5;598:16;644:3;635:6;630:3;626:16;623:25;620:2;;;661:1;658;651:12;620:2;671:41;705:6;700:3;695;671:41;;;342:376;;;;;;;;772:664;;896:4;884:9;879:3;875:19;871:30;868:2;;;914:1;911;904:12;868:2;932:20;947:4;932:20;;;923:29;-1:-1;1002:31;;1053:18;1042:30;;1039:2;;;1085:1;1082;1075:12;1039:2;1120:55;1171:3;1162:6;1151:9;1147:22;1120:55;;;1095:81;;-1:-1;1268:2;1253:18;;1240:32;1292:18;1281:30;;1278:2;;;1324:1;1321;1314:12;1278:2;1359:55;1410:3;1401:6;1390:9;1386:22;1359:55;;;1352:4;1345:5;1341:16;1334:81;1197:229;862:574;;;;;1443:263;;1558:2;1546:9;1537:7;1533:23;1529:32;1526:2;;;1574:1;1571;1564:12;1526:2;1609:1;1626:64;1682:7;1662:9;1626:64;;;1616:74;1520:186;-1:-1;;;;1520:186;1713:241;;1817:2;1805:9;1796:7;1792:23;1788:32;1785:2;;;1833:1;1830;1823:12;1785:2;1868:1;1885:53;1930:7;1910:9;1885:53;;1961:522;;;2117:2;2105:9;2096:7;2092:23;2088:32;2085:2;;;2133:1;2130;2123:12;2085:2;2168:1;2185:53;2230:7;2210:9;2185:53;;;2175:63;;2147:97;2303:2;2292:9;2288:18;2275:32;2327:18;2319:6;2316:30;2313:2;;;2359:1;2356;2349:12;2313:2;2379:88;2459:7;2450:6;2439:9;2435:22;2379:88;;;2369:98;;2254:219;2079:404;;;;;;2490:113;2573:24;2591:5;2573:24;;;2568:3;2561:37;2555:48;;;2610:347;;2722:39;2755:5;2722:39;;;2773:71;2837:6;2832:3;2773:71;;;2766:78;;2849:52;2894:6;2889:3;2882:4;2875:5;2871:16;2849:52;;;2922:29;2944:6;2922:29;;;2913:39;;;;2702:255;-1:-1;;;2702:255;3311:381;;3471:67;3535:2;3530:3;3471:67;;;3571:34;3551:55;;-1:-1;;;3635:2;3626:12;;3619:36;3683:2;3674:12;;3457:235;-1:-1;;3457:235;3700:213;3818:2;3803:18;;3832:71;3807:9;3876:6;3832:71;;3920:500;4106:2;4120:47;;;4091:18;;4181:78;4091:18;4245:6;4181:78;;;4173:86;;4307:9;4301:4;4297:20;4292:2;4281:9;4277:18;4270:48;4332:78;4405:4;4396:6;4332:78;;4918:407;5109:2;5123:47;;;5094:18;;5184:131;5094:18;5184:131;;5332:256;5394:2;5388:9;5420:17;;;5495:18;5480:34;;5516:22;;;5477:62;5474:2;;;5552:1;5549;5542:12;5474:2;5568;5561:22;5372:216;;-1:-1;5372:216;5595:318;;5735:18;5727:6;5724:30;5721:2;;;5767:1;5764;5757:12;5721:2;-1:-1;5898:4;5834;5811:17;;;;-1:-1;;5807:33;5888:15;;5658:255;5920:118;6004:12;;5975:63;6175:163;6278:19;;;6327:4;6318:14;;6271:67;6346:91;;-1:-1;;;;;6585:54;;6408:24;6568:76;6652:145;6733:6;6728:3;6723;6710:30;-1:-1;6789:1;6771:16;;6764:27;6703:94;6806:268;6871:1;6878:101;6892:6;6889:1;6886:13;6878:101;;;6959:11;;;6953:18;6940:11;;;6933:39;6914:2;6907:10;6878:101;;;6994:6;6991:1;6988:13;6985:2;;;7059:1;7050:6;7045:3;7041:16;7034:27;6985:2;6855:219;;;;;7082:97;7170:2;7150:14;-1:-1;;7146:28;;7130:49;7187:117;7256:24;7274:5;7256:24;;;7249:5;7246:35;7236:2;;7295:1;7292;7285:12;7236:2;7230:74;;7311:117;7380:24;7398:5;7380:24;",
+  "source": "pragma solidity >=0.5.0 <0.6.0;\npragma experimental ABIEncoderV2;\n\nimport \"./UprtclRoot.sol\";\n\ncontract UprtclDetails {\n\n    struct PerspectiveDetails {\n        string name;\n        string context;\n    }\n\n    mapping(bytes32 => PerspectiveDetails) public perspectivesDetails;\n\n    UprtclRoot uprtclRoot;\n\n    constructor(UprtclRoot _uprtclRoot) public {\n        uprtclRoot = _uprtclRoot;\n    }\n\n    /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */\n    function setPerspectiveDetails(\n        bytes32 perspectiveIdHash,\n        PerspectiveDetails memory newDetails\n    ) public {\n        require(uprtclRoot.getPerspectiveOwner(perspectiveIdHash) == msg.sender, \"details can only by set by perspective owner\");\n\n        PerspectiveDetails storage details = perspectivesDetails[perspectiveIdHash];\n\n        details.name = newDetails.name;\n        details.context = newDetails.context;\n\n        perspectivesDetails[perspectiveIdHash] = details;\n    }\n\n    function getPerspectiveDetails(bytes32 perspectiveIdHash) public view returns (string memory name, string memory context) {\n        PerspectiveDetails memory details = perspectivesDetails[perspectiveIdHash];\n        return (details.name, details.context);\n    }\n\n}\n",
+  "sourcePath": "/home/pepo/pr/uprtcl/eth-uprtcl/contracts/UprtclDetails.sol",
+  "ast": {
+    "absolutePath": "/home/pepo/pr/uprtcl/eth-uprtcl/contracts/UprtclDetails.sol",
+    "exportedSymbols": {
+      "UprtclDetails": [
+        561
+      ]
+    },
+    "id": 562,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 470,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.5",
+          ".0",
+          "<",
+          "0.6",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:31:5"
+      },
+      {
+        "id": 471,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:33:5"
+      },
+      {
+        "absolutePath": "/home/pepo/pr/uprtcl/eth-uprtcl/contracts/UprtclRoot.sol",
+        "file": "./UprtclRoot.sol",
+        "id": 472,
+        "nodeType": "ImportDirective",
+        "scope": 562,
+        "sourceUnit": 881,
+        "src": "67:26:5",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 561,
+        "linearizedBaseContracts": [
+          561
+        ],
+        "name": "UprtclDetails",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "UprtclDetails.PerspectiveDetails",
+            "id": 477,
+            "members": [
+              {
+                "constant": false,
+                "id": 474,
+                "name": "name",
+                "nodeType": "VariableDeclaration",
+                "scope": 477,
+                "src": "161:11:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_string_storage_ptr",
+                  "typeString": "string"
+                },
+                "typeName": {
+                  "id": 473,
+                  "name": "string",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "161:6:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_storage_ptr",
+                    "typeString": "string"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 476,
+                "name": "context",
+                "nodeType": "VariableDeclaration",
+                "scope": 477,
+                "src": "182:14:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_string_storage_ptr",
+                  "typeString": "string"
+                },
+                "typeName": {
+                  "id": 475,
+                  "name": "string",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "182:6:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_storage_ptr",
+                    "typeString": "string"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "PerspectiveDetails",
+            "nodeType": "StructDefinition",
+            "scope": 561,
+            "src": "125:78:5",
+            "visibility": "public"
+          },
+          {
+            "constant": false,
+            "id": 481,
+            "name": "perspectivesDetails",
+            "nodeType": "VariableDeclaration",
+            "scope": 561,
+            "src": "209:65:5",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_PerspectiveDetails_$477_storage_$",
+              "typeString": "mapping(bytes32 => struct UprtclDetails.PerspectiveDetails)"
+            },
+            "typeName": {
+              "id": 480,
+              "keyType": {
+                "id": 478,
+                "name": "bytes32",
+                "nodeType": "ElementaryTypeName",
+                "src": "217:7:5",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes32",
+                  "typeString": "bytes32"
+                }
+              },
+              "nodeType": "Mapping",
+              "src": "209:38:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_PerspectiveDetails_$477_storage_$",
+                "typeString": "mapping(bytes32 => struct UprtclDetails.PerspectiveDetails)"
+              },
+              "valueType": {
+                "contractScope": null,
+                "id": 479,
+                "name": "PerspectiveDetails",
+                "nodeType": "UserDefinedTypeName",
+                "referencedDeclaration": 477,
+                "src": "228:18:5",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                  "typeString": "struct UprtclDetails.PerspectiveDetails"
+                }
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "constant": false,
+            "id": 483,
+            "name": "uprtclRoot",
+            "nodeType": "VariableDeclaration",
+            "scope": 561,
+            "src": "281:21:5",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_UprtclRoot_$880",
+              "typeString": "contract UprtclRoot"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 482,
+              "name": "UprtclRoot",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 880,
+              "src": "281:10:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                "typeString": "contract UprtclRoot"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 492,
+              "nodeType": "Block",
+              "src": "352:41:5",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 490,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 488,
+                      "name": "uprtclRoot",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 483,
+                      "src": "362:10:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                        "typeString": "contract UprtclRoot"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 489,
+                      "name": "_uprtclRoot",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 485,
+                      "src": "375:11:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                        "typeString": "contract UprtclRoot"
+                      }
+                    },
+                    "src": "362:24:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                      "typeString": "contract UprtclRoot"
+                    }
+                  },
+                  "id": 491,
+                  "nodeType": "ExpressionStatement",
+                  "src": "362:24:5"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 493,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 486,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 485,
+                  "name": "_uprtclRoot",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 493,
+                  "src": "321:22:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                    "typeString": "contract UprtclRoot"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 484,
+                    "name": "UprtclRoot",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 880,
+                    "src": "321:10:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                      "typeString": "contract UprtclRoot"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "320:24:5"
+            },
+            "returnParameters": {
+              "id": 487,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "352:0:5"
+            },
+            "scope": 561,
+            "src": "309:84:5",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 537,
+              "nodeType": "Block",
+              "src": "627:369:5",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "id": 507,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "id": 503,
+                              "name": "perspectiveIdHash",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 495,
+                              "src": "676:17:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bytes32",
+                                "typeString": "bytes32"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bytes32",
+                                "typeString": "bytes32"
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 501,
+                              "name": "uprtclRoot",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 483,
+                              "src": "645:10:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                                "typeString": "contract UprtclRoot"
+                              }
+                            },
+                            "id": 502,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "getPerspectiveOwner",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 879,
+                            "src": "645:30:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_address_$",
+                              "typeString": "function (bytes32) view external returns (address)"
+                            }
+                          },
+                          "id": 504,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "645:49:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 505,
+                            "name": "msg",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 895,
+                            "src": "698:3:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_magic_message",
+                              "typeString": "msg"
+                            }
+                          },
+                          "id": 506,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "sender",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": null,
+                          "src": "698:10:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address_payable",
+                            "typeString": "address payable"
+                          }
+                        },
+                        "src": "645:63:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "64657461696c732063616e206f6e6c7920627920736574206279207065727370656374697665206f776e6572",
+                        "id": 508,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "710:46:5",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_1c44df5a0ab131345bb049dc624f9c7d81c8a38044f07e1a1ce0ce7895ed4435",
+                          "typeString": "literal_string \"details can only by set by perspective owner\""
+                        },
+                        "value": "details can only by set by perspective owner"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_1c44df5a0ab131345bb049dc624f9c7d81c8a38044f07e1a1ce0ce7895ed4435",
+                          "typeString": "literal_string \"details can only by set by perspective owner\""
+                        }
+                      ],
+                      "id": 500,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        898,
+                        899
+                      ],
+                      "referencedDeclaration": 899,
+                      "src": "637:7:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 509,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "637:120:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 510,
+                  "nodeType": "ExpressionStatement",
+                  "src": "637:120:5"
+                },
+                {
+                  "assignments": [
+                    512
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 512,
+                      "name": "details",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 537,
+                      "src": "768:34:5",
+                      "stateVariable": false,
+                      "storageLocation": "storage",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                        "typeString": "struct UprtclDetails.PerspectiveDetails"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 511,
+                        "name": "PerspectiveDetails",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 477,
+                        "src": "768:18:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                          "typeString": "struct UprtclDetails.PerspectiveDetails"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 516,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "baseExpression": {
+                      "argumentTypes": null,
+                      "id": 513,
+                      "name": "perspectivesDetails",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 481,
+                      "src": "805:19:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_PerspectiveDetails_$477_storage_$",
+                        "typeString": "mapping(bytes32 => struct UprtclDetails.PerspectiveDetails storage ref)"
+                      }
+                    },
+                    "id": 515,
+                    "indexExpression": {
+                      "argumentTypes": null,
+                      "id": 514,
+                      "name": "perspectiveIdHash",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 495,
+                      "src": "825:17:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bytes32",
+                        "typeString": "bytes32"
+                      }
+                    },
+                    "isConstant": false,
+                    "isLValue": true,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "IndexAccess",
+                    "src": "805:38:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage",
+                      "typeString": "struct UprtclDetails.PerspectiveDetails storage ref"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "768:75:5"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 522,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 517,
+                        "name": "details",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 512,
+                        "src": "854:7:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                          "typeString": "struct UprtclDetails.PerspectiveDetails storage pointer"
+                        }
+                      },
+                      "id": 519,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "memberName": "name",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 474,
+                      "src": "854:12:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_storage",
+                        "typeString": "string storage ref"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 520,
+                        "name": "newDetails",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 497,
+                        "src": "869:10:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_PerspectiveDetails_$477_memory_ptr",
+                          "typeString": "struct UprtclDetails.PerspectiveDetails memory"
+                        }
+                      },
+                      "id": 521,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "name",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 474,
+                      "src": "869:15:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_memory",
+                        "typeString": "string memory"
+                      }
+                    },
+                    "src": "854:30:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage",
+                      "typeString": "string storage ref"
+                    }
+                  },
+                  "id": 523,
+                  "nodeType": "ExpressionStatement",
+                  "src": "854:30:5"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 529,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 524,
+                        "name": "details",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 512,
+                        "src": "894:7:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                          "typeString": "struct UprtclDetails.PerspectiveDetails storage pointer"
+                        }
+                      },
+                      "id": 526,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "memberName": "context",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 476,
+                      "src": "894:15:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_storage",
+                        "typeString": "string storage ref"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 527,
+                        "name": "newDetails",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 497,
+                        "src": "912:10:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_PerspectiveDetails_$477_memory_ptr",
+                          "typeString": "struct UprtclDetails.PerspectiveDetails memory"
+                        }
+                      },
+                      "id": 528,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "context",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 476,
+                      "src": "912:18:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_memory",
+                        "typeString": "string memory"
+                      }
+                    },
+                    "src": "894:36:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage",
+                      "typeString": "string storage ref"
+                    }
+                  },
+                  "id": 530,
+                  "nodeType": "ExpressionStatement",
+                  "src": "894:36:5"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 535,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "baseExpression": {
+                        "argumentTypes": null,
+                        "id": 531,
+                        "name": "perspectivesDetails",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 481,
+                        "src": "941:19:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_PerspectiveDetails_$477_storage_$",
+                          "typeString": "mapping(bytes32 => struct UprtclDetails.PerspectiveDetails storage ref)"
+                        }
+                      },
+                      "id": 533,
+                      "indexExpression": {
+                        "argumentTypes": null,
+                        "id": 532,
+                        "name": "perspectiveIdHash",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 495,
+                        "src": "961:17:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "IndexAccess",
+                      "src": "941:38:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage",
+                        "typeString": "struct UprtclDetails.PerspectiveDetails storage ref"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 534,
+                      "name": "details",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 512,
+                      "src": "982:7:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                        "typeString": "struct UprtclDetails.PerspectiveDetails storage pointer"
+                      }
+                    },
+                    "src": "941:48:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage",
+                      "typeString": "struct UprtclDetails.PerspectiveDetails storage ref"
+                    }
+                  },
+                  "id": 536,
+                  "nodeType": "ExpressionStatement",
+                  "src": "941:48:5"
+                }
+              ]
+            },
+            "documentation": "Adds a new perspective to the mapping and sets the owner. The head pointer and the context. ",
+            "id": 538,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setPerspectiveDetails",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 498,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 495,
+                  "name": "perspectiveIdHash",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 538,
+                  "src": "542:25:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 494,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "542:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 497,
+                  "name": "newDetails",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 538,
+                  "src": "577:36:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_PerspectiveDetails_$477_memory_ptr",
+                    "typeString": "struct UprtclDetails.PerspectiveDetails"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 496,
+                    "name": "PerspectiveDetails",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 477,
+                    "src": "577:18:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                      "typeString": "struct UprtclDetails.PerspectiveDetails"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "532:87:5"
+            },
+            "returnParameters": {
+              "id": 499,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "627:0:5"
+            },
+            "scope": 561,
+            "src": "502:494:5",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 559,
+              "nodeType": "Block",
+              "src": "1124:139:5",
+              "statements": [
+                {
+                  "assignments": [
+                    548
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 548,
+                      "name": "details",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 559,
+                      "src": "1134:33:5",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_PerspectiveDetails_$477_memory_ptr",
+                        "typeString": "struct UprtclDetails.PerspectiveDetails"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 547,
+                        "name": "PerspectiveDetails",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 477,
+                        "src": "1134:18:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                          "typeString": "struct UprtclDetails.PerspectiveDetails"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 552,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "baseExpression": {
+                      "argumentTypes": null,
+                      "id": 549,
+                      "name": "perspectivesDetails",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 481,
+                      "src": "1170:19:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_PerspectiveDetails_$477_storage_$",
+                        "typeString": "mapping(bytes32 => struct UprtclDetails.PerspectiveDetails storage ref)"
+                      }
+                    },
+                    "id": 551,
+                    "indexExpression": {
+                      "argumentTypes": null,
+                      "id": 550,
+                      "name": "perspectiveIdHash",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 540,
+                      "src": "1190:17:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bytes32",
+                        "typeString": "bytes32"
+                      }
+                    },
+                    "isConstant": false,
+                    "isLValue": true,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "IndexAccess",
+                    "src": "1170:38:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage",
+                      "typeString": "struct UprtclDetails.PerspectiveDetails storage ref"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1134:74:5"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "components": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 553,
+                          "name": "details",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 548,
+                          "src": "1226:7:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_PerspectiveDetails_$477_memory_ptr",
+                            "typeString": "struct UprtclDetails.PerspectiveDetails memory"
+                          }
+                        },
+                        "id": 554,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "name",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 474,
+                        "src": "1226:12:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_string_memory",
+                          "typeString": "string memory"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 555,
+                          "name": "details",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 548,
+                          "src": "1240:7:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_PerspectiveDetails_$477_memory_ptr",
+                            "typeString": "struct UprtclDetails.PerspectiveDetails memory"
+                          }
+                        },
+                        "id": 556,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "context",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 476,
+                        "src": "1240:15:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_string_memory",
+                          "typeString": "string memory"
+                        }
+                      }
+                    ],
+                    "id": 557,
+                    "isConstant": false,
+                    "isInlineArray": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "TupleExpression",
+                    "src": "1225:31:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_string_memory_$_t_string_memory_$",
+                      "typeString": "tuple(string memory,string memory)"
+                    }
+                  },
+                  "functionReturnParameters": 546,
+                  "id": 558,
+                  "nodeType": "Return",
+                  "src": "1218:38:5"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 560,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getPerspectiveDetails",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 541,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 540,
+                  "name": "perspectiveIdHash",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 560,
+                  "src": "1033:25:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 539,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1033:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1032:27:5"
+            },
+            "returnParameters": {
+              "id": 546,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 543,
+                  "name": "name",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 560,
+                  "src": "1081:18:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 542,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1081:6:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 545,
+                  "name": "context",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 560,
+                  "src": "1101:21:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 544,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1101:6:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1080:43:5"
+            },
+            "scope": 561,
+            "src": "1002:261:5",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 562,
+        "src": "95:1171:5"
+      }
+    ],
+    "src": "0:1267:5"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/pepo/pr/uprtcl/eth-uprtcl/contracts/UprtclDetails.sol",
+    "exportedSymbols": {
+      "UprtclDetails": [
+        561
+      ]
+    },
+    "id": 562,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 470,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.5",
+          ".0",
+          "<",
+          "0.6",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:31:5"
+      },
+      {
+        "id": 471,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:33:5"
+      },
+      {
+        "absolutePath": "/home/pepo/pr/uprtcl/eth-uprtcl/contracts/UprtclRoot.sol",
+        "file": "./UprtclRoot.sol",
+        "id": 472,
+        "nodeType": "ImportDirective",
+        "scope": 562,
+        "sourceUnit": 881,
+        "src": "67:26:5",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 561,
+        "linearizedBaseContracts": [
+          561
+        ],
+        "name": "UprtclDetails",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "UprtclDetails.PerspectiveDetails",
+            "id": 477,
+            "members": [
+              {
+                "constant": false,
+                "id": 474,
+                "name": "name",
+                "nodeType": "VariableDeclaration",
+                "scope": 477,
+                "src": "161:11:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_string_storage_ptr",
+                  "typeString": "string"
+                },
+                "typeName": {
+                  "id": 473,
+                  "name": "string",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "161:6:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_storage_ptr",
+                    "typeString": "string"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 476,
+                "name": "context",
+                "nodeType": "VariableDeclaration",
+                "scope": 477,
+                "src": "182:14:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_string_storage_ptr",
+                  "typeString": "string"
+                },
+                "typeName": {
+                  "id": 475,
+                  "name": "string",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "182:6:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_storage_ptr",
+                    "typeString": "string"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "PerspectiveDetails",
+            "nodeType": "StructDefinition",
+            "scope": 561,
+            "src": "125:78:5",
+            "visibility": "public"
+          },
+          {
+            "constant": false,
+            "id": 481,
+            "name": "perspectivesDetails",
+            "nodeType": "VariableDeclaration",
+            "scope": 561,
+            "src": "209:65:5",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_PerspectiveDetails_$477_storage_$",
+              "typeString": "mapping(bytes32 => struct UprtclDetails.PerspectiveDetails)"
+            },
+            "typeName": {
+              "id": 480,
+              "keyType": {
+                "id": 478,
+                "name": "bytes32",
+                "nodeType": "ElementaryTypeName",
+                "src": "217:7:5",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes32",
+                  "typeString": "bytes32"
+                }
+              },
+              "nodeType": "Mapping",
+              "src": "209:38:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_PerspectiveDetails_$477_storage_$",
+                "typeString": "mapping(bytes32 => struct UprtclDetails.PerspectiveDetails)"
+              },
+              "valueType": {
+                "contractScope": null,
+                "id": 479,
+                "name": "PerspectiveDetails",
+                "nodeType": "UserDefinedTypeName",
+                "referencedDeclaration": 477,
+                "src": "228:18:5",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                  "typeString": "struct UprtclDetails.PerspectiveDetails"
+                }
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "constant": false,
+            "id": 483,
+            "name": "uprtclRoot",
+            "nodeType": "VariableDeclaration",
+            "scope": 561,
+            "src": "281:21:5",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_UprtclRoot_$880",
+              "typeString": "contract UprtclRoot"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 482,
+              "name": "UprtclRoot",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 880,
+              "src": "281:10:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                "typeString": "contract UprtclRoot"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 492,
+              "nodeType": "Block",
+              "src": "352:41:5",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 490,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 488,
+                      "name": "uprtclRoot",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 483,
+                      "src": "362:10:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                        "typeString": "contract UprtclRoot"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 489,
+                      "name": "_uprtclRoot",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 485,
+                      "src": "375:11:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                        "typeString": "contract UprtclRoot"
+                      }
+                    },
+                    "src": "362:24:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                      "typeString": "contract UprtclRoot"
+                    }
+                  },
+                  "id": 491,
+                  "nodeType": "ExpressionStatement",
+                  "src": "362:24:5"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 493,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 486,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 485,
+                  "name": "_uprtclRoot",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 493,
+                  "src": "321:22:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                    "typeString": "contract UprtclRoot"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 484,
+                    "name": "UprtclRoot",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 880,
+                    "src": "321:10:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                      "typeString": "contract UprtclRoot"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "320:24:5"
+            },
+            "returnParameters": {
+              "id": 487,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "352:0:5"
+            },
+            "scope": 561,
+            "src": "309:84:5",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 537,
+              "nodeType": "Block",
+              "src": "627:369:5",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "id": 507,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "id": 503,
+                              "name": "perspectiveIdHash",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 495,
+                              "src": "676:17:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bytes32",
+                                "typeString": "bytes32"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bytes32",
+                                "typeString": "bytes32"
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 501,
+                              "name": "uprtclRoot",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 483,
+                              "src": "645:10:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_contract$_UprtclRoot_$880",
+                                "typeString": "contract UprtclRoot"
+                              }
+                            },
+                            "id": 502,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "getPerspectiveOwner",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 879,
+                            "src": "645:30:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_address_$",
+                              "typeString": "function (bytes32) view external returns (address)"
+                            }
+                          },
+                          "id": 504,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "645:49:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 505,
+                            "name": "msg",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 895,
+                            "src": "698:3:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_magic_message",
+                              "typeString": "msg"
+                            }
+                          },
+                          "id": 506,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "sender",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": null,
+                          "src": "698:10:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address_payable",
+                            "typeString": "address payable"
+                          }
+                        },
+                        "src": "645:63:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "64657461696c732063616e206f6e6c7920627920736574206279207065727370656374697665206f776e6572",
+                        "id": 508,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "710:46:5",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_1c44df5a0ab131345bb049dc624f9c7d81c8a38044f07e1a1ce0ce7895ed4435",
+                          "typeString": "literal_string \"details can only by set by perspective owner\""
+                        },
+                        "value": "details can only by set by perspective owner"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_1c44df5a0ab131345bb049dc624f9c7d81c8a38044f07e1a1ce0ce7895ed4435",
+                          "typeString": "literal_string \"details can only by set by perspective owner\""
+                        }
+                      ],
+                      "id": 500,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        898,
+                        899
+                      ],
+                      "referencedDeclaration": 899,
+                      "src": "637:7:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 509,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "637:120:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 510,
+                  "nodeType": "ExpressionStatement",
+                  "src": "637:120:5"
+                },
+                {
+                  "assignments": [
+                    512
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 512,
+                      "name": "details",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 537,
+                      "src": "768:34:5",
+                      "stateVariable": false,
+                      "storageLocation": "storage",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                        "typeString": "struct UprtclDetails.PerspectiveDetails"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 511,
+                        "name": "PerspectiveDetails",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 477,
+                        "src": "768:18:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                          "typeString": "struct UprtclDetails.PerspectiveDetails"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 516,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "baseExpression": {
+                      "argumentTypes": null,
+                      "id": 513,
+                      "name": "perspectivesDetails",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 481,
+                      "src": "805:19:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_PerspectiveDetails_$477_storage_$",
+                        "typeString": "mapping(bytes32 => struct UprtclDetails.PerspectiveDetails storage ref)"
+                      }
+                    },
+                    "id": 515,
+                    "indexExpression": {
+                      "argumentTypes": null,
+                      "id": 514,
+                      "name": "perspectiveIdHash",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 495,
+                      "src": "825:17:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bytes32",
+                        "typeString": "bytes32"
+                      }
+                    },
+                    "isConstant": false,
+                    "isLValue": true,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "IndexAccess",
+                    "src": "805:38:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage",
+                      "typeString": "struct UprtclDetails.PerspectiveDetails storage ref"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "768:75:5"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 522,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 517,
+                        "name": "details",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 512,
+                        "src": "854:7:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                          "typeString": "struct UprtclDetails.PerspectiveDetails storage pointer"
+                        }
+                      },
+                      "id": 519,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "memberName": "name",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 474,
+                      "src": "854:12:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_storage",
+                        "typeString": "string storage ref"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 520,
+                        "name": "newDetails",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 497,
+                        "src": "869:10:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_PerspectiveDetails_$477_memory_ptr",
+                          "typeString": "struct UprtclDetails.PerspectiveDetails memory"
+                        }
+                      },
+                      "id": 521,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "name",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 474,
+                      "src": "869:15:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_memory",
+                        "typeString": "string memory"
+                      }
+                    },
+                    "src": "854:30:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage",
+                      "typeString": "string storage ref"
+                    }
+                  },
+                  "id": 523,
+                  "nodeType": "ExpressionStatement",
+                  "src": "854:30:5"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 529,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 524,
+                        "name": "details",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 512,
+                        "src": "894:7:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                          "typeString": "struct UprtclDetails.PerspectiveDetails storage pointer"
+                        }
+                      },
+                      "id": 526,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "memberName": "context",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 476,
+                      "src": "894:15:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_storage",
+                        "typeString": "string storage ref"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 527,
+                        "name": "newDetails",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 497,
+                        "src": "912:10:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_PerspectiveDetails_$477_memory_ptr",
+                          "typeString": "struct UprtclDetails.PerspectiveDetails memory"
+                        }
+                      },
+                      "id": 528,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "context",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 476,
+                      "src": "912:18:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_memory",
+                        "typeString": "string memory"
+                      }
+                    },
+                    "src": "894:36:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage",
+                      "typeString": "string storage ref"
+                    }
+                  },
+                  "id": 530,
+                  "nodeType": "ExpressionStatement",
+                  "src": "894:36:5"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 535,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "baseExpression": {
+                        "argumentTypes": null,
+                        "id": 531,
+                        "name": "perspectivesDetails",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 481,
+                        "src": "941:19:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_PerspectiveDetails_$477_storage_$",
+                          "typeString": "mapping(bytes32 => struct UprtclDetails.PerspectiveDetails storage ref)"
+                        }
+                      },
+                      "id": 533,
+                      "indexExpression": {
+                        "argumentTypes": null,
+                        "id": 532,
+                        "name": "perspectiveIdHash",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 495,
+                        "src": "961:17:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "IndexAccess",
+                      "src": "941:38:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage",
+                        "typeString": "struct UprtclDetails.PerspectiveDetails storage ref"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 534,
+                      "name": "details",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 512,
+                      "src": "982:7:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                        "typeString": "struct UprtclDetails.PerspectiveDetails storage pointer"
+                      }
+                    },
+                    "src": "941:48:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage",
+                      "typeString": "struct UprtclDetails.PerspectiveDetails storage ref"
+                    }
+                  },
+                  "id": 536,
+                  "nodeType": "ExpressionStatement",
+                  "src": "941:48:5"
+                }
+              ]
+            },
+            "documentation": "Adds a new perspective to the mapping and sets the owner. The head pointer and the context. ",
+            "id": 538,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setPerspectiveDetails",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 498,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 495,
+                  "name": "perspectiveIdHash",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 538,
+                  "src": "542:25:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 494,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "542:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 497,
+                  "name": "newDetails",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 538,
+                  "src": "577:36:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_PerspectiveDetails_$477_memory_ptr",
+                    "typeString": "struct UprtclDetails.PerspectiveDetails"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 496,
+                    "name": "PerspectiveDetails",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 477,
+                    "src": "577:18:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                      "typeString": "struct UprtclDetails.PerspectiveDetails"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "532:87:5"
+            },
+            "returnParameters": {
+              "id": 499,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "627:0:5"
+            },
+            "scope": 561,
+            "src": "502:494:5",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 559,
+              "nodeType": "Block",
+              "src": "1124:139:5",
+              "statements": [
+                {
+                  "assignments": [
+                    548
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 548,
+                      "name": "details",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 559,
+                      "src": "1134:33:5",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_PerspectiveDetails_$477_memory_ptr",
+                        "typeString": "struct UprtclDetails.PerspectiveDetails"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 547,
+                        "name": "PerspectiveDetails",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 477,
+                        "src": "1134:18:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage_ptr",
+                          "typeString": "struct UprtclDetails.PerspectiveDetails"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 552,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "baseExpression": {
+                      "argumentTypes": null,
+                      "id": 549,
+                      "name": "perspectivesDetails",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 481,
+                      "src": "1170:19:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_PerspectiveDetails_$477_storage_$",
+                        "typeString": "mapping(bytes32 => struct UprtclDetails.PerspectiveDetails storage ref)"
+                      }
+                    },
+                    "id": 551,
+                    "indexExpression": {
+                      "argumentTypes": null,
+                      "id": 550,
+                      "name": "perspectiveIdHash",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 540,
+                      "src": "1190:17:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bytes32",
+                        "typeString": "bytes32"
+                      }
+                    },
+                    "isConstant": false,
+                    "isLValue": true,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "IndexAccess",
+                    "src": "1170:38:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_PerspectiveDetails_$477_storage",
+                      "typeString": "struct UprtclDetails.PerspectiveDetails storage ref"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1134:74:5"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "components": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 553,
+                          "name": "details",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 548,
+                          "src": "1226:7:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_PerspectiveDetails_$477_memory_ptr",
+                            "typeString": "struct UprtclDetails.PerspectiveDetails memory"
+                          }
+                        },
+                        "id": 554,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "name",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 474,
+                        "src": "1226:12:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_string_memory",
+                          "typeString": "string memory"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 555,
+                          "name": "details",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 548,
+                          "src": "1240:7:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_PerspectiveDetails_$477_memory_ptr",
+                            "typeString": "struct UprtclDetails.PerspectiveDetails memory"
+                          }
+                        },
+                        "id": 556,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "context",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 476,
+                        "src": "1240:15:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_string_memory",
+                          "typeString": "string memory"
+                        }
+                      }
+                    ],
+                    "id": 557,
+                    "isConstant": false,
+                    "isInlineArray": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "TupleExpression",
+                    "src": "1225:31:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_string_memory_$_t_string_memory_$",
+                      "typeString": "tuple(string memory,string memory)"
+                    }
+                  },
+                  "functionReturnParameters": 546,
+                  "id": 558,
+                  "nodeType": "Return",
+                  "src": "1218:38:5"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 560,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getPerspectiveDetails",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 541,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 540,
+                  "name": "perspectiveIdHash",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 560,
+                  "src": "1033:25:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 539,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1033:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1032:27:5"
+            },
+            "returnParameters": {
+              "id": 546,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 543,
+                  "name": "name",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 560,
+                  "src": "1081:18:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 542,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1081:6:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 545,
+                  "name": "context",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 560,
+                  "src": "1101:21:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 544,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1101:6:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1080:43:5"
+            },
+            "scope": 561,
+            "src": "1002:261:5",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 562,
+        "src": "95:1171:5"
+      }
+    ],
+    "src": "0:1267:5"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.23",
+  "updatedAt": "2020-02-21T14:43:47.355Z",
+  "networkType": "ethereum",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {
+      "setPerspectiveDetails(bytes32,(string,string))": {
+        "notice": "Adds a new perspective to the mapping and sets the owner. The head pointer and the context. "
+      }
+    }
+  }
+}

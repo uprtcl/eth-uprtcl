@@ -14,7 +14,7 @@ contract Toll is Ownable {
 
     uint256[2] private fees;
 
-    function transfer(uint256 amount) public onlyOwner {
+    function withdraw(uint256 amount) public onlyOwner {
         this.owner().transfer(amount);
     }
 

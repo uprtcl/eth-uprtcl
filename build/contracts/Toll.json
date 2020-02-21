@@ -112,6 +112,26 @@
     {
       "constant": true,
       "inputs": [],
+      "name": "getFees",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "addFee",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "updateFee",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
       "name": "getAddFee",
       "outputs": [
         {
@@ -140,25 +160,25 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[],\"name\":\"getAddFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getUpdateFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"addFee\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"updateFee\",\"type\":\"uint256\"}],\"name\":\"setFees\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Contract module which provides a basic access control mechanism, where there is an account (an owner) that can be granted exclusive access to specific functions. * This module is used through inheritance. It will make available the modifier `onlyOwner`, which can be applied to your functions to restrict their use to the owner.\",\"methods\":{\"isOwner()\":{\"details\":\"Returns true if the caller is the current owner.\"},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner.     * NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Toll.sol\":\"Toll\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Context.sol\":{\"keccak256\":\"0x90a3995645af7562d84b9d69363ffa5ae7217714ab61e951bf7bc450f40e4061\",\"urls\":[\"bzz-raw://216ef9d6b614db4eb46970b4e84903f2534a45572dd30a79f0041f1a5830f436\",\"dweb:/ipfs/QmNPrJ4MWKUAWzKXpUqeyKRUfosaoANZAqXgvepdrCwZAG\"]},\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Ownable.sol\":{\"keccak256\":\"0x4c324cbeb9fb22b32c1896024abfe04737c7634ed7e0aa7792d3e23f6f036ea7\",\"urls\":[\"bzz-raw://1302316b694a6904e1023402ad87d744596e0531ffc6431e079c9e1afade5699\",\"dweb:/ipfs/QmTXjKwKbgrXZbJ3TZEjxzxuL6pTeLB2q6siSzFUXNvqXw\"]},\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Toll.sol\":{\"keccak256\":\"0x925ef77a6e444a39b4e8894e0e36ada60ca5c5c7b99ab475aa3ab20b795568c1\",\"urls\":[\"bzz-raw://688b8551bd0926ff62d97294347fac1982970a0c46283d7cbcdfe4caf8c177fa\",\"dweb:/ipfs/QmRnqudcmsxUsG6NWPrHsCaAaNmyMDJJAck5PYWb98P64R\"]}},\"version\":1}",
-  "bytecode": "0x60806040526100156001600160e01b0361006216565b600080546001600160a01b0319166001600160a01b03928316178082556040519216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908290a3610066565b3390565b6104e5806100756000396000f3fe608060405234801561001057600080fd5b50600436106100885760003560e01c80638da5cb5b1161005b5780638da5cb5b146100f15780638f32d59b14610115578063b7b0ccde14610131578063f2fde38b1461013957610088565b80630b78f9c01461008d57806312514bba146100b2578063715018a6146100cf57806386830d58146100d7575b600080fd5b6100b0600480360360408110156100a357600080fd5b508035906020013561015f565b005b6100b0600480360360208110156100c857600080fd5b50356101b1565b6100b0610298565b6100df610329565b60408051918252519081900360200190f35b6100f9610336565b604080516001600160a01b039092168252519081900360200190f35b61011d610345565b604080519115158252519081900360200190f35b6100df610369565b6100b06004803603602081101561014f57600080fd5b50356001600160a01b0316610373565b610167610345565b6101a6576040805162461bcd60e51b81526020600482018190526024820152600080516020610491833981519152604482015290519081900360640190fd5b600191909155600255565b6101b9610345565b6101f8576040805162461bcd60e51b81526020600482018190526024820152600080516020610491833981519152604482015290519081900360640190fd5b306001600160a01b0316638da5cb5b6040518163ffffffff1660e01b815260040160206040518083038186803b15801561023157600080fd5b505afa158015610245573d6000803e3d6000fd5b505050506040513d602081101561025b57600080fd5b50516040516001600160a01b039091169082156108fc029083906000818181858888f19350505050158015610294573d6000803e3d6000fd5b5050565b6102a0610345565b6102df576040805162461bcd60e51b81526020600482018190526024820152600080516020610491833981519152604482015290519081900360640190fd5b600080546040516001600160a01b03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a3600080546001600160a01b0319169055565b60006001815b0154905090565b6000546001600160a01b031690565b600080546001600160a01b031661035a6103c6565b6001600160a01b031614905090565b600060018061032f565b61037b610345565b6103ba576040805162461bcd60e51b81526020600482018190526024820152600080516020610491833981519152604482015290519081900360640190fd5b6103c3816103ca565b50565b3390565b6001600160a01b03811661040f5760405162461bcd60e51b815260040180806020018281038252602681526020018061046b6026913960400191505060405180910390fd5b600080546040516001600160a01b03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a3600080546001600160a01b0319166001600160a01b039290921691909117905556fe4f776e61626c653a206e6577206f776e657220697320746865207a65726f20616464726573734f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572a265627a7a72315820cbc26a639d71e2d2df8287f44907b76478c389a1543edeac2f800dd9299c016764736f6c63430005100032",
-  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100885760003560e01c80638da5cb5b1161005b5780638da5cb5b146100f15780638f32d59b14610115578063b7b0ccde14610131578063f2fde38b1461013957610088565b80630b78f9c01461008d57806312514bba146100b2578063715018a6146100cf57806386830d58146100d7575b600080fd5b6100b0600480360360408110156100a357600080fd5b508035906020013561015f565b005b6100b0600480360360208110156100c857600080fd5b50356101b1565b6100b0610298565b6100df610329565b60408051918252519081900360200190f35b6100f9610336565b604080516001600160a01b039092168252519081900360200190f35b61011d610345565b604080519115158252519081900360200190f35b6100df610369565b6100b06004803603602081101561014f57600080fd5b50356001600160a01b0316610373565b610167610345565b6101a6576040805162461bcd60e51b81526020600482018190526024820152600080516020610491833981519152604482015290519081900360640190fd5b600191909155600255565b6101b9610345565b6101f8576040805162461bcd60e51b81526020600482018190526024820152600080516020610491833981519152604482015290519081900360640190fd5b306001600160a01b0316638da5cb5b6040518163ffffffff1660e01b815260040160206040518083038186803b15801561023157600080fd5b505afa158015610245573d6000803e3d6000fd5b505050506040513d602081101561025b57600080fd5b50516040516001600160a01b039091169082156108fc029083906000818181858888f19350505050158015610294573d6000803e3d6000fd5b5050565b6102a0610345565b6102df576040805162461bcd60e51b81526020600482018190526024820152600080516020610491833981519152604482015290519081900360640190fd5b600080546040516001600160a01b03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a3600080546001600160a01b0319169055565b60006001815b0154905090565b6000546001600160a01b031690565b600080546001600160a01b031661035a6103c6565b6001600160a01b031614905090565b600060018061032f565b61037b610345565b6103ba576040805162461bcd60e51b81526020600482018190526024820152600080516020610491833981519152604482015290519081900360640190fd5b6103c3816103ca565b50565b3390565b6001600160a01b03811661040f5760405162461bcd60e51b815260040180806020018281038252602681526020018061046b6026913960400191505060405180910390fd5b600080546040516001600160a01b03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a3600080546001600160a01b0319166001600160a01b039290921691909117905556fe4f776e61626c653a206e6577206f776e657220697320746865207a65726f20616464726573734f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572a265627a7a72315820cbc26a639d71e2d2df8287f44907b76478c389a1543edeac2f800dd9299c016764736f6c63430005100032",
-  "sourceMap": "418:459:3:-;;;710:12:2;-1:-1:-1;;;;;710:10:2;:12;:::i;:::-;701:6;:21;;-1:-1:-1;;;;;;701:21:2;-1:-1:-1;;;;;701:21:2;;;;;;;737:40;;770:6;;;737:40;;701:6;;737:40;418:459:3;;788:96:0;867:10;788:96;:::o;418:459:3:-;;;;;;;",
-  "deployedSourceMap": "418:459:3:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;418:459:3;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;577:125;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;577:125:3;;;;;;;:::i;:::-;;477:94;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;477:94:3;;:::i;1653:137:2:-;;;:::i;708:79:3:-;;;:::i;:::-;;;;;;;;;;;;;;;;860:85:2;;;:::i;:::-;;;;-1:-1:-1;;;;;860:85:2;;;;;;;;;;;;;;1219:92;;;:::i;:::-;;;;;;;;;;;;;;;;;;793:82:3;;;:::i;1939:115:2:-;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;1939:115:2;-1:-1:-1;;;;;1939:115:2;;:::i;577:125:3:-;1072:9:2;:7;:9::i;:::-;1064:54;;;;;-1:-1:-1;;;1064:54:2;;;;;;;;;;;;;-1:-1:-1;;;;;;;;;;;1064:54:2;;;;;;;;;;;;;;;650:4:3;:16;;;;676:7;:19;577:125::o;477:94::-;1072:9:2;:7;:9::i;:::-;1064:54;;;;;-1:-1:-1;;;1064:54:2;;;;;;;;;;;;;-1:-1:-1;;;;;;;;;;;1064:54:2;;;;;;;;;;;;;;;535:4:3;-1:-1:-1;;;;;535:10:3;;:12;;;;;;;;;;;;;;;;;;;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;535:12:3;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;535:12:3;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;535:12:3;:29;;-1:-1:-1;;;;;535:21:3;;;;:29;;;;;557:6;;535:29;;;;557:6;535:21;:29;;;;;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;535:29:3;477:94;:::o;1653:137:2:-;1072:9;:7;:9::i;:::-;1064:54;;;;;-1:-1:-1;;;1064:54:2;;;;;;;;;;;;;-1:-1:-1;;;;;;;;;;;1064:54:2;;;;;;;;;;;;;;;1751:1;1735:6;;1714:40;;-1:-1:-1;;;;;1735:6:2;;;;1714:40;;1751:1;;1714:40;1781:1;1764:19;;-1:-1:-1;;;;;;1764:19:2;;;1653:137::o;708:79:3:-;750:4;773;750;773:7;;;766:14;;708:79;:::o;860:85:2:-;898:15;932:6;-1:-1:-1;;;;;932:6:2;860:85;:::o;1219:92::-;1259:4;1298:6;;-1:-1:-1;;;;;1298:6:2;1282:12;:10;:12::i;:::-;-1:-1:-1;;;;;1282:22:2;;1275:29;;1219:92;:::o;793:82:3:-;838:4;861;;:7;;1939:115:2;1072:9;:7;:9::i;:::-;1064:54;;;;;-1:-1:-1;;;1064:54:2;;;;;;;;;;;;;-1:-1:-1;;;;;;;;;;;1064:54:2;;;;;;;;;;;;;;;2019:28;2038:8;2019:18;:28::i;:::-;1939:115;:::o;788:96:0:-;867:10;788:96;:::o;2155:233:2:-;-1:-1:-1;;;;;2236:22:2;;2228:73;;;;-1:-1:-1;;;2228:73:2;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2337:6;;;2316:38;;-1:-1:-1;;;;;2316:38:2;;;;2337:6;;;2316:38;;;2364:6;:17;;-1:-1:-1;;;;;;2364:17:2;-1:-1:-1;;;;;2364:17:2;;;;;;;;;;2155:233::o",
-  "source": "pragma solidity >=0.5.0 <0.6.0;\n\nimport \"./Ownable.sol\";\n/**\n * @dev Contract module which provides a basic access control mechanism, where\n * there is an account (an owner) that can be granted exclusive access to\n * specific functions.\n *\n * This module is used through inheritance. It will make available the modifier\n * `onlyOwner`, which can be applied to your functions to restrict their use to\n * the owner.\n */\ncontract Toll is Ownable {\n\n    uint[2] private fees;\n\n    function transfer(uint amount) public onlyOwner {\n        this.owner().transfer(amount);\n    }\n\n    function setFees(uint addFee, uint updateFee) public onlyOwner {\n        fees[0] = addFee;\n        fees[1] = updateFee;\n    }\n\n    function getAddFee() public view returns (uint) {\n        return fees[0];\n    }\n\n    function getUpdateFee() public view returns (uint) {\n        return fees[1];\n    }\n}",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[],\"name\":\"getAddFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getFees\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"addFee\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"updateFee\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getUpdateFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"addFee\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"updateFee\",\"type\":\"uint256\"}],\"name\":\"setFees\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Contract module which provides a basic access control mechanism, where there is an account (an owner) that can be granted exclusive access to specific functions. * This module is used through inheritance. It will make available the modifier `onlyOwner`, which can be applied to your functions to restrict their use to the owner.\",\"methods\":{\"isOwner()\":{\"details\":\"Returns true if the caller is the current owner.\"},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner.     * NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Toll.sol\":\"Toll\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Context.sol\":{\"keccak256\":\"0x90a3995645af7562d84b9d69363ffa5ae7217714ab61e951bf7bc450f40e4061\",\"urls\":[\"bzz-raw://216ef9d6b614db4eb46970b4e84903f2534a45572dd30a79f0041f1a5830f436\",\"dweb:/ipfs/QmNPrJ4MWKUAWzKXpUqeyKRUfosaoANZAqXgvepdrCwZAG\"]},\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Ownable.sol\":{\"keccak256\":\"0x4c324cbeb9fb22b32c1896024abfe04737c7634ed7e0aa7792d3e23f6f036ea7\",\"urls\":[\"bzz-raw://1302316b694a6904e1023402ad87d744596e0531ffc6431e079c9e1afade5699\",\"dweb:/ipfs/QmTXjKwKbgrXZbJ3TZEjxzxuL6pTeLB2q6siSzFUXNvqXw\"]},\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Toll.sol\":{\"keccak256\":\"0x527d5fbc80f87ea926de2e23ba8b3a31ebf1cecdaf50a4c222e8b2330a840088\",\"urls\":[\"bzz-raw://58b061527c86c7f5afaaa7a6d993895b2f5e5b27da8e088538fda857aadc3f76\",\"dweb:/ipfs/QmdrL1ahqweFNyguaCBZc96YeswhyMi6itSDZ4tt3SP3J6\"]}},\"version\":1}",
+  "bytecode": "0x60806040526100156001600160e01b0361006216565b600080546001600160a01b0319166001600160a01b03928316178082556040519216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908290a3610066565b3390565b61051b806100756000396000f3fe608060405234801561001057600080fd5b50600436106100935760003560e01c80638da5cb5b116100665780638da5cb5b146100fc5780638f32d59b14610120578063b7b0ccde1461013c578063db8d55f114610144578063f2fde38b1461016557610093565b80630b78f9c01461009857806312514bba146100bd578063715018a6146100da57806386830d58146100e2575b600080fd5b6100bb600480360360408110156100ae57600080fd5b508035906020013561018b565b005b6100bb600480360360208110156100d357600080fd5b50356101dd565b6100bb6102c4565b6100ea610355565b60408051918252519081900360200190f35b610104610362565b604080516001600160a01b039092168252519081900360200190f35b610128610371565b604080519115158252519081900360200190f35b6100ea610395565b61014c61039f565b6040805192835260208301919091528051918290030190f35b6100bb6004803603602081101561017b57600080fd5b50356001600160a01b03166103a9565b610193610371565b6101d2576040805162461bcd60e51b815260206004820181905260248201526000805160206104c7833981519152604482015290519081900360640190fd5b600191909155600255565b6101e5610371565b610224576040805162461bcd60e51b815260206004820181905260248201526000805160206104c7833981519152604482015290519081900360640190fd5b306001600160a01b0316638da5cb5b6040518163ffffffff1660e01b815260040160206040518083038186803b15801561025d57600080fd5b505afa158015610271573d6000803e3d6000fd5b505050506040513d602081101561028757600080fd5b50516040516001600160a01b039091169082156108fc029083906000818181858888f193505050501580156102c0573d6000803e3d6000fd5b5050565b6102cc610371565b61030b576040805162461bcd60e51b815260206004820181905260248201526000805160206104c7833981519152604482015290519081900360640190fd5b600080546040516001600160a01b03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a3600080546001600160a01b0319169055565b60006001815b0154905090565b6000546001600160a01b031690565b600080546001600160a01b03166103866103fc565b6001600160a01b031614905090565b600060018061035b565b6001546002549091565b6103b1610371565b6103f0576040805162461bcd60e51b815260206004820181905260248201526000805160206104c7833981519152604482015290519081900360640190fd5b6103f981610400565b50565b3390565b6001600160a01b0381166104455760405162461bcd60e51b81526004018080602001828103825260268152602001806104a16026913960400191505060405180910390fd5b600080546040516001600160a01b03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a3600080546001600160a01b0319166001600160a01b039290921691909117905556fe4f776e61626c653a206e6577206f776e657220697320746865207a65726f20616464726573734f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572a265627a7a72315820f454d51f709035dee1b8885cba58c5563ed289fa839f8b300a050175a062e25564736f6c63430005100032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100935760003560e01c80638da5cb5b116100665780638da5cb5b146100fc5780638f32d59b14610120578063b7b0ccde1461013c578063db8d55f114610144578063f2fde38b1461016557610093565b80630b78f9c01461009857806312514bba146100bd578063715018a6146100da57806386830d58146100e2575b600080fd5b6100bb600480360360408110156100ae57600080fd5b508035906020013561018b565b005b6100bb600480360360208110156100d357600080fd5b50356101dd565b6100bb6102c4565b6100ea610355565b60408051918252519081900360200190f35b610104610362565b604080516001600160a01b039092168252519081900360200190f35b610128610371565b604080519115158252519081900360200190f35b6100ea610395565b61014c61039f565b6040805192835260208301919091528051918290030190f35b6100bb6004803603602081101561017b57600080fd5b50356001600160a01b03166103a9565b610193610371565b6101d2576040805162461bcd60e51b815260206004820181905260248201526000805160206104c7833981519152604482015290519081900360640190fd5b600191909155600255565b6101e5610371565b610224576040805162461bcd60e51b815260206004820181905260248201526000805160206104c7833981519152604482015290519081900360640190fd5b306001600160a01b0316638da5cb5b6040518163ffffffff1660e01b815260040160206040518083038186803b15801561025d57600080fd5b505afa158015610271573d6000803e3d6000fd5b505050506040513d602081101561028757600080fd5b50516040516001600160a01b039091169082156108fc029083906000818181858888f193505050501580156102c0573d6000803e3d6000fd5b5050565b6102cc610371565b61030b576040805162461bcd60e51b815260206004820181905260248201526000805160206104c7833981519152604482015290519081900360640190fd5b600080546040516001600160a01b03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a3600080546001600160a01b0319169055565b60006001815b0154905090565b6000546001600160a01b031690565b600080546001600160a01b03166103866103fc565b6001600160a01b031614905090565b600060018061035b565b6001546002549091565b6103b1610371565b6103f0576040805162461bcd60e51b815260206004820181905260248201526000805160206104c7833981519152604482015290519081900360640190fd5b6103f981610400565b50565b3390565b6001600160a01b0381166104455760405162461bcd60e51b81526004018080602001828103825260268152602001806104a16026913960400191505060405180910390fd5b600080546040516001600160a01b03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a3600080546001600160a01b0319166001600160a01b039290921691909117905556fe4f776e61626c653a206e6577206f776e657220697320746865207a65726f20616464726573734f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572a265627a7a72315820f454d51f709035dee1b8885cba58c5563ed289fa839f8b300a050175a062e25564736f6c63430005100032",
+  "sourceMap": "418:600:4:-;;;710:12:2;-1:-1:-1;;;;;710:10:2;:12;:::i;:::-;701:6;:21;;-1:-1:-1;;;;;;701:21:2;-1:-1:-1;;;;;701:21:2;;;;;;;737:40;;770:6;;;737:40;;701:6;;737:40;418:600:4;;788:96:0;867:10;788:96;:::o;418:600:4:-;;;;;;;",
+  "deployedSourceMap": "418:600:4:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;418:600:4;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;583:131;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;583:131:4;;;;;;;:::i;:::-;;480:97;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;480:97:4;;:::i;1653:137:2:-;;;:::i;843:82:4:-;;;:::i;:::-;;;;;;;;;;;;;;;;860:85:2;;;:::i;:::-;;;;-1:-1:-1;;;;;860:85:2;;;;;;;;;;;;;;1219:92;;;:::i;:::-;;;;;;;;;;;;;;;;;;931:85:4;;;:::i;720:117::-;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;1939:115:2;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;1939:115:2;-1:-1:-1;;;;;1939:115:2;;:::i;583:131:4:-;1072:9:2;:7;:9::i;:::-;1064:54;;;;;-1:-1:-1;;;1064:54:2;;;;;;;;;;;;;-1:-1:-1;;;;;;;;;;;1064:54:2;;;;;;;;;;;;;;;662:4:4;:16;;;;688:7;:19;583:131::o;480:97::-;1072:9:2;:7;:9::i;:::-;1064:54;;;;;-1:-1:-1;;;1064:54:2;;;;;;;;;;;;;-1:-1:-1;;;;;;;;;;;1064:54:2;;;;;;;;;;;;;;;541:4:4;-1:-1:-1;;;;;541:10:4;;:12;;;;;;;;;;;;;;;;;;;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;541:12:4;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;541:12:4;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;541:12:4;:29;;-1:-1:-1;;;;;541:21:4;;;;:29;;;;;563:6;;541:29;;;;563:6;541:21;:29;;;;;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;541:29:4;480:97;:::o;1653:137:2:-;1072:9;:7;:9::i;:::-;1064:54;;;;;-1:-1:-1;;;1064:54:2;;;;;;;;;;;;;-1:-1:-1;;;;;;;;;;;1064:54:2;;;;;;;;;;;;;;;1751:1;1735:6;;1714:40;;-1:-1:-1;;;;;1735:6:2;;;;1714:40;;1751:1;;1714:40;1781:1;1764:19;;-1:-1:-1;;;;;;1764:19:2;;;1653:137::o;843:82:4:-;885:7;911:4;885:7;911;;;904:14;;843:82;:::o;860:85:2:-;898:15;932:6;-1:-1:-1;;;;;932:6:2;860:85;:::o;1219:92::-;1259:4;1298:6;;-1:-1:-1;;;;;1298:6:2;1282:12;:10;:12::i;:::-;-1:-1:-1;;;;;1282:22:2;;1275:29;;1219:92;:::o;931:85:4:-;976:7;1002:4;;:7;;720:117;813:4;:7;822;;813;;720:117::o;1939:115:2:-;1072:9;:7;:9::i;:::-;1064:54;;;;;-1:-1:-1;;;1064:54:2;;;;;;;;;;;;;-1:-1:-1;;;;;;;;;;;1064:54:2;;;;;;;;;;;;;;;2019:28;2038:8;2019:18;:28::i;:::-;1939:115;:::o;788:96:0:-;867:10;788:96;:::o;2155:233:2:-;-1:-1:-1;;;;;2236:22:2;;2228:73;;;;-1:-1:-1;;;2228:73:2;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2337:6;;;2316:38;;-1:-1:-1;;;;;2316:38:2;;;;2337:6;;;2316:38;;;2364:6;:17;;-1:-1:-1;;;;;;2364:17:2;-1:-1:-1;;;;;2364:17:2;;;;;;;;;;2155:233::o",
+  "source": "pragma solidity >=0.5.0 <0.6.0;\n\nimport \"./Ownable.sol\";\n/**\n * @dev Contract module which provides a basic access control mechanism, where\n * there is an account (an owner) that can be granted exclusive access to\n * specific functions.\n *\n * This module is used through inheritance. It will make available the modifier\n * `onlyOwner`, which can be applied to your functions to restrict their use to\n * the owner.\n */\ncontract Toll is Ownable {\n\n    uint256[2] private fees;\n\n    function transfer(uint256 amount) public onlyOwner {\n        this.owner().transfer(amount);\n    }\n\n    function setFees(uint256 addFee, uint256 updateFee) public onlyOwner {\n        fees[0] = addFee;\n        fees[1] = updateFee;\n    }\n\n    function getFees() public view returns (uint256 addFee, uint256 updateFee) {\n        return (fees[0], fees[1]);\n    }\n\n    function getAddFee() public view returns (uint256) {\n        return fees[0];\n    }\n\n    function getUpdateFee() public view returns (uint256) {\n        return fees[1];\n    }\n}",
   "sourcePath": "/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Toll.sol",
   "ast": {
     "absolutePath": "/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Toll.sol",
     "exportedSymbols": {
       "Toll": [
-        265
+        468
       ]
     },
-    "id": 266,
+    "id": 469,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 199,
+        "id": 386,
         "literals": [
           "solidity",
           ">=",
@@ -169,16 +189,16 @@
           ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:31:3"
+        "src": "0:31:4"
       },
       {
         "absolutePath": "/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Ownable.sol",
         "file": "./Ownable.sol",
-        "id": 200,
+        "id": 387,
         "nodeType": "ImportDirective",
-        "scope": 266,
+        "scope": 469,
         "sourceUnit": 198,
-        "src": "33:23:3",
+        "src": "33:23:4",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -188,19 +208,19 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 201,
+              "id": 388,
               "name": "Ownable",
               "nodeType": "UserDefinedTypeName",
               "referencedDeclaration": 197,
-              "src": "435:7:3",
+              "src": "435:7:4",
               "typeDescriptions": {
                 "typeIdentifier": "t_contract$_Ownable_$197",
                 "typeString": "contract Ownable"
               }
             },
-            "id": 202,
+            "id": 389,
             "nodeType": "InheritanceSpecifier",
-            "src": "435:7:3"
+            "src": "435:7:4"
           }
         ],
         "contractDependencies": [
@@ -210,9 +230,9 @@
         "contractKind": "contract",
         "documentation": "@dev Contract module which provides a basic access control mechanism, where\nthere is an account (an owner) that can be granted exclusive access to\nspecific functions.\n * This module is used through inheritance. It will make available the modifier\n`onlyOwner`, which can be applied to your functions to restrict their use to\nthe owner.",
         "fullyImplemented": true,
-        "id": 265,
+        "id": 468,
         "linearizedBaseContracts": [
-          265,
+          468,
           197,
           26
         ],
@@ -221,11 +241,11 @@
         "nodes": [
           {
             "constant": false,
-            "id": 206,
+            "id": 393,
             "name": "fees",
             "nodeType": "VariableDeclaration",
-            "scope": 265,
-            "src": "450:20:3",
+            "scope": 468,
+            "src": "450:23:4",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -234,27 +254,27 @@
             },
             "typeName": {
               "baseType": {
-                "id": 203,
-                "name": "uint",
+                "id": 390,
+                "name": "uint256",
                 "nodeType": "ElementaryTypeName",
-                "src": "450:4:3",
+                "src": "450:7:4",
                 "typeDescriptions": {
                   "typeIdentifier": "t_uint256",
                   "typeString": "uint256"
                 }
               },
-              "id": 205,
+              "id": 392,
               "length": {
                 "argumentTypes": null,
                 "hexValue": "32",
-                "id": 204,
+                "id": 391,
                 "isConstant": false,
                 "isLValue": false,
                 "isPure": true,
                 "kind": "number",
                 "lValueRequested": false,
                 "nodeType": "Literal",
-                "src": "455:1:3",
+                "src": "458:1:4",
                 "subdenomination": null,
                 "typeDescriptions": {
                   "typeIdentifier": "t_rational_2_by_1",
@@ -263,7 +283,7 @@
                 "value": "2"
               },
               "nodeType": "ArrayTypeName",
-              "src": "450:7:3",
+              "src": "450:10:4",
               "typeDescriptions": {
                 "typeIdentifier": "t_array$_t_uint256_$2_storage_ptr",
                 "typeString": "uint256[2]"
@@ -274,9 +294,9 @@
           },
           {
             "body": {
-              "id": 221,
+              "id": 408,
               "nodeType": "Block",
-              "src": "525:46:3",
+              "src": "531:46:4",
               "statements": [
                 {
                   "expression": {
@@ -284,12 +304,12 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 218,
+                        "id": 405,
                         "name": "amount",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 208,
-                        "src": "557:6:3",
+                        "referencedDeclaration": 395,
+                        "src": "563:6:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -310,18 +330,18 @@
                           "argumentTypes": [],
                           "expression": {
                             "argumentTypes": null,
-                            "id": 213,
+                            "id": 400,
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 542,
-                            "src": "535:4:3",
+                            "referencedDeclaration": 917,
+                            "src": "541:4:4",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_Toll_$265",
+                              "typeIdentifier": "t_contract$_Toll_$468",
                               "typeString": "contract Toll"
                             }
                           },
-                          "id": 215,
+                          "id": 402,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -329,13 +349,13 @@
                           "memberName": "owner",
                           "nodeType": "MemberAccess",
                           "referencedDeclaration": 120,
-                          "src": "535:10:3",
+                          "src": "541:10:4",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_external_view$__$returns$_t_address_payable_$",
                             "typeString": "function () view external returns (address payable)"
                           }
                         },
-                        "id": 216,
+                        "id": 403,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -343,13 +363,13 @@
                         "lValueRequested": false,
                         "names": [],
                         "nodeType": "FunctionCall",
-                        "src": "535:12:3",
+                        "src": "541:12:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address_payable",
                           "typeString": "address payable"
                         }
                       },
-                      "id": 217,
+                      "id": 404,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -357,13 +377,13 @@
                       "memberName": "transfer",
                       "nodeType": "MemberAccess",
                       "referencedDeclaration": null,
-                      "src": "535:21:3",
+                      "src": "541:21:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_transfer_nonpayable$_t_uint256_$returns$__$",
                         "typeString": "function (uint256)"
                       }
                     },
-                    "id": 219,
+                    "id": 406,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -371,56 +391,56 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "535:29:3",
+                    "src": "541:29:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 220,
+                  "id": 407,
                   "nodeType": "ExpressionStatement",
-                  "src": "535:29:3"
+                  "src": "541:29:4"
                 }
               ]
             },
             "documentation": null,
-            "id": 222,
+            "id": 409,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
                 "arguments": null,
-                "id": 211,
+                "id": 398,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 210,
+                  "id": 397,
                   "name": "onlyOwner",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
                   "referencedDeclaration": 130,
-                  "src": "515:9:3",
+                  "src": "521:9:4",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
                     "typeString": "modifier ()"
                   }
                 },
                 "nodeType": "ModifierInvocation",
-                "src": "515:9:3"
+                "src": "521:9:4"
               }
             ],
             "name": "transfer",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 209,
+              "id": 396,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 208,
+                  "id": 395,
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 222,
-                  "src": "495:11:3",
+                  "scope": 409,
+                  "src": "498:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -428,10 +448,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 207,
-                    "name": "uint",
+                    "id": 394,
+                    "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "495:4:3",
+                    "src": "498:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -441,30 +461,30 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "494:13:3"
+              "src": "497:16:4"
             },
             "returnParameters": {
-              "id": 212,
+              "id": 399,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "525:0:3"
+              "src": "531:0:4"
             },
-            "scope": 265,
-            "src": "477:94:3",
+            "scope": 468,
+            "src": "480:97:4",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 243,
+              "id": 430,
               "nodeType": "Block",
-              "src": "640:62:3",
+              "src": "652:62:4",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 235,
+                    "id": 422,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -473,29 +493,29 @@
                       "argumentTypes": null,
                       "baseExpression": {
                         "argumentTypes": null,
-                        "id": 231,
+                        "id": 418,
                         "name": "fees",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 206,
-                        "src": "650:4:3",
+                        "referencedDeclaration": 393,
+                        "src": "662:4:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_uint256_$2_storage",
                           "typeString": "uint256[2] storage ref"
                         }
                       },
-                      "id": 233,
+                      "id": 420,
                       "indexExpression": {
                         "argumentTypes": null,
                         "hexValue": "30",
-                        "id": 232,
+                        "id": 419,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "655:1:3",
+                        "src": "667:1:4",
                         "subdenomination": null,
                         "typeDescriptions": {
                           "typeIdentifier": "t_rational_0_by_1",
@@ -508,7 +528,7 @@
                       "isPure": false,
                       "lValueRequested": true,
                       "nodeType": "IndexAccess",
-                      "src": "650:7:3",
+                      "src": "662:7:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -518,31 +538,31 @@
                     "operator": "=",
                     "rightHandSide": {
                       "argumentTypes": null,
-                      "id": 234,
+                      "id": 421,
                       "name": "addFee",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 224,
-                      "src": "660:6:3",
+                      "referencedDeclaration": 411,
+                      "src": "672:6:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "src": "650:16:3",
+                    "src": "662:16:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "id": 236,
+                  "id": 423,
                   "nodeType": "ExpressionStatement",
-                  "src": "650:16:3"
+                  "src": "662:16:4"
                 },
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 241,
+                    "id": 428,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -551,29 +571,29 @@
                       "argumentTypes": null,
                       "baseExpression": {
                         "argumentTypes": null,
-                        "id": 237,
+                        "id": 424,
                         "name": "fees",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 206,
-                        "src": "676:4:3",
+                        "referencedDeclaration": 393,
+                        "src": "688:4:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_uint256_$2_storage",
                           "typeString": "uint256[2] storage ref"
                         }
                       },
-                      "id": 239,
+                      "id": 426,
                       "indexExpression": {
                         "argumentTypes": null,
                         "hexValue": "31",
-                        "id": 238,
+                        "id": 425,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "681:1:3",
+                        "src": "693:1:4",
                         "subdenomination": null,
                         "typeDescriptions": {
                           "typeIdentifier": "t_rational_1_by_1",
@@ -586,7 +606,7 @@
                       "isPure": false,
                       "lValueRequested": true,
                       "nodeType": "IndexAccess",
-                      "src": "676:7:3",
+                      "src": "688:7:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -596,67 +616,67 @@
                     "operator": "=",
                     "rightHandSide": {
                       "argumentTypes": null,
-                      "id": 240,
+                      "id": 427,
                       "name": "updateFee",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 226,
-                      "src": "686:9:3",
+                      "referencedDeclaration": 413,
+                      "src": "698:9:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "src": "676:19:3",
+                    "src": "688:19:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "id": 242,
+                  "id": 429,
                   "nodeType": "ExpressionStatement",
-                  "src": "676:19:3"
+                  "src": "688:19:4"
                 }
               ]
             },
             "documentation": null,
-            "id": 244,
+            "id": 431,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
                 "arguments": null,
-                "id": 229,
+                "id": 416,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 228,
+                  "id": 415,
                   "name": "onlyOwner",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
                   "referencedDeclaration": 130,
-                  "src": "630:9:3",
+                  "src": "642:9:4",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
                     "typeString": "modifier ()"
                   }
                 },
                 "nodeType": "ModifierInvocation",
-                "src": "630:9:3"
+                "src": "642:9:4"
               }
             ],
             "name": "setFees",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 227,
+              "id": 414,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 224,
+                  "id": 411,
                   "name": "addFee",
                   "nodeType": "VariableDeclaration",
-                  "scope": 244,
-                  "src": "594:11:3",
+                  "scope": 431,
+                  "src": "600:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -664,10 +684,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 223,
-                    "name": "uint",
+                    "id": 410,
+                    "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "594:4:3",
+                    "src": "600:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -678,11 +698,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 226,
+                  "id": 413,
                   "name": "updateFee",
                   "nodeType": "VariableDeclaration",
-                  "scope": 244,
-                  "src": "607:14:3",
+                  "scope": 431,
+                  "src": "616:17:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -690,10 +710,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 225,
-                    "name": "uint",
+                    "id": 412,
+                    "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "607:4:3",
+                    "src": "616:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -703,54 +723,253 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "593:29:3"
+              "src": "599:35:4"
             },
             "returnParameters": {
-              "id": 230,
+              "id": 417,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "640:0:3"
+              "src": "652:0:4"
             },
-            "scope": 265,
-            "src": "577:125:3",
+            "scope": 468,
+            "src": "583:131:4",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 253,
+              "id": 446,
               "nodeType": "Block",
-              "src": "756:31:3",
+              "src": "795:42:4",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "components": [
+                      {
+                        "argumentTypes": null,
+                        "baseExpression": {
+                          "argumentTypes": null,
+                          "id": 438,
+                          "name": "fees",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 393,
+                          "src": "813:4:4",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_uint256_$2_storage",
+                            "typeString": "uint256[2] storage ref"
+                          }
+                        },
+                        "id": 440,
+                        "indexExpression": {
+                          "argumentTypes": null,
+                          "hexValue": "30",
+                          "id": 439,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "818:1:4",
+                          "subdenomination": null,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_0_by_1",
+                            "typeString": "int_const 0"
+                          },
+                          "value": "0"
+                        },
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "nodeType": "IndexAccess",
+                        "src": "813:7:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "baseExpression": {
+                          "argumentTypes": null,
+                          "id": 441,
+                          "name": "fees",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 393,
+                          "src": "822:4:4",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_uint256_$2_storage",
+                            "typeString": "uint256[2] storage ref"
+                          }
+                        },
+                        "id": 443,
+                        "indexExpression": {
+                          "argumentTypes": null,
+                          "hexValue": "31",
+                          "id": 442,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "827:1:4",
+                          "subdenomination": null,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_1_by_1",
+                            "typeString": "int_const 1"
+                          },
+                          "value": "1"
+                        },
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "nodeType": "IndexAccess",
+                        "src": "822:7:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "id": 444,
+                    "isConstant": false,
+                    "isInlineArray": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "TupleExpression",
+                    "src": "812:18:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_uint256_$_t_uint256_$",
+                      "typeString": "tuple(uint256,uint256)"
+                    }
+                  },
+                  "functionReturnParameters": 437,
+                  "id": 445,
+                  "nodeType": "Return",
+                  "src": "805:25:4"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 447,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getFees",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 432,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "736:2:4"
+            },
+            "returnParameters": {
+              "id": 437,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 434,
+                  "name": "addFee",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 447,
+                  "src": "760:14:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 433,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "760:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 436,
+                  "name": "updateFee",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 447,
+                  "src": "776:17:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 435,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "776:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "759:35:4"
+            },
+            "scope": 468,
+            "src": "720:117:4",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 456,
+              "nodeType": "Block",
+              "src": "894:31:4",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
                     "baseExpression": {
                       "argumentTypes": null,
-                      "id": 249,
+                      "id": 452,
                       "name": "fees",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 206,
-                      "src": "773:4:3",
+                      "referencedDeclaration": 393,
+                      "src": "911:4:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_array$_t_uint256_$2_storage",
                         "typeString": "uint256[2] storage ref"
                       }
                     },
-                    "id": 251,
+                    "id": 454,
                     "indexExpression": {
                       "argumentTypes": null,
                       "hexValue": "30",
-                      "id": 250,
+                      "id": 453,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "kind": "number",
                       "lValueRequested": false,
                       "nodeType": "Literal",
-                      "src": "778:1:3",
+                      "src": "916:1:4",
                       "subdenomination": null,
                       "typeDescriptions": {
                         "typeIdentifier": "t_rational_0_by_1",
@@ -763,43 +982,43 @@
                     "isPure": false,
                     "lValueRequested": false,
                     "nodeType": "IndexAccess",
-                    "src": "773:7:3",
+                    "src": "911:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "functionReturnParameters": 248,
-                  "id": 252,
+                  "functionReturnParameters": 451,
+                  "id": 455,
                   "nodeType": "Return",
-                  "src": "766:14:3"
+                  "src": "904:14:4"
                 }
               ]
             },
             "documentation": null,
-            "id": 254,
+            "id": 457,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "getAddFee",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 245,
+              "id": 448,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "726:2:3"
+              "src": "861:2:4"
             },
             "returnParameters": {
-              "id": 248,
+              "id": 451,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 247,
+                  "id": 450,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 254,
-                  "src": "750:4:3",
+                  "scope": 457,
+                  "src": "885:7:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -807,10 +1026,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 246,
-                    "name": "uint",
+                    "id": 449,
+                    "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "750:4:3",
+                    "src": "885:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -820,48 +1039,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "749:6:3"
+              "src": "884:9:4"
             },
-            "scope": 265,
-            "src": "708:79:3",
+            "scope": 468,
+            "src": "843:82:4",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 263,
+              "id": 466,
               "nodeType": "Block",
-              "src": "844:31:3",
+              "src": "985:31:4",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
                     "baseExpression": {
                       "argumentTypes": null,
-                      "id": 259,
+                      "id": 462,
                       "name": "fees",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 206,
-                      "src": "861:4:3",
+                      "referencedDeclaration": 393,
+                      "src": "1002:4:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_array$_t_uint256_$2_storage",
                         "typeString": "uint256[2] storage ref"
                       }
                     },
-                    "id": 261,
+                    "id": 464,
                     "indexExpression": {
                       "argumentTypes": null,
                       "hexValue": "31",
-                      "id": 260,
+                      "id": 463,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "kind": "number",
                       "lValueRequested": false,
                       "nodeType": "Literal",
-                      "src": "866:1:3",
+                      "src": "1007:1:4",
                       "subdenomination": null,
                       "typeDescriptions": {
                         "typeIdentifier": "t_rational_1_by_1",
@@ -874,43 +1093,43 @@
                     "isPure": false,
                     "lValueRequested": false,
                     "nodeType": "IndexAccess",
-                    "src": "861:7:3",
+                    "src": "1002:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "functionReturnParameters": 258,
-                  "id": 262,
+                  "functionReturnParameters": 461,
+                  "id": 465,
                   "nodeType": "Return",
-                  "src": "854:14:3"
+                  "src": "995:14:4"
                 }
               ]
             },
             "documentation": null,
-            "id": 264,
+            "id": 467,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "getUpdateFee",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 255,
+              "id": 458,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "814:2:3"
+              "src": "952:2:4"
             },
             "returnParameters": {
-              "id": 258,
+              "id": 461,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 257,
+                  "id": 460,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 264,
-                  "src": "838:4:3",
+                  "scope": 467,
+                  "src": "976:7:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -918,10 +1137,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 256,
-                    "name": "uint",
+                    "id": 459,
+                    "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "838:4:3",
+                    "src": "976:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -931,33 +1150,33 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "837:6:3"
+              "src": "975:9:4"
             },
-            "scope": 265,
-            "src": "793:82:3",
+            "scope": 468,
+            "src": "931:85:4",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 266,
-        "src": "418:459:3"
+        "scope": 469,
+        "src": "418:600:4"
       }
     ],
-    "src": "0:877:3"
+    "src": "0:1018:4"
   },
   "legacyAST": {
     "absolutePath": "/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Toll.sol",
     "exportedSymbols": {
       "Toll": [
-        265
+        468
       ]
     },
-    "id": 266,
+    "id": 469,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 199,
+        "id": 386,
         "literals": [
           "solidity",
           ">=",
@@ -968,16 +1187,16 @@
           ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:31:3"
+        "src": "0:31:4"
       },
       {
         "absolutePath": "/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Ownable.sol",
         "file": "./Ownable.sol",
-        "id": 200,
+        "id": 387,
         "nodeType": "ImportDirective",
-        "scope": 266,
+        "scope": 469,
         "sourceUnit": 198,
-        "src": "33:23:3",
+        "src": "33:23:4",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -987,19 +1206,19 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 201,
+              "id": 388,
               "name": "Ownable",
               "nodeType": "UserDefinedTypeName",
               "referencedDeclaration": 197,
-              "src": "435:7:3",
+              "src": "435:7:4",
               "typeDescriptions": {
                 "typeIdentifier": "t_contract$_Ownable_$197",
                 "typeString": "contract Ownable"
               }
             },
-            "id": 202,
+            "id": 389,
             "nodeType": "InheritanceSpecifier",
-            "src": "435:7:3"
+            "src": "435:7:4"
           }
         ],
         "contractDependencies": [
@@ -1009,9 +1228,9 @@
         "contractKind": "contract",
         "documentation": "@dev Contract module which provides a basic access control mechanism, where\nthere is an account (an owner) that can be granted exclusive access to\nspecific functions.\n * This module is used through inheritance. It will make available the modifier\n`onlyOwner`, which can be applied to your functions to restrict their use to\nthe owner.",
         "fullyImplemented": true,
-        "id": 265,
+        "id": 468,
         "linearizedBaseContracts": [
-          265,
+          468,
           197,
           26
         ],
@@ -1020,11 +1239,11 @@
         "nodes": [
           {
             "constant": false,
-            "id": 206,
+            "id": 393,
             "name": "fees",
             "nodeType": "VariableDeclaration",
-            "scope": 265,
-            "src": "450:20:3",
+            "scope": 468,
+            "src": "450:23:4",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -1033,27 +1252,27 @@
             },
             "typeName": {
               "baseType": {
-                "id": 203,
-                "name": "uint",
+                "id": 390,
+                "name": "uint256",
                 "nodeType": "ElementaryTypeName",
-                "src": "450:4:3",
+                "src": "450:7:4",
                 "typeDescriptions": {
                   "typeIdentifier": "t_uint256",
                   "typeString": "uint256"
                 }
               },
-              "id": 205,
+              "id": 392,
               "length": {
                 "argumentTypes": null,
                 "hexValue": "32",
-                "id": 204,
+                "id": 391,
                 "isConstant": false,
                 "isLValue": false,
                 "isPure": true,
                 "kind": "number",
                 "lValueRequested": false,
                 "nodeType": "Literal",
-                "src": "455:1:3",
+                "src": "458:1:4",
                 "subdenomination": null,
                 "typeDescriptions": {
                   "typeIdentifier": "t_rational_2_by_1",
@@ -1062,7 +1281,7 @@
                 "value": "2"
               },
               "nodeType": "ArrayTypeName",
-              "src": "450:7:3",
+              "src": "450:10:4",
               "typeDescriptions": {
                 "typeIdentifier": "t_array$_t_uint256_$2_storage_ptr",
                 "typeString": "uint256[2]"
@@ -1073,9 +1292,9 @@
           },
           {
             "body": {
-              "id": 221,
+              "id": 408,
               "nodeType": "Block",
-              "src": "525:46:3",
+              "src": "531:46:4",
               "statements": [
                 {
                   "expression": {
@@ -1083,12 +1302,12 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 218,
+                        "id": 405,
                         "name": "amount",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 208,
-                        "src": "557:6:3",
+                        "referencedDeclaration": 395,
+                        "src": "563:6:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -1109,18 +1328,18 @@
                           "argumentTypes": [],
                           "expression": {
                             "argumentTypes": null,
-                            "id": 213,
+                            "id": 400,
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 542,
-                            "src": "535:4:3",
+                            "referencedDeclaration": 917,
+                            "src": "541:4:4",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_Toll_$265",
+                              "typeIdentifier": "t_contract$_Toll_$468",
                               "typeString": "contract Toll"
                             }
                           },
-                          "id": 215,
+                          "id": 402,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1128,13 +1347,13 @@
                           "memberName": "owner",
                           "nodeType": "MemberAccess",
                           "referencedDeclaration": 120,
-                          "src": "535:10:3",
+                          "src": "541:10:4",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_external_view$__$returns$_t_address_payable_$",
                             "typeString": "function () view external returns (address payable)"
                           }
                         },
-                        "id": 216,
+                        "id": 403,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1142,13 +1361,13 @@
                         "lValueRequested": false,
                         "names": [],
                         "nodeType": "FunctionCall",
-                        "src": "535:12:3",
+                        "src": "541:12:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address_payable",
                           "typeString": "address payable"
                         }
                       },
-                      "id": 217,
+                      "id": 404,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1156,13 +1375,13 @@
                       "memberName": "transfer",
                       "nodeType": "MemberAccess",
                       "referencedDeclaration": null,
-                      "src": "535:21:3",
+                      "src": "541:21:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_transfer_nonpayable$_t_uint256_$returns$__$",
                         "typeString": "function (uint256)"
                       }
                     },
-                    "id": 219,
+                    "id": 406,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1170,56 +1389,56 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "535:29:3",
+                    "src": "541:29:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 220,
+                  "id": 407,
                   "nodeType": "ExpressionStatement",
-                  "src": "535:29:3"
+                  "src": "541:29:4"
                 }
               ]
             },
             "documentation": null,
-            "id": 222,
+            "id": 409,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
                 "arguments": null,
-                "id": 211,
+                "id": 398,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 210,
+                  "id": 397,
                   "name": "onlyOwner",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
                   "referencedDeclaration": 130,
-                  "src": "515:9:3",
+                  "src": "521:9:4",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
                     "typeString": "modifier ()"
                   }
                 },
                 "nodeType": "ModifierInvocation",
-                "src": "515:9:3"
+                "src": "521:9:4"
               }
             ],
             "name": "transfer",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 209,
+              "id": 396,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 208,
+                  "id": 395,
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 222,
-                  "src": "495:11:3",
+                  "scope": 409,
+                  "src": "498:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1227,10 +1446,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 207,
-                    "name": "uint",
+                    "id": 394,
+                    "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "495:4:3",
+                    "src": "498:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1240,30 +1459,30 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "494:13:3"
+              "src": "497:16:4"
             },
             "returnParameters": {
-              "id": 212,
+              "id": 399,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "525:0:3"
+              "src": "531:0:4"
             },
-            "scope": 265,
-            "src": "477:94:3",
+            "scope": 468,
+            "src": "480:97:4",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 243,
+              "id": 430,
               "nodeType": "Block",
-              "src": "640:62:3",
+              "src": "652:62:4",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 235,
+                    "id": 422,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1272,29 +1491,29 @@
                       "argumentTypes": null,
                       "baseExpression": {
                         "argumentTypes": null,
-                        "id": 231,
+                        "id": 418,
                         "name": "fees",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 206,
-                        "src": "650:4:3",
+                        "referencedDeclaration": 393,
+                        "src": "662:4:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_uint256_$2_storage",
                           "typeString": "uint256[2] storage ref"
                         }
                       },
-                      "id": 233,
+                      "id": 420,
                       "indexExpression": {
                         "argumentTypes": null,
                         "hexValue": "30",
-                        "id": 232,
+                        "id": 419,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "655:1:3",
+                        "src": "667:1:4",
                         "subdenomination": null,
                         "typeDescriptions": {
                           "typeIdentifier": "t_rational_0_by_1",
@@ -1307,7 +1526,7 @@
                       "isPure": false,
                       "lValueRequested": true,
                       "nodeType": "IndexAccess",
-                      "src": "650:7:3",
+                      "src": "662:7:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -1317,31 +1536,31 @@
                     "operator": "=",
                     "rightHandSide": {
                       "argumentTypes": null,
-                      "id": 234,
+                      "id": 421,
                       "name": "addFee",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 224,
-                      "src": "660:6:3",
+                      "referencedDeclaration": 411,
+                      "src": "672:6:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "src": "650:16:3",
+                    "src": "662:16:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "id": 236,
+                  "id": 423,
                   "nodeType": "ExpressionStatement",
-                  "src": "650:16:3"
+                  "src": "662:16:4"
                 },
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 241,
+                    "id": 428,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1350,29 +1569,29 @@
                       "argumentTypes": null,
                       "baseExpression": {
                         "argumentTypes": null,
-                        "id": 237,
+                        "id": 424,
                         "name": "fees",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 206,
-                        "src": "676:4:3",
+                        "referencedDeclaration": 393,
+                        "src": "688:4:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_uint256_$2_storage",
                           "typeString": "uint256[2] storage ref"
                         }
                       },
-                      "id": 239,
+                      "id": 426,
                       "indexExpression": {
                         "argumentTypes": null,
                         "hexValue": "31",
-                        "id": 238,
+                        "id": 425,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "681:1:3",
+                        "src": "693:1:4",
                         "subdenomination": null,
                         "typeDescriptions": {
                           "typeIdentifier": "t_rational_1_by_1",
@@ -1385,7 +1604,7 @@
                       "isPure": false,
                       "lValueRequested": true,
                       "nodeType": "IndexAccess",
-                      "src": "676:7:3",
+                      "src": "688:7:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -1395,67 +1614,67 @@
                     "operator": "=",
                     "rightHandSide": {
                       "argumentTypes": null,
-                      "id": 240,
+                      "id": 427,
                       "name": "updateFee",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 226,
-                      "src": "686:9:3",
+                      "referencedDeclaration": 413,
+                      "src": "698:9:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "src": "676:19:3",
+                    "src": "688:19:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "id": 242,
+                  "id": 429,
                   "nodeType": "ExpressionStatement",
-                  "src": "676:19:3"
+                  "src": "688:19:4"
                 }
               ]
             },
             "documentation": null,
-            "id": 244,
+            "id": 431,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
                 "arguments": null,
-                "id": 229,
+                "id": 416,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 228,
+                  "id": 415,
                   "name": "onlyOwner",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
                   "referencedDeclaration": 130,
-                  "src": "630:9:3",
+                  "src": "642:9:4",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
                     "typeString": "modifier ()"
                   }
                 },
                 "nodeType": "ModifierInvocation",
-                "src": "630:9:3"
+                "src": "642:9:4"
               }
             ],
             "name": "setFees",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 227,
+              "id": 414,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 224,
+                  "id": 411,
                   "name": "addFee",
                   "nodeType": "VariableDeclaration",
-                  "scope": 244,
-                  "src": "594:11:3",
+                  "scope": 431,
+                  "src": "600:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1463,10 +1682,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 223,
-                    "name": "uint",
+                    "id": 410,
+                    "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "594:4:3",
+                    "src": "600:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1477,11 +1696,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 226,
+                  "id": 413,
                   "name": "updateFee",
                   "nodeType": "VariableDeclaration",
-                  "scope": 244,
-                  "src": "607:14:3",
+                  "scope": 431,
+                  "src": "616:17:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1489,10 +1708,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 225,
-                    "name": "uint",
+                    "id": 412,
+                    "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "607:4:3",
+                    "src": "616:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1502,54 +1721,253 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "593:29:3"
+              "src": "599:35:4"
             },
             "returnParameters": {
-              "id": 230,
+              "id": 417,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "640:0:3"
+              "src": "652:0:4"
             },
-            "scope": 265,
-            "src": "577:125:3",
+            "scope": 468,
+            "src": "583:131:4",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 253,
+              "id": 446,
               "nodeType": "Block",
-              "src": "756:31:3",
+              "src": "795:42:4",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "components": [
+                      {
+                        "argumentTypes": null,
+                        "baseExpression": {
+                          "argumentTypes": null,
+                          "id": 438,
+                          "name": "fees",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 393,
+                          "src": "813:4:4",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_uint256_$2_storage",
+                            "typeString": "uint256[2] storage ref"
+                          }
+                        },
+                        "id": 440,
+                        "indexExpression": {
+                          "argumentTypes": null,
+                          "hexValue": "30",
+                          "id": 439,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "818:1:4",
+                          "subdenomination": null,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_0_by_1",
+                            "typeString": "int_const 0"
+                          },
+                          "value": "0"
+                        },
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "nodeType": "IndexAccess",
+                        "src": "813:7:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "baseExpression": {
+                          "argumentTypes": null,
+                          "id": 441,
+                          "name": "fees",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 393,
+                          "src": "822:4:4",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_array$_t_uint256_$2_storage",
+                            "typeString": "uint256[2] storage ref"
+                          }
+                        },
+                        "id": 443,
+                        "indexExpression": {
+                          "argumentTypes": null,
+                          "hexValue": "31",
+                          "id": 442,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "827:1:4",
+                          "subdenomination": null,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_1_by_1",
+                            "typeString": "int_const 1"
+                          },
+                          "value": "1"
+                        },
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "nodeType": "IndexAccess",
+                        "src": "822:7:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "id": 444,
+                    "isConstant": false,
+                    "isInlineArray": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "TupleExpression",
+                    "src": "812:18:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_uint256_$_t_uint256_$",
+                      "typeString": "tuple(uint256,uint256)"
+                    }
+                  },
+                  "functionReturnParameters": 437,
+                  "id": 445,
+                  "nodeType": "Return",
+                  "src": "805:25:4"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 447,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getFees",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 432,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "736:2:4"
+            },
+            "returnParameters": {
+              "id": 437,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 434,
+                  "name": "addFee",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 447,
+                  "src": "760:14:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 433,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "760:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 436,
+                  "name": "updateFee",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 447,
+                  "src": "776:17:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 435,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "776:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "759:35:4"
+            },
+            "scope": 468,
+            "src": "720:117:4",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 456,
+              "nodeType": "Block",
+              "src": "894:31:4",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
                     "baseExpression": {
                       "argumentTypes": null,
-                      "id": 249,
+                      "id": 452,
                       "name": "fees",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 206,
-                      "src": "773:4:3",
+                      "referencedDeclaration": 393,
+                      "src": "911:4:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_array$_t_uint256_$2_storage",
                         "typeString": "uint256[2] storage ref"
                       }
                     },
-                    "id": 251,
+                    "id": 454,
                     "indexExpression": {
                       "argumentTypes": null,
                       "hexValue": "30",
-                      "id": 250,
+                      "id": 453,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "kind": "number",
                       "lValueRequested": false,
                       "nodeType": "Literal",
-                      "src": "778:1:3",
+                      "src": "916:1:4",
                       "subdenomination": null,
                       "typeDescriptions": {
                         "typeIdentifier": "t_rational_0_by_1",
@@ -1562,43 +1980,43 @@
                     "isPure": false,
                     "lValueRequested": false,
                     "nodeType": "IndexAccess",
-                    "src": "773:7:3",
+                    "src": "911:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "functionReturnParameters": 248,
-                  "id": 252,
+                  "functionReturnParameters": 451,
+                  "id": 455,
                   "nodeType": "Return",
-                  "src": "766:14:3"
+                  "src": "904:14:4"
                 }
               ]
             },
             "documentation": null,
-            "id": 254,
+            "id": 457,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "getAddFee",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 245,
+              "id": 448,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "726:2:3"
+              "src": "861:2:4"
             },
             "returnParameters": {
-              "id": 248,
+              "id": 451,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 247,
+                  "id": 450,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 254,
-                  "src": "750:4:3",
+                  "scope": 457,
+                  "src": "885:7:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1606,10 +2024,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 246,
-                    "name": "uint",
+                    "id": 449,
+                    "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "750:4:3",
+                    "src": "885:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1619,48 +2037,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "749:6:3"
+              "src": "884:9:4"
             },
-            "scope": 265,
-            "src": "708:79:3",
+            "scope": 468,
+            "src": "843:82:4",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 263,
+              "id": 466,
               "nodeType": "Block",
-              "src": "844:31:3",
+              "src": "985:31:4",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
                     "baseExpression": {
                       "argumentTypes": null,
-                      "id": 259,
+                      "id": 462,
                       "name": "fees",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 206,
-                      "src": "861:4:3",
+                      "referencedDeclaration": 393,
+                      "src": "1002:4:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_array$_t_uint256_$2_storage",
                         "typeString": "uint256[2] storage ref"
                       }
                     },
-                    "id": 261,
+                    "id": 464,
                     "indexExpression": {
                       "argumentTypes": null,
                       "hexValue": "31",
-                      "id": 260,
+                      "id": 463,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "kind": "number",
                       "lValueRequested": false,
                       "nodeType": "Literal",
-                      "src": "866:1:3",
+                      "src": "1007:1:4",
                       "subdenomination": null,
                       "typeDescriptions": {
                         "typeIdentifier": "t_rational_1_by_1",
@@ -1673,43 +2091,43 @@
                     "isPure": false,
                     "lValueRequested": false,
                     "nodeType": "IndexAccess",
-                    "src": "861:7:3",
+                    "src": "1002:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "functionReturnParameters": 258,
-                  "id": 262,
+                  "functionReturnParameters": 461,
+                  "id": 465,
                   "nodeType": "Return",
-                  "src": "854:14:3"
+                  "src": "995:14:4"
                 }
               ]
             },
             "documentation": null,
-            "id": 264,
+            "id": 467,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "getUpdateFee",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 255,
+              "id": 458,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "814:2:3"
+              "src": "952:2:4"
             },
             "returnParameters": {
-              "id": 258,
+              "id": 461,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 257,
+                  "id": 460,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 264,
-                  "src": "838:4:3",
+                  "scope": 467,
+                  "src": "976:7:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1717,10 +2135,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 256,
-                    "name": "uint",
+                    "id": 459,
+                    "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "838:4:3",
+                    "src": "976:7:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1730,20 +2148,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "837:6:3"
+              "src": "975:9:4"
             },
-            "scope": 265,
-            "src": "793:82:3",
+            "scope": 468,
+            "src": "931:85:4",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 266,
-        "src": "418:459:3"
+        "scope": 469,
+        "src": "418:600:4"
       }
     ],
-    "src": "0:877:3"
+    "src": "0:1018:4"
   },
   "compiler": {
     "name": "solc",
@@ -1751,7 +2169,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-02-20T13:01:54.942Z",
+  "updatedAt": "2020-02-21T14:43:45.304Z",
   "devdoc": {
     "details": "Contract module which provides a basic access control mechanism, where there is an account (an owner) that can be granted exclusive access to specific functions. * This module is used through inheritance. It will make available the modifier `onlyOwner`, which can be applied to your functions to restrict their use to the owner.",
     "methods": {
