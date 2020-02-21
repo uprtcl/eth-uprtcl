@@ -388,12 +388,27 @@ contract('Uprtcl', (accounts) => {
     assert.equal(perspectiveRead2.headCid1, headCidParts[0], "head is not what was expected");
   });
 
-  it.skip('should be able to add a batch of perspectives', async () => {
+  it('should be able to add a batch of perspectives', async () => {
     const uprtclInstance = await Uprtcl.deployed();
 
     const timestamps = randomVec(10);
 
-    const buildPerspectivesDataPromises = timestamps.map(async (timestamp) => {
+    const buildPerspectivesPromises = timestamps.map(async (timestamp) => {
+
+      const data = {
+        text: 'This is my data ads'
+      }
+
+      const dataId = await generateCid(JSON.stringify(data), cidConfig1);
+
+      const head = {
+        creatorId: 'did:uport:123',
+        timestamp: timestamp + 1,
+        message: 'test commit new',
+        parentsIds: [],
+        dataId: dataId.toString()
+      }
+      
       const perspective = {
         origin: 'eth://contractAddress',
         creatorId: 'did:uport:123',
@@ -401,17 +416,10 @@ contract('Uprtcl', (accounts) => {
       }
 
       const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
-      /** store this string to simulate the step from string to cid */
-      return { 
-        perspectiveId: perspectiveCid.toString()
-      }
-    });
 
-    const perspectivesData = await Promise.all(buildPerspectivesDataPromises);
-
-    const buildPerspectivesPromises = perspectivesData.map(async (perspectivesData) => {
-      
-      const perspectiveCid = perspectivesData.perspectiveId;
+      const headId = await generateCid(JSON.stringify(head), cidConfig1);
+      const headCidStr = headId.toString();
+      const headCidParts = cidToHex32(headCidStr);
       
       /** perspective and context ids are hashed to fit in bytes32
        * their multihash is hashed so different cids map to the same perspective */
@@ -419,8 +427,7 @@ contract('Uprtcl', (accounts) => {
 
       return {
         perspectiveIdHash: perspectiveIdHash,
-        headCid1: ZERO_HEX_32,
-        headCid0: ZERO_HEX_32,
+        headCid: headCidStr,
         owner: firstOwner
       }
     });
@@ -432,8 +439,16 @@ contract('Uprtcl', (accounts) => {
 
     console.log(`addPerspectiveBatch gas cost: ${result.receipt.gasUsed}`)
 
-    const checkOwnersPromises = await perspectivesData.map(async (perspectiveData) => {
-      const perspectiveIdHash = await hash2x32(perspectiveData.perspectiveId);
+    const checkOwnersPromises = await timestamps.map(async (timestamp) => {
+      const perspective = {
+        origin: 'eth://contractAddress',
+        creatorId: 'did:uport:123',
+        timestamp: timestamp
+      }
+
+      const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+
+      const perspectiveIdHash = await hash2x32(perspectiveCid);
       let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
         perspectiveIdHash,
         { from: observer });
