@@ -7,7 +7,6 @@ import "./SafeMath.sol";
 /** Underscore Protocol Ethereum Service used to store the content of
 * _Prtcl perspectives */
 contract UprtclRoot is Toll {
-
     using SafeMath for uint256;
 
     struct Perspective {
@@ -24,6 +23,7 @@ contract UprtclRoot is Toll {
     }
 
     mapping(bytes32 => Perspective) public perspectives;
+    private address grantee;
 
     event PerspectiveOwnerUpdated(
         bytes32 indexed perspectiveIdHash,
@@ -31,11 +31,14 @@ contract UprtclRoot is Toll {
         address previousOwner
     );
 
-    /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
-    function addPerspectiveInternal(
-        NewPerspective memory newPerspective
-    ) private {
+    function setGrantee(address _grantee) public {
+        grantee = _grantee;
+    }
 
+    /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
+    function addPerspectiveInternal(NewPerspective memory newPerspective)
+        private
+    {
         bytes32 perspectiveIdHash = newPerspective.perspectiveIdHash;
 
         Perspective storage perspective = perspectives[perspectiveIdHash];
@@ -49,15 +52,24 @@ contract UprtclRoot is Toll {
         perspectives[perspectiveIdHash] = perspective;
     }
 
-    function addPerspective(NewPerspective memory newPerspective) public payable {
+    function addPerspective(NewPerspective memory newPerspective)
+        public
+        payable
+    {
         require(msg.value >= getAddFee(), "add fee not enough");
         addPerspectiveInternal(newPerspective);
     }
 
-    function addPerspectiveBatch(NewPerspective[] memory newPerspectives) public payable {
+    function addPerspectiveBatch(NewPerspective[] memory newPerspectives)
+        public
+        payable
+    {
         uint256 nPerspectives = newPerspectives.length;
 
-        require(msg.value >= (getAddFee().mul(nPerspectives)), "add fee not enough");
+        require(
+            msg.value >= (getAddFee().mul(nPerspectives)),
+            "add fee not enough"
+        );
 
         for (uint256 ix = 0; ix < nPerspectives; ix++) {
             addPerspectiveInternal(newPerspectives[ix]);
@@ -74,8 +86,8 @@ contract UprtclRoot is Toll {
         Perspective storage perspective = perspectives[perspectiveIdHash];
 
         require(
-            perspective.owner == msg.sender,
-            "only the owner can update the perspective"
+            (perspective.owner == msg.sender) || (grantee == msg.sender),
+            "only the owner or grantee can update the perspective"
         );
 
         if (newHeadCid0 != bytes32(0)) {
@@ -84,11 +96,11 @@ contract UprtclRoot is Toll {
         }
     }
 
-    function changeOwnerInternal(
+    function changePerspectiveOwnerInternal(
         bytes32 perspectiveIdHash,
         address newOwner,
-        address sender) private {
-
+        address sender
+    ) private {
         Perspective storage perspective = perspectives[perspectiveIdHash];
         require(sender == perspective.owner, "unauthorized access");
 
@@ -103,46 +115,45 @@ contract UprtclRoot is Toll {
     }
 
     /** Changes the owner of a given perspective. Available only to the current owner of that perspective. */
-    function changeOwner(
-        bytes32 perspectiveIdHash,
-        address newOwner) public {
-        changeOwnerInternal(perspectiveIdHash, newOwner, msg.sender);
+    function changePerspectiveOwner(bytes32 perspectiveIdHash, address newOwner)
+        public
+    {
+        changePerspectiveOwnerInternal(perspectiveIdHash, newOwner, msg.sender);
+    }
+
+    function changePerspectiveOwnerBatch(
+        bytes32[] memory perspectiveIdsHashes,
+        address newOwner
+    ) public {
+        for (uint256 ix = 0; ix < perspectiveIdsHashes.length; ix++) {
+            changePerspectiveOwnerInternal(
+                perspectiveIdsHashes[ix],
+                newOwner,
+                msg.sender
+            );
+        }
     }
 
     /** Get the perspective owner and details from its ID */
-    function getPerspectiveDetails(
-        bytes32 perspectiveIdHash)
+    function getPerspectiveDetails(bytes32 perspectiveIdHash)
         public
         view
-        returns (
-            address owner,
-            bytes32 headCid1,
-            bytes32 headCid0
-        )
+        returns (address owner, bytes32 headCid1, bytes32 headCid0)
     {
         Perspective memory perspective = perspectives[perspectiveIdHash];
 
-        return (
-            perspective.owner,
-            perspective.headCid1,
-            perspective.headCid0
-        );
+        return (perspective.owner, perspective.headCid1, perspective.headCid0);
     }
 
     /** Get the perspective owner and details from its ID */
-    function getPerspectiveOwner(
-        bytes32 perspectiveIdHash)
+    function getPerspectiveOwner(bytes32 perspectiveIdHash)
         public
         view
-        returns (
-            address owner
-        )
+        returns (address owner)
     {
         Perspective memory perspective = perspectives[perspectiveIdHash];
 
-        return (
-            perspective.owner
-        );
+        return (perspective.owner);
     }
 
 }
