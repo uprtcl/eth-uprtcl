@@ -2,8 +2,9 @@ pragma solidity >=0.5.0 <0.6.0;
 pragma experimental ABIEncoderV2;
 
 import "./UprtclRoot.sol";
+import "./Ownable.sol";
 
-contract UprtclDetails {
+contract UprtclDetails is Ownable {
 
     struct PerspectiveDetails {
         string name;
@@ -27,6 +28,7 @@ contract UprtclDetails {
     function setPerspectiveDetails(
         bytes32 perspectiveIdHash,
         PerspectiveDetails memory newDetails
+        ... make internal and msgsend parameter
     ) public {
         require(uprtclRoot.getPerspectiveOwner(perspectiveIdHash) == msg.sender, "details can only by set by perspective owner");
 
@@ -52,6 +54,12 @@ contract UprtclDetails {
         UprtclRoot.NewPerspective memory newPerspective,
         PerspectiveDetails memory newDetails,
         address account) public {
+
+        /** collect fee here */
+        uint256 fee = uprtclRoot.getAddFee();
+        if (fee > 0) {
+            uprtclRoot.consume(account, msg.sender, fee);
+        }
 
         uprtclRoot.addPerspective(newPerspective, account);
         setPerspectiveDetails(newPerspective.perspectiveIdHash, newDetails);

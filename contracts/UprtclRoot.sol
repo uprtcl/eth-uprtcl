@@ -26,8 +26,9 @@ contract UprtclRoot is Ownable {
 
     /** superUsers can update any perspective */
     mapping(address => bool) private superUsers;
-    mapping(bytes32 => Perspective) public perspectives;
     mapping(uint256 => uint256) public fees;
+
+    mapping(bytes32 => Perspective) public perspectives;
 
     event PerspectiveOwnerUpdated(
         bytes32 indexed perspectiveIdHash,
@@ -35,7 +36,7 @@ contract UprtclRoot is Ownable {
         address previousOwner
     );
 
-    UprtclAccounts accounts;
+    UprtclAccounts public accounts;
 
     function setAccounts(UprtclAccounts _accounts) public onlyOwner {
         accounts = _accounts;
@@ -66,6 +67,11 @@ contract UprtclRoot is Ownable {
         return fees[1];
     }
 
+    function consume(address account, address by, uint256 amount) public {
+        require(superUsers[msg.sender] == true, "only super user");
+        accounts.consume(account, by, amount);
+    }
+
     /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
     function addPerspectiveInternal(NewPerspective memory newPerspective)
         private
@@ -86,9 +92,11 @@ contract UprtclRoot is Ownable {
     function addPerspective(NewPerspective memory newPerspective, address account)
         public
     {
-        uint256 fee = getAddFee();
-        if (fee > 0) {
-            accounts.consume(account, msg.sender, fee);
+        if (!superUsers[msg.sender]) {
+            uint256 fee = getAddFee();
+            if (fee > 0) {
+                accounts.consume(account, msg.sender, fee);
+            }
         }
         addPerspectiveInternal(newPerspective);
     }
@@ -98,9 +106,12 @@ contract UprtclRoot is Ownable {
     {
         uint256 nPerspectives = newPerspectives.length;
 
-        uint256 fee = getUpdateFee().mul(nPerspectives);
-        if (fee > 0) {
-            accounts.consume(account, msg.sender, fee);
+        if (!superUsers[msg.sender]) {
+            uint256 fee = getUpdateFee().mul(nPerspectives);
+
+            if (fee > 0) {
+                accounts.consume(account, msg.sender, fee);
+            }
         }
 
         for (uint256 ix = 0; ix < nPerspectives; ix++) {
@@ -114,9 +125,11 @@ contract UprtclRoot is Ownable {
         bytes32 newHeadCid0,
         address account
     ) public {
-        uint256 fee = getUpdateFee();
-        if (fee > 0) {
-            accounts.consume(account, msg.sender, fee);
+        if (!superUsers[msg.sender]) {
+            uint256 fee = getUpdateFee();
+            if (fee > 0) {
+                accounts.consume(account, msg.sender, fee);
+            }
         }
 
         Perspective storage perspective = perspectives[perspectiveIdHash];

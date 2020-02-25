@@ -600,9 +600,10 @@ contract('UprtclRoot', (accounts) => {
 
   });
 
-  it.skip('should be able to set the details of a persective', async () => {
+  it('should be able to set the details of a persective', async () => {
     const uprtclInstance = await UprtclRoot.deployed();
     const detailsInstance = await UprtclDetails.deployed();
+    const erc20Instance = await ERC20Mintable.deployed();    
 
     const perspective = {
       origin: 'eth://contractAddress',
@@ -623,9 +624,12 @@ contract('UprtclRoot', (accounts) => {
       owner: firstOwner
     }
 
+    await erc20Instance.mint(accountOwner, ADD_FEE, { from: owner });
+    await erc20Instance.approve(UprtclAccounts.address, ADD_FEE, { from: accountOwner });
+
     await uprtclInstance.addPerspective(
-      newPerspective,
-      { from: creator, value: ADD_FEE });
+      newPerspective, accountOwner,
+      { from: creator });
 
     const currentDetails = await detailsInstance.getPerspectiveDetails(perspectiveIdHash);
     
@@ -661,8 +665,10 @@ contract('UprtclRoot', (accounts) => {
 
   });
 
-  it.skip('should be able to init a persective with head and details', async () => {
+  it('should be able to init a persective with head and details', async () => {
+    const uprtclInstance = await UprtclRoot.deployed();
     const detailsInstance = await UprtclDetails.deployed();
+    const erc20Instance = await ERC20Mintable.deployed();    
 
     const perspective = {
       origin: 'eth://contractAddress',
@@ -688,10 +694,16 @@ contract('UprtclRoot', (accounts) => {
       context: 'my-context'
     };
 
+    await erc20Instance.mint(accountOwner, ADD_FEE, { from: owner });
+    await erc20Instance.approve(UprtclAccounts.address, ADD_FEE, { from: accountOwner });
+
+    await uprtclInstance.setSuperUser(detailsInstance.address, { from: owner });    
+
     await detailsInstance.initPerspective(
         newPerspective,
         details,
-        { from: firstOwner, value: ADD_FEE } )
+        accountOwner,
+        { from: creator } )
 
     const newDetails = await detailsInstance.getPerspectiveDetails(perspectiveIdHash);
 
