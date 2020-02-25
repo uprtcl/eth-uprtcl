@@ -10,6 +10,8 @@ const Buffer = require('buffer/').Buffer;
 const toBuffer = require('typedarray-to-buffer')
 var seedrandom = require('seedrandom');
 
+var BN = web3.utils.BN;
+
 cidConfig1 = {
   version: 1,
   codec: 'raw',
@@ -183,8 +185,8 @@ contract('UprtclRoot', (accounts) => {
 
   const accountOwner = accounts[6];
 
-  const ADD_FEE = 500000000000000;
-  const UPDATE_FEE = 200000000000000;
+  const ADD_FEE = new BN(500000000000000);
+  const UPDATE_FEE = new BN(200000000000000);
 
   it('should be able to set the fees', async () => {
     const uprtclInstance = await UprtclRoot.deployed();
@@ -193,8 +195,9 @@ contract('UprtclRoot', (accounts) => {
     assert.equal(ownerRead, owner, "owner not as expected");
 
     const fees = await uprtclInstance.getFees({ from: observer });
-    assert.equal(fees.addFee, 0, 'add fee not zero');
-    assert.equal(fees.updateFee, 0, 'update fee not zero');
+    
+    assert.isTrue(fees.addFee.eq(new BN(0)), 'add fee not zero');
+    assert.isTrue(fees.updateFee.eq(new BN(0)), 'update fee not zero');
 
     let failed = false;
     await uprtclInstance.setFees(ADD_FEE, UPDATE_FEE, { from: observer }).catch((error) => {
@@ -207,8 +210,8 @@ contract('UprtclRoot', (accounts) => {
     await uprtclInstance.setFees(ADD_FEE, UPDATE_FEE, { from: owner })
     
     const fees2 = await uprtclInstance.getFees({ from: observer });
-    assert.equal(fees2.addFee, ADD_FEE, 'add fee not zero');
-    assert.equal(fees2.updateFee, UPDATE_FEE, 'update fee not zero');
+    assert.isTrue(fees2.addFee.eq(ADD_FEE), 'add fee not zero');
+    assert.isTrue(fees2.updateFee.eq(UPDATE_FEE), 'update fee not zero');
 
     failed = false;
     await uprtclInstance.transferOwnership(newOwner, { from: observer }).catch((error) => {
@@ -328,6 +331,9 @@ contract('UprtclRoot', (accounts) => {
     /** mint tokens to the accountOwner */
     await erc20Instance.mint(accountOwner, ADD_FEE, { from: owner });
 
+    const accountBalance = await erc20Instance.balanceOf(accountOwner);
+    assert.isTrue(accountBalance.eq(ADD_FEE), "account balance not as expected");
+
     /** acountOwner gives UprtclAcconts allowance */
     await erc20Instance.approve(UprtclAccounts.address, ADD_FEE, { from: accountOwner });
 
@@ -342,6 +348,12 @@ contract('UprtclRoot', (accounts) => {
       { from: creator });
 
     console.log(`addPerspective with payment gas cost: ${result.receipt.gasUsed}`);
+
+    const accountBalance2 = await erc20Instance.balanceOf(accountOwner);
+    assert.isTrue(accountBalance2.eq(new BN(0)), "account balance not as expected");
+
+    const uprtclBalance = await erc20Instance.balanceOf(uprtclAccounts.address);
+    assert.isTrue(uprtclBalance.eq(ADD_FEE), "uprtcl balance not as expected");
     
     let perspectiveRead = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash,
@@ -352,8 +364,9 @@ contract('UprtclRoot', (accounts) => {
     assert.equal(perspectiveRead.headCid1, ZERO_HEX_32, "head is not what was expected");
   });
 
-  it.skip('should persist and read a perspective with head', async () => {
+  it('should persist and read a perspective with head', async () => {
     const uprtclInstance = await UprtclRoot.deployed();
+    const erc20Instance = await ERC20Mintable.deployed();    
 
     const perspective = {
       origin: 'eth://contractAddress',
@@ -393,9 +406,12 @@ contract('UprtclRoot', (accounts) => {
       owner: firstOwner
     }
 
+    await erc20Instance.mint(accountOwner, ADD_FEE, { from: owner });
+    await erc20Instance.approve(UprtclAccounts.address, ADD_FEE, { from: accountOwner });
+
     const result = await uprtclInstance.addPerspective(
-      newPerspective,
-      { from: creator, value: ADD_FEE });
+      newPerspective, accountOwner,
+      { from: creator });
 
     console.log(`addPerspective with head gas cost: ${result.receipt.gasUsed}`);
 
@@ -408,8 +424,12 @@ contract('UprtclRoot', (accounts) => {
     assert.equal(perspectiveRead.headCid1, headCidParts[0], "head is not what was expected");
   });
   
-  it.skip('should persist and update a perspective', async () => {
+  it('should persist and update a perspective', async () => {
     const uprtclInstance = await UprtclRoot.deployed();
+    const uprtclAccounts = await UprtclAccounts.deployed();
+    const erc20Instance = await ERC20Mintable.deployed();    
+
+    await uprtclInstance.setFees(ADD_FEE, UPDATE_FEE, { from: owner })
 
     const perspective = {
       origin: 'eth://contractAddress',
@@ -430,9 +450,12 @@ contract('UprtclRoot', (accounts) => {
       owner: firstOwner
     }
 
+    await erc20Instance.mint(accountOwner, ADD_FEE, { from: owner });
+    await erc20Instance.approve(UprtclAccounts.address, ADD_FEE, { from: accountOwner });
+
     await uprtclInstance.addPerspective(
-      newPerspective,
-      { from: creator, value: ADD_FEE });
+      newPerspective, accountOwner,
+      { from: creator });
 
     let perspectiveRead1 = await uprtclInstance.getPerspectiveDetails(
       perspectiveIdHash,
@@ -460,20 +483,32 @@ contract('UprtclRoot', (accounts) => {
     const headCidStr = headId.toString();
     const headCidParts = cidToHex32(headCidStr);
 
+    await uprtclAccounts.setUsufructuary(observer, true, { from: accountOwner });
+    await erc20Instance.mint(accountOwner, UPDATE_FEE, { from: owner });
+    await erc20Instance.approve(UprtclAccounts.address, UPDATE_FEE, { from: accountOwner });
+    
     let failed = false;
     await uprtclInstance.updateHead(
-      perspectiveIdHash, headCidParts[0], headCidParts[1],
-      { from: observer, value: UPDATE_FEE })
+      perspectiveIdHash, headCidParts[0], headCidParts[1], accountOwner,
+      { from: observer })
     .catch((error) => {
       assert.equal(error.reason, 'only the owner can update the perspective', "unexpected reason");
       failed = true
     });
 
+    await uprtclAccounts.setUsufructuary(observer, false, { from: accountOwner });
+    const isUsufructurary = await uprtclAccounts.isUsufructuary(accountOwner, observer);
+    assert.equal(isUsufructurary, false, 'usufructuary not set');
+
     assert.isTrue(failed, "update the perspective did not failed");
 
+    await uprtclAccounts.setUsufructuary(firstOwner, true, { from: accountOwner });
+
     const result = await uprtclInstance.updateHead(
-      perspectiveIdHash, headCidParts[0], headCidParts[1],
-      { from: firstOwner, value: UPDATE_FEE });
+      perspectiveIdHash, headCidParts[0], headCidParts[1], accountOwner,
+      { from: firstOwner });
+
+      await uprtclAccounts.setUsufructuary(firstOwner, false, { from: accountOwner });
 
     console.log(`updateHead gas cost: ${result.receipt.gasUsed}`);
 
@@ -486,8 +521,9 @@ contract('UprtclRoot', (accounts) => {
     assert.equal(perspectiveRead2.headCid1, headCidParts[0], "head is not what was expected");
   });
 
-  it.skip('should be able to add a batch of perspectives', async () => {
+  it('should be able to add a batch of perspectives', async () => {
     const uprtclInstance = await UprtclRoot.deployed();
+    const erc20Instance = await ERC20Mintable.deployed();    
 
     const timestamps = randomVec(50);
 
@@ -533,8 +569,13 @@ contract('UprtclRoot', (accounts) => {
 
     const perspectives = await Promise.all(buildPerspectivesPromises);
 
+    const fee = ADD_FEE.mul(new BN(perspectives.length));
+
+    await erc20Instance.mint(accountOwner, fee, { from: owner });
+    await erc20Instance.approve(UprtclAccounts.address, fee, { from: accountOwner });
+
     let result = await uprtclInstance.addPerspectiveBatch(
-      perspectives, { from: creator, value: ADD_FEE*perspectives.length } );
+      perspectives, accountOwner, { from: creator } );
 
     console.log(`addPerspectiveBatch gas cost: ${result.receipt.gasUsed}`)
 

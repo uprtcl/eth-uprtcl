@@ -26,9 +26,9 @@ contract UprtclAccounts is Ownable {
     }
 
     function consume (address account, address by, uint256 amount) public {
+        // TODO: Should be callable from UprtclRoot or UprtclProposals only!
         require(isUsufructuary(account, by) == true, "user is not an account usufructuary");
-        require(token.allowance(account, address(this)) >= amount, "insuficient funds");
-        // token.transferFrom(account, address(this), amount);
+        token.transferFrom(account, address(this), amount);
     }
 
 }

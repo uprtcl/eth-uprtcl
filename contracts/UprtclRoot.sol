@@ -100,7 +100,7 @@ contract UprtclRoot is Ownable {
 
         uint256 fee = getUpdateFee().mul(nPerspectives);
         if (fee > 0) {
-            accounts.consume(msg.sender, account, fee);
+            accounts.consume(account, msg.sender, fee);
         }
 
         for (uint256 ix = 0; ix < nPerspectives; ix++) {
@@ -116,7 +116,7 @@ contract UprtclRoot is Ownable {
     ) public {
         uint256 fee = getUpdateFee();
         if (fee > 0) {
-            accounts.consume(msg.sender, account, fee);
+            accounts.consume(account, msg.sender, fee);
         }
 
         Perspective storage perspective = perspectives[perspectiveIdHash];
