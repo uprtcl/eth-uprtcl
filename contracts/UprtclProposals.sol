@@ -145,7 +145,7 @@ contract UprtclProposals is Ownable {
         proposal.authorized = authorized;
     }
 
-    function executeProposal(bytes32 proposalId) public {
+    function executeProposal(bytes32 proposalId, address account) public {
         Proposal storage proposal = proposals[proposalId];
 
         /** Check the msg.sender is an approved address */
@@ -159,20 +159,22 @@ contract UprtclProposals is Ownable {
             indexes[ix] = ix;
         }
 
-        executeProposalPartiallyInternal(proposalId, indexes, msg.sender);
+        executeProposalPartiallyInternal(proposalId, indexes, msg.sender, account);
     }
 
     function executeProposalPartially(
         bytes32 proposalId,
-        uint256[] memory indexes
+        uint256[] memory indexes,
+        address account
     ) public {
-        executeProposalPartiallyInternal(proposalId, indexes, msg.sender);
+        executeProposalPartiallyInternal(proposalId, indexes, msg.sender, account);
     }
 
     function executeProposalPartiallyInternal(
         bytes32 proposalId,
         uint256[] memory indexes,
-        address msgSender
+        address msgSender,
+        address account
     ) private {
         Proposal storage proposal = proposals[proposalId];
         require(proposal.authorized != 0, "Proposal not authorized");
@@ -188,7 +190,7 @@ contract UprtclProposals is Ownable {
             require(headUpdate.executed == 0, "head update already executed");
             headUpdate.executed = 1;
 
-            uprtclRoot.updateHead(headUpdate.perspectiveIdHash, headUpdate.headCid0, headUpdate.headCid1);
+            uprtclRoot.updateHead(headUpdate.perspectiveIdHash, headUpdate.headCid0, headUpdate.headCid1, account);
         }
     }
 

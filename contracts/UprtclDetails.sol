@@ -50,9 +50,10 @@ contract UprtclDetails {
 
     function initPerspective(
         UprtclRoot.NewPerspective memory newPerspective,
-        PerspectiveDetails memory newDetails) public payable {
+        PerspectiveDetails memory newDetails,
+        address account) public {
 
-        uprtclRoot.addPerspective.value(msg.value)(newPerspective);
+        uprtclRoot.addPerspective(newPerspective, account);
         setPerspectiveDetails(newPerspective.perspectiveIdHash, newDetails);
     }
 

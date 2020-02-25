@@ -4,6 +4,8 @@ pragma experimental ABIEncoderV2;
 import "./Ownable.sol";
 import "./SafeMath.sol";
 
+import "./UprtclAccounts.sol";
+
 /** Underscore Protocol Ethereum Service used to store the content of
 * _Prtcl perspectives */
 contract UprtclRoot is Ownable {
@@ -26,15 +28,21 @@ contract UprtclRoot is Ownable {
     mapping(address => bool) private superUsers;
     mapping(bytes32 => Perspective) public perspectives;
     mapping(uint256 => uint256) public fees;
-    
+
     event PerspectiveOwnerUpdated(
         bytes32 indexed perspectiveIdHash,
         address newOwner,
         address previousOwner
     );
 
-    function setSuperUser(address _grantee) public onlyOwner {
-        superUsers[_grantee] = true;
+    UprtclAccounts accounts;
+
+    function setAccounts(UprtclAccounts _accounts) public onlyOwner {
+        accounts = _accounts;
+    }
+
+    function setSuperUser(address suAddress) public onlyOwner {
+        superUsers[suAddress] = true;
     }
 
     function withdraw(uint256 amount) public onlyOwner {
@@ -75,24 +83,25 @@ contract UprtclRoot is Ownable {
         perspectives[perspectiveIdHash] = perspective;
     }
 
-    function addPerspective(NewPerspective memory newPerspective)
+    function addPerspective(NewPerspective memory newPerspective, address account)
         public
-        payable
     {
-        require(msg.value >= getAddFee(), "add fee not enough");
+        uint256 fee = getAddFee();
+        if (fee > 0) {
+            accounts.consume(account, msg.sender, fee);
+        }
         addPerspectiveInternal(newPerspective);
     }
 
-    function addPerspectiveBatch(NewPerspective[] memory newPerspectives)
+    function addPerspectiveBatch(NewPerspective[] memory newPerspectives, address account)
         public
-        payable
     {
         uint256 nPerspectives = newPerspectives.length;
 
-        require(
-            msg.value >= (getAddFee().mul(nPerspectives)),
-            "add fee not enough"
-        );
+        uint256 fee = getUpdateFee().mul(nPerspectives);
+        if (fee > 0) {
+            accounts.consume(msg.sender, account, fee);
+        }
 
         for (uint256 ix = 0; ix < nPerspectives; ix++) {
             addPerspectiveInternal(newPerspectives[ix]);
@@ -102,9 +111,13 @@ contract UprtclRoot is Ownable {
     function updateHead(
         bytes32 perspectiveIdHash,
         bytes32 newHeadCid1,
-        bytes32 newHeadCid0
-    ) public payable {
-        require(msg.value >= getUpdateFee(), "update fee not added");
+        bytes32 newHeadCid0,
+        address account
+    ) public {
+        uint256 fee = getUpdateFee();
+        if (fee > 0) {
+            accounts.consume(msg.sender, account, fee);
+        }
 
         Perspective storage perspective = perspectives[perspectiveIdHash];
 
