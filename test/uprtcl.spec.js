@@ -1,5 +1,6 @@
 const UprtclRoot = artifacts.require("UprtclRoot");
 const UprtclDetails = artifacts.require("UprtclDetails");
+const UprtclProposals = artifacts.require("UprtclProposals");
 
 const CID = require('cids');
 const multihashing = require('multihashing-async')
@@ -175,6 +176,9 @@ contract('UprtclRoot', (accounts) => {
   const owner = accounts[9];
   const newOwner = accounts[8];
 
+  const proposalOwner = accounts[0];
+  const requestRegistrator = accounts[4];
+
   const ADD_FEE = 500000000000000;
   const UPDATE_FEE = 200000000000000;
 
@@ -221,6 +225,9 @@ contract('UprtclRoot', (accounts) => {
       failed = true
     });
     assert.isTrue(failed, "owner transfer did not failed");
+
+    /** leave owner as the owner, not newOwner */
+    await uprtclInstance.transferOwnership(owner, { from: newOwner });
   })
 
   it('should persist and read a perspective', async () => {
@@ -565,5 +572,60 @@ contract('UprtclRoot', (accounts) => {
     assert.equal(newDetails.name, 'my-name', "wrong name");
     assert.equal(newDetails.context, 'my-context', "wrong context");
 
+  });
+
+  it('should be able to create a new proposal without update heads', async () => {
+    const uprtclInstance = await UprtclRoot.deployed();
+    const uprtclProposals = await UprtclProposals.deployed();
+
+    failed = false;
+    await uprtclInstance.setSuperUser(uprtclProposals.address, { from: observer }).catch((error) => {
+      assert.equal(error.reason, 'Ownable: caller is not the owner', "unexpected reason");
+      failed = true
+    });
+    assert.isTrue(failed, "superUser set did not afailed");
+
+    await uprtclInstance.setSuperUser(uprtclProposals.address, { from: owner });    
+
+    const toPerspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123',
+      timestamp: randomInt()
+    }
+
+    const fromPerspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123',
+      timestamp: randomInt()
+    }
+
+    const toPerspectiveCid = await generateCid(JSON.stringify(toPerspective), cidConfig1);
+    const fromPerspectiveCid = await generateCid(JSON.stringify(fromPerspective), cidConfig1);
+    
+    const toPerspectiveIdHash = await hash2x32(toPerspectiveCid.toString());
+    const fromPerspectiveIdHash = await hash2x32(fromPerspectiveCid.toString());
+    const nonce = 0;
+
+    const result = await uprtclProposals.initProposal(
+      toPerspectiveIdHash, 
+      fromPerspectiveIdHash, 
+      proposalOwner, 
+      nonce, 
+      [], 
+      [],
+      { from: requestRegistrator })
+
+    console.log(`initProposal gas cost: ${result.receipt.gasUsed}`)
+    
+    const proposalId01 = await uprtclProposals.getProposalId(
+      toPerspectiveIdHash,
+      fromPerspectiveIdHash,
+      nonce);
+
+    let proposalRead = await uprtclProposals.getProposal(proposalId01);
+    assert.equal(proposalRead.owner, proposalOwner, "unexpected request owner")
+    assert.equal(proposalRead.approvedAddresses.length, 0, "unexpected approvedAddress")
+    assert.equal(proposalRead.status, 1, "unexpected status")
+    assert.equal(proposalRead.authorized, 0, "unexpected authorized")
   });
 });

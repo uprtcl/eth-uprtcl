@@ -1,12 +1,12 @@
 pragma solidity >=0.5.0 <0.6.0;
 pragma experimental ABIEncoderV2;
 
-import "./Toll.sol";
+import "./Ownable.sol";
 import "./SafeMath.sol";
 
 /** Underscore Protocol Ethereum Service used to store the content of
 * _Prtcl perspectives */
-contract UprtclRoot is Toll {
+contract UprtclRoot is Ownable {
     using SafeMath for uint256;
 
     struct Perspective {
@@ -22,17 +22,40 @@ contract UprtclRoot is Toll {
         address owner;
     }
 
+    /** superUsers can update any perspective */
+    mapping(address => bool) private superUsers;
     mapping(bytes32 => Perspective) public perspectives;
-    private address grantee;
-
+    mapping(uint256 => uint256) public fees;
+    
     event PerspectiveOwnerUpdated(
         bytes32 indexed perspectiveIdHash,
         address newOwner,
         address previousOwner
     );
 
-    function setGrantee(address _grantee) public {
-        grantee = _grantee;
+    function setSuperUser(address _grantee) public onlyOwner {
+        superUsers[_grantee] = true;
+    }
+
+    function withdraw(uint256 amount) public onlyOwner {
+        this.owner().transfer(amount);
+    }
+
+    function setFees(uint256 addFee, uint256 updateFee) public onlyOwner {
+        fees[0] = addFee;
+        fees[1] = updateFee;
+    }
+
+    function getFees() public view returns (uint256 addFee, uint256 updateFee) {
+        return (fees[0], fees[1]);
+    }
+
+    function getAddFee() public view returns (uint256) {
+        return fees[0];
+    }
+
+    function getUpdateFee() public view returns (uint256) {
+        return fees[1];
     }
 
     /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
@@ -86,8 +109,8 @@ contract UprtclRoot is Toll {
         Perspective storage perspective = perspectives[perspectiveIdHash];
 
         require(
-            (perspective.owner == msg.sender) || (grantee == msg.sender),
-            "only the owner or grantee can update the perspective"
+            (perspective.owner == msg.sender) || (superUsers[msg.sender] == true),
+            "only the owner can update the perspective"
         );
 
         if (newHeadCid0 != bytes32(0)) {
