@@ -68,8 +68,12 @@ contract UprtclDetails is Ownable {
             uprtclRoot.consume(account, msg.sender, fee);
         }
 
-        uprtclRoot.addPerspective(newPerspective, account);
-        setPerspectiveDetailsInternal(newPerspective.perspectiveIdHash, newDetails, newPerspective.owner);
+        uprtclRoot.createPerspective(newPerspective, account);
+        
+        setPerspectiveDetailsInternal(
+            uprtclRoot.getPerspectiveIdHash(newPerspective.perspectiveId),
+            newDetails,
+            newPerspective.owner);
     }
 
 }

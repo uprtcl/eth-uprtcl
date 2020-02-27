@@ -18,7 +18,7 @@ contract UprtclRoot is HasSuperUsers {
     }
 
     struct NewPerspective {
-        bytes32 perspectiveIdHash;
+        string perspectiveId;
         bytes32 headCid1;
         bytes32 headCid0;
         address owner;
@@ -29,10 +29,9 @@ contract UprtclRoot is HasSuperUsers {
 
     mapping(uint256 => uint256) public fees;
 
-    event PerspectiveOwnerUpdated(
+    event PerspectiveCreated(
         bytes32 indexed perspectiveIdHash,
-        address newOwner,
-        address previousOwner
+        string perspectiveId
     );
 
     UprtclAccounts public accounts;
@@ -70,11 +69,15 @@ contract UprtclRoot is HasSuperUsers {
         accounts.transferTo(from, by, to, amount);
     }
 
+    function getPerspectiveIdHash(string memory perspectiveId) public pure returns (bytes32 idHash) {
+        return keccak256(abi.encodePacked(perspectiveId));
+    }
+
     /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
-    function addPerspectiveInternal(NewPerspective memory newPerspective)
+    function createPerspectiveInternal(NewPerspective memory newPerspective)
         private
     {
-        bytes32 perspectiveIdHash = newPerspective.perspectiveIdHash;
+        bytes32 perspectiveIdHash = getPerspectiveIdHash(newPerspective.perspectiveId);
 
         Perspective storage perspective = perspectives[perspectiveIdHash];
         require(address(0) != newPerspective.owner, "owner cannot be empty");
@@ -85,9 +88,14 @@ contract UprtclRoot is HasSuperUsers {
         perspective.headCid0 = newPerspective.headCid0;
 
         perspectives[perspectiveIdHash] = perspective;
+
+        emit PerspectiveCreated(
+            perspectiveIdHash,
+            newPerspective.perspectiveId
+        );
     }
 
-    function addPerspective(NewPerspective memory newPerspective, address account)
+    function createPerspective(NewPerspective memory newPerspective, address account)
         public
     {
         if (!isSuperUser(msg.sender)) {
@@ -96,10 +104,10 @@ contract UprtclRoot is HasSuperUsers {
                 accounts.consume(account, msg.sender, fee);
             }
         }
-        addPerspectiveInternal(newPerspective);
+        createPerspectiveInternal(newPerspective);
     }
 
-    function addPerspectiveBatch(NewPerspective[] memory newPerspectives, address account)
+    function createPerspectiveBatch(NewPerspective[] memory newPerspectives, address account)
         public
     {
         uint256 nPerspectives = newPerspectives.length;
@@ -113,7 +121,7 @@ contract UprtclRoot is HasSuperUsers {
         }
 
         for (uint256 ix = 0; ix < nPerspectives; ix++) {
-            addPerspectiveInternal(newPerspectives[ix]);
+            createPerspectiveInternal(newPerspectives[ix]);
         }
     }
 
@@ -150,15 +158,8 @@ contract UprtclRoot is HasSuperUsers {
     ) private {
         Perspective storage perspective = perspectives[perspectiveIdHash];
         require(sender == perspective.owner, "unauthorized access");
-
-        address previousOwner = perspective.owner;
+        
         perspective.owner = newOwner;
-
-        emit PerspectiveOwnerUpdated(
-            perspectiveIdHash,
-            perspective.owner,
-            previousOwner
-        );
     }
 
     /** Changes the owner of a given perspective. Available only to the current owner of that perspective. */

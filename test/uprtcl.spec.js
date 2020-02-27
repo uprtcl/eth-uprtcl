@@ -165,13 +165,6 @@ const generateCid = async (message, cidConfig) => {
   return new CID(cidConfig.version, cidConfig.codec, encoded, cidConfig.base);
 }
 
-/** hashes the cid to fit in a bytes32 word */
-const hash2x32 = async (cid) => {
-  const cidStrParts = cidToHex32(cid);
-  const hash = web3.utils.keccak256(cidStrParts[0] + cidStrParts[1].slice(2), { encoding: 'hex' });
-  return hash;
-}
-
 contract('UprtclRoot', (accounts) => {
 
   const creator = accounts[0];
@@ -317,23 +310,21 @@ contract('UprtclRoot', (accounts) => {
     }
 
     const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
-    /** store this string to simulate the step from string to cid */
-    const perspectiveCidStr = perspectiveCid.toString();
-
-    const perspectiveIdHash = await hash2x32(perspectiveCidStr);
     
     const newPerspective = {
-      perspectiveIdHash: perspectiveIdHash,
+      perspectiveId: perspectiveCid.toString(),
       headCid1: ZERO_HEX_32,
       headCid0: ZERO_HEX_32,
       owner: firstOwner
     }
 
-    const result = await uprtclRoot.addPerspective(
+    const result = await uprtclRoot.createPerspective(
       newPerspective, observer,
       { from: creator });
 
-    console.log(`addPerspective gas cost: ${result.receipt.gasUsed}`);
+    console.log(`createPerspective gas cost: ${result.receipt.gasUsed}`);
+
+    const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
     
     let perspectiveRead = await uprtclRoot.getPerspectiveDetails(
       perspectiveIdHash,
@@ -354,13 +345,9 @@ contract('UprtclRoot', (accounts) => {
     }
 
     const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
-    /** store this string to simulate the step from string to cid */
-    const perspectiveCidStr = perspectiveCid.toString();
-
-    const perspectiveIdHash = await hash2x32(perspectiveCidStr);
     
     const newPerspective = {
-      perspectiveIdHash: perspectiveIdHash,
+      perspectiveId: perspectiveCid.toString(),
       headCid1: ZERO_HEX_32,
       headCid0: ZERO_HEX_32,
       owner: firstOwner
@@ -381,11 +368,11 @@ contract('UprtclRoot', (accounts) => {
 
     assert.equal(isUsufructurary, true, 'usufructuary not set');
 
-    const result = await uprtclRoot.addPerspective(
+    const result = await uprtclRoot.createPerspective(
       newPerspective, accountOwner,
       { from: creator });
 
-    console.log(`addPerspective with payment gas cost: ${result.receipt.gasUsed}`);
+    console.log(`createPerspective with payment gas cost: ${result.receipt.gasUsed}`);
 
     const accountBalance2 = await erc20Instance.balanceOf(accountOwner);
     assert.isTrue(accountBalance2.eq(new BN(0)), "account balance not as expected");
@@ -393,6 +380,7 @@ contract('UprtclRoot', (accounts) => {
     const uprtclBalance = await erc20Instance.balanceOf(uprtclAccounts.address);
     assert.isTrue(uprtclBalance.eq(ADD_FEE), "uprtcl balance not as expected");
     
+    const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
     let perspectiveRead = await uprtclRoot.getPerspectiveDetails(
       perspectiveIdHash,
       { from: observer });
@@ -410,9 +398,7 @@ contract('UprtclRoot', (accounts) => {
     }
 
     const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
-    /** store this string to simulate the step from string to cid */
-    const perspectiveCidStr = perspectiveCid.toString();
-
+    
     /** head */
     const data = {
       text: 'This is my data 2'
@@ -432,10 +418,8 @@ contract('UprtclRoot', (accounts) => {
     const headCidStr = headId.toString();
     const headCidParts = cidToHex32(headCidStr);
 
-    let perspectiveIdHash = await hash2x32(perspectiveCidStr);
-    
     const newPerspective = {
-      perspectiveIdHash: perspectiveIdHash,
+      perspectiveId: perspectiveCid.toString(),
       headCid1: headCidParts[0],
       headCid0: headCidParts[1],
       owner: firstOwner
@@ -444,12 +428,13 @@ contract('UprtclRoot', (accounts) => {
     await erc20Instance.mint(accountOwner, ADD_FEE, { from: god });
     await erc20Instance.approve(UprtclAccounts.address, ADD_FEE, { from: accountOwner });
 
-    const result = await uprtclRoot.addPerspective(
+    const result = await uprtclRoot.createPerspective(
       newPerspective, accountOwner,
       { from: creator });
 
-    console.log(`addPerspective with head gas cost: ${result.receipt.gasUsed}`);
+    console.log(`createPerspective with head gas cost: ${result.receipt.gasUsed}`);
 
+    const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
     let perspectiveRead = await uprtclRoot.getPerspectiveDetails(
       perspectiveIdHash,
       { from: observer });
@@ -469,13 +454,9 @@ contract('UprtclRoot', (accounts) => {
     }
 
     const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
-    /** store this string to simulate the step from string to cid */
-    const perspectiveCidStr = perspectiveCid.toString();
-
-    let perspectiveIdHash = await hash2x32(perspectiveCidStr);
     
     const newPerspective = {
-      perspectiveIdHash: perspectiveIdHash,
+      perspectiveId: perspectiveCid.toString(),
       headCid1: ZERO_HEX_32,
       headCid0: ZERO_HEX_32,
       owner: firstOwner
@@ -484,10 +465,11 @@ contract('UprtclRoot', (accounts) => {
     await erc20Instance.mint(accountOwner, ADD_FEE, { from: god });
     await erc20Instance.approve(UprtclAccounts.address, ADD_FEE, { from: accountOwner });
 
-    await uprtclRoot.addPerspective(
+    await uprtclRoot.createPerspective(
       newPerspective, accountOwner,
       { from: creator });
 
+    const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
     let perspectiveRead1 = await uprtclRoot.getPerspectiveDetails(
       perspectiveIdHash,
       { from: observer });
@@ -517,7 +499,7 @@ contract('UprtclRoot', (accounts) => {
     await uprtclAccounts.setUsufructuary(observer, true, { from: accountOwner });
     await erc20Instance.mint(accountOwner, UPDATE_FEE, { from: god });
     await erc20Instance.approve(UprtclAccounts.address, UPDATE_FEE, { from: accountOwner });
-    
+
     let failed = false;
     await uprtclRoot.updateHead(
       perspectiveIdHash, headCidParts[0], headCidParts[1], accountOwner,
@@ -583,12 +565,8 @@ contract('UprtclRoot', (accounts) => {
       const headCidStr = headId.toString();
       const headCidParts = cidToHex32(headCidStr);
       
-      /** perspective and context ids are hashed to fit in bytes32
-       * their multihash is hashed so different cids map to the same perspective */
-      let perspectiveIdHash = await hash2x32(perspectiveCid);
-
       return {
-        perspectiveIdHash: perspectiveIdHash,
+        perspectiveId: perspectiveCid.toString(),
         headCid1: headCidParts[0],
         headCid0: headCidParts[1],
         owner: firstOwner
@@ -602,10 +580,10 @@ contract('UprtclRoot', (accounts) => {
     await erc20Instance.mint(accountOwner, fee, { from: god });
     await erc20Instance.approve(UprtclAccounts.address, fee, { from: accountOwner });
 
-    let result = await uprtclRoot.addPerspectiveBatch(
+    let result = await uprtclRoot.createPerspectiveBatch(
       perspectives, accountOwner, { from: creator } );
 
-    console.log(`addPerspectiveBatch gas cost: ${result.receipt.gasUsed}`)
+    console.log(`createPerspectiveBatch gas cost: ${result.receipt.gasUsed}`)
 
     const checkOwnersPromises = await timestamps.map(async (timestamp) => {
       const perspective = {
@@ -616,7 +594,7 @@ contract('UprtclRoot', (accounts) => {
 
       const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
 
-      const perspectiveIdHash = await hash2x32(perspectiveCid);
+      const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
       let perspectiveRead = await uprtclRoot.getPerspectiveDetails(
         perspectiveIdHash,
         { from: observer });
@@ -636,13 +614,9 @@ contract('UprtclRoot', (accounts) => {
     }
 
     const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
-    /** store this string to simulate the step from string to cid */
-    const perspectiveCidStr = perspectiveCid.toString();
-
-    let perspectiveIdHash = await hash2x32(perspectiveCidStr);
     
     const newPerspective = {
-      perspectiveIdHash: perspectiveIdHash,
+      perspectiveId: perspectiveCid.toString(),
       headCid1: ZERO_HEX_32,
       headCid0: ZERO_HEX_32,
       owner: firstOwner
@@ -651,10 +625,11 @@ contract('UprtclRoot', (accounts) => {
     await erc20Instance.mint(accountOwner, ADD_FEE, { from: god });
     await erc20Instance.approve(UprtclAccounts.address, ADD_FEE, { from: accountOwner });
 
-    await uprtclRoot.addPerspective(
+    await uprtclRoot.createPerspective(
       newPerspective, accountOwner,
       { from: creator });
 
+    const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
     const currentDetails = await uprtclDetails.getPerspectiveDetails(perspectiveIdHash);
     
     assert.equal(currentDetails.name, '', "wrong name");
@@ -697,13 +672,9 @@ contract('UprtclRoot', (accounts) => {
     }
 
     const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
-    /** store this string to simulate the step from string to cid */
-    const perspectiveCidStr = perspectiveCid.toString();
-
-    let perspectiveIdHash = await hash2x32(perspectiveCidStr);
     
     const newPerspective = {
-      perspectiveIdHash: perspectiveIdHash,
+      perspectiveId: perspectiveCid.toString(),
       headCid1: ZERO_HEX_32,
       headCid0: ZERO_HEX_32,
       owner: firstOwner
@@ -723,6 +694,7 @@ contract('UprtclRoot', (accounts) => {
         accountOwner,
         { from: creator } )
 
+    const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
     const newDetails = await uprtclDetails.getPerspectiveDetails(perspectiveIdHash);
 
     assert.equal(newDetails.name, 'my-name', "wrong name");
@@ -746,8 +718,9 @@ contract('UprtclRoot', (accounts) => {
     const toPerspectiveCid = await generateCid(JSON.stringify(toPerspective), cidConfig1);
     const fromPerspectiveCid = await generateCid(JSON.stringify(fromPerspective), cidConfig1);
     
-    const toPerspectiveIdHash = await hash2x32(toPerspectiveCid.toString());
-    const fromPerspectiveIdHash = await hash2x32(fromPerspectiveCid.toString());
+    const toPerspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(toPerspectiveCid.toString());
+    const fromPerspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(fromPerspectiveCid.toString());
+    
     const nonce = 0;
 
     const result = await uprtclProposals.initProposal(
@@ -802,8 +775,8 @@ contract('UprtclRoot', (accounts) => {
     const toPerspectiveCid = await generateCid(JSON.stringify(toPerspective), cidConfig1);
     const fromPerspectiveCid = await generateCid(JSON.stringify(fromPerspective), cidConfig1);
     
-    const toPerspectiveIdHash = await hash2x32(toPerspectiveCid.toString());
-    const fromPerspectiveIdHash = await hash2x32(fromPerspectiveCid.toString());
+    const toPerspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(toPerspectiveCid.toString());
+    const fromPerspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(fromPerspectiveCid.toString());
     const nonce = 0;
 
     await uprtclAccounts.setUsufructuary(requestRegistrator, true, { from: accountOwner });
