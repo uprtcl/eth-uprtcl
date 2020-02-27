@@ -20,17 +20,17 @@ contract UprtclDetails is Ownable {
 
     UprtclRoot uprtclRoot;
 
-    constructor(UprtclRoot _uprtclRoot) public {
+    function setUprtclRoot(UprtclRoot _uprtclRoot) public onlyOwner {
         uprtclRoot = _uprtclRoot;
     }
 
     /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
-    function setPerspectiveDetails(
+    function setPerspectiveDetailsInternal(
         bytes32 perspectiveIdHash,
-        PerspectiveDetails memory newDetails
-        ... make internal and msgsend parameter
-    ) public {
-        require(uprtclRoot.getPerspectiveOwner(perspectiveIdHash) == msg.sender, "details can only by set by perspective owner");
+        PerspectiveDetails memory newDetails,
+        address sender
+    ) private {
+        require(uprtclRoot.getPerspectiveOwner(perspectiveIdHash) == sender, "details can only by set by perspective owner");
 
         PerspectiveDetails storage details = perspectivesDetails[perspectiveIdHash];
 
@@ -43,6 +43,13 @@ contract UprtclDetails is Ownable {
             perspectiveIdHash,
             keccak256(abi.encodePacked(details.context))
         );
+    }
+
+    function setPerspectiveDetails(
+        bytes32 perspectiveIdHash,
+        PerspectiveDetails memory newDetails
+    ) public {
+        setPerspectiveDetailsInternal(perspectiveIdHash, newDetails, msg.sender);
     }
 
     function getPerspectiveDetails(bytes32 perspectiveIdHash) public view returns (string memory name, string memory context) {
@@ -62,7 +69,7 @@ contract UprtclDetails is Ownable {
         }
 
         uprtclRoot.addPerspective(newPerspective, account);
-        setPerspectiveDetails(newPerspective.perspectiveIdHash, newDetails);
+        setPerspectiveDetailsInternal(newPerspective.perspectiveIdHash, newDetails, newPerspective.owner);
     }
 
 }

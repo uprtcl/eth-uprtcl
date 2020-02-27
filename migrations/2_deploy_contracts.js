@@ -5,12 +5,10 @@ const UprtclAccounts = artifacts.require("UprtclAccounts");
 const ERC20Mintable = artifacts.require("ERC20Mintable");
 
 module.exports = async (deployer, network, accounts) => {
-  const owner = accounts[9];
-  deployer.deploy(UprtclRoot, { from: owner }).then(function (root) {
-    return deployer.deploy(UprtclDetails, root.address);
-  });
-
-  deployer.deploy(UprtclProposals, { from: owner });
-  deployer.deploy(UprtclAccounts, { from: owner });
-  deployer.deploy(ERC20Mintable, { from: owner });
+  const god = accounts[9];
+  deployer.deploy(UprtclRoot, { from: god });
+  deployer.deploy(UprtclDetails, { from: god });
+  deployer.deploy(UprtclProposals, { from: god });
+  deployer.deploy(UprtclAccounts, { from: god });
+  deployer.deploy(ERC20Mintable, { from: god });
 };

@@ -2,8 +2,11 @@ pragma solidity >=0.5.0 <0.6.0;
 pragma experimental ABIEncoderV2;
 
 import "./UprtclRoot.sol";
+import "./SafeMath.sol";
 
 contract UprtclProposals is Ownable {
+
+    using SafeMath for uint256;
 
     struct HeadUpdate {
         bytes32 perspectiveIdHash;
@@ -22,7 +25,17 @@ contract UprtclProposals is Ownable {
         uint8 authorized;
     }
 
+    struct OwnerFees {
+        uint256 fee;
+        uint256 balance;
+    }
+
     mapping(bytes32 => Proposal) public proposals;
+    mapping(address => OwnerFees) public fees;
+    
+    uint256 public minFee;
+    uint256 public factor_num;
+    uint256 public factor_den;
 
     UprtclRoot uprtclRoot;
 
@@ -32,6 +45,10 @@ contract UprtclProposals is Ownable {
         uint32 nonce,
         bytes32 indexed proposalId
     );
+
+    function setUprtclRoot(UprtclRoot _uprtclRoot) public onlyOwner {
+        uprtclRoot = _uprtclRoot;
+    }
 
     function getProposalId(
         bytes32 toPerspectiveIdHash,
@@ -43,14 +60,50 @@ contract UprtclProposals is Ownable {
         );
     }
 
+    function setMinFee(uint256 _minFee) public onlyOwner {
+        minFee = _minFee;
+    }
+
+    function setFactorNum(uint256 _factor_num) public onlyOwner {
+        factor_num = _factor_num;
+    }
+
+    function setFactorDen(uint256 _factor_den) public onlyOwner {
+        factor_den = _factor_den;
+    }
+
     function initProposal(
         bytes32 toPerspectiveIdHash,
         bytes32 fromPerspectiveIdHash,
         address owner,
         uint32 nonce,
         HeadUpdate[] memory headUpdates,
-        address[] memory approvedAddresses
+        address[] memory approvedAddresses,
+        address account
     ) public {
+        
+        address perspOwner = uprtclRoot.getPerspectiveOwner(toPerspectiveIdHash);
+        uint256 perspFee = fees[perspOwner].fee;
+
+        if (perspFee == 0) {
+            /** charge only min fee */
+            if (minFee > 0) {
+                uprtclRoot.consume(account, msg.sender, minFee);
+            }
+        } else {
+            /** charge fee and transfer to perspOwner, keep a fraction to us */
+            uint256 feeUprtcl = perspFee.mul(factor_num).div(factor_den);
+            uint256 feeOwner = perspFee.mul(factor_den.sub(factor_num)).div(factor_den);
+
+            uint256 feeUprtclActual = feeUprtcl;
+            if (feeUprtcl < minFee) {
+                feeUprtclActual = minFee;
+            }
+
+            uprtclRoot.transferTo(account, msg.sender, perspOwner, feeOwner);
+            uprtclRoot.consume(account, msg.sender, feeUprtclActual);
+        }
+
         bytes32 proposalId = getProposalId(
             toPerspectiveIdHash,
             fromPerspectiveIdHash,

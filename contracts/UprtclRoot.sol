@@ -8,7 +8,7 @@ import "./UprtclAccounts.sol";
 
 /** Underscore Protocol Ethereum Service used to store the content of
 * _Prtcl perspectives */
-contract UprtclRoot is Ownable {
+contract UprtclRoot is HasSuperUsers {
     using SafeMath for uint256;
 
     struct Perspective {
@@ -25,10 +25,9 @@ contract UprtclRoot is Ownable {
     }
 
     /** superUsers can update any perspective */
-    mapping(address => bool) private superUsers;
-    mapping(uint256 => uint256) public fees;
-
     mapping(bytes32 => Perspective) public perspectives;
+
+    mapping(uint256 => uint256) public fees;
 
     event PerspectiveOwnerUpdated(
         bytes32 indexed perspectiveIdHash,
@@ -40,10 +39,6 @@ contract UprtclRoot is Ownable {
 
     function setAccounts(UprtclAccounts _accounts) public onlyOwner {
         accounts = _accounts;
-    }
-
-    function setSuperUser(address suAddress) public onlyOwner {
-        superUsers[suAddress] = true;
     }
 
     function withdraw(uint256 amount) public onlyOwner {
@@ -67,9 +62,12 @@ contract UprtclRoot is Ownable {
         return fees[1];
     }
 
-    function consume(address account, address by, uint256 amount) public {
-        require(superUsers[msg.sender] == true, "only super user");
+    function consume(address account, address by, uint256 amount) public onlySuperUser {
         accounts.consume(account, by, amount);
+    }
+
+    function transferTo(address from, address by, address to, uint256 amount) public onlySuperUser {
+        accounts.transferTo(from, by, to, amount);
     }
 
     /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
@@ -92,7 +90,7 @@ contract UprtclRoot is Ownable {
     function addPerspective(NewPerspective memory newPerspective, address account)
         public
     {
-        if (!superUsers[msg.sender]) {
+        if (!isSuperUser(msg.sender)) {
             uint256 fee = getAddFee();
             if (fee > 0) {
                 accounts.consume(account, msg.sender, fee);
@@ -106,7 +104,7 @@ contract UprtclRoot is Ownable {
     {
         uint256 nPerspectives = newPerspectives.length;
 
-        if (!superUsers[msg.sender]) {
+        if (!isSuperUser(msg.sender)) {
             uint256 fee = getUpdateFee().mul(nPerspectives);
 
             if (fee > 0) {
@@ -125,7 +123,7 @@ contract UprtclRoot is Ownable {
         bytes32 newHeadCid0,
         address account
     ) public {
-        if (!superUsers[msg.sender]) {
+        if (!isSuperUser(msg.sender)) {
             uint256 fee = getUpdateFee();
             if (fee > 0) {
                 accounts.consume(account, msg.sender, fee);
@@ -135,7 +133,7 @@ contract UprtclRoot is Ownable {
         Perspective storage perspective = perspectives[perspectiveIdHash];
 
         require(
-            (perspective.owner == msg.sender) || (superUsers[msg.sender] == true),
+            (perspective.owner == msg.sender) || isSuperUser(msg.sender),
             "only the owner can update the perspective"
         );
 
