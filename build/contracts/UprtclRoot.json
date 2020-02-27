@@ -14645,14 +14645,55 @@
   },
   "networks": {
     "3333": {
-      "events": {},
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        },
+        "0x9096b4564a2bafa0ceef5b1e2a3726b6c688e97d8231050b488716d3c5d06328": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "perspectiveIdHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "perspectiveId",
+              "type": "string"
+            }
+          ],
+          "name": "PerspectiveCreated",
+          "type": "event",
+          "signature": "0x9096b4564a2bafa0ceef5b1e2a3726b6c688e97d8231050b488716d3c5d06328"
+        }
+      },
       "links": {},
       "address": "0x07a457d878BF363E0Bb5aa0B096092f941e19962",
-      "transactionHash": "0x3c6f983e41929de8fd45303b760e5d340a6cd511bbde29873e4a1a23e7f537fb"
+      "transactionHash": "0x62ddfb456ba13a1752b4a291ae955d971c0800ba279278f6174b03093c2d9b04"
     }
   },
-  "schemaVersion": "3.0.23",
-  "updatedAt": "2020-02-27T14:47:08.569Z",
+  "schemaVersion": "3.0.11",
+  "updatedAt": "2020-02-27T17:00:17.525Z",
   "devdoc": {
     "methods": {
       "isOwner()": {

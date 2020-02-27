@@ -720,17 +720,20 @@ contract('UprtclRoot', (accounts) => {
     
     const toPerspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(toPerspectiveCid.toString());
     const fromPerspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(fromPerspectiveCid.toString());
-    
+
     const nonce = 0;
 
+    const newProposal = {
+      toPerspectiveIdHash: toPerspectiveIdHash, 
+      fromPerspectiveIdHash: fromPerspectiveIdHash, 
+      owner: proposalOwner, 
+      nonce: nonce, 
+      headUpdates: [], 
+      approvedAddresses: []
+    }
+
     const result = await uprtclProposals.initProposal(
-      toPerspectiveIdHash, 
-      fromPerspectiveIdHash, 
-      proposalOwner, 
-      nonce, 
-      [], 
-      [],
-      accountOwner,
+      newProposal, accountOwner,
       { from: requestRegistrator })
 
     console.log(`initProposal gas cost: ${result.receipt.gasUsed}`)
@@ -783,16 +786,21 @@ contract('UprtclRoot', (accounts) => {
     await erc20Instance.mint(accountOwner, PROPOSAL_MIN_FEE, { from: god });
     await erc20Instance.approve(UprtclAccounts.address, PROPOSAL_MIN_FEE, { from: accountOwner });
 
+
+    const newProposal = {
+      toPerspectiveIdHash: toPerspectiveIdHash, 
+      fromPerspectiveIdHash: fromPerspectiveIdHash, 
+      owner: proposalOwner, 
+      nonce: nonce, 
+      headUpdates: [], 
+      approvedAddresses: []
+    }
+
     const result = await uprtclProposals.initProposal(
-      toPerspectiveIdHash, 
-      fromPerspectiveIdHash, 
-      proposalOwner, 
-      nonce, 
-      [], 
-      [],
-      accountOwner,
+      newProposal, accountOwner,
       { from: requestRegistrator })
 
+      
     console.log(`initProposal gas cost: ${result.receipt.gasUsed}`)
     
     const proposalId01 = await uprtclProposals.getProposalId(
