@@ -16,8 +16,8 @@ contract UprtclProposals is Ownable {
     }
 
     struct NewProposal {
-        bytes32 toPerspectiveIdHash;
-        bytes32 fromPerspectiveIdHash;
+        string toPerspectiveId;
+        string fromPerspectiveId;
         address owner;
         uint256 nonce;
         HeadUpdate[] headUpdates;
@@ -25,8 +25,8 @@ contract UprtclProposals is Ownable {
     }
 
     struct Proposal {
-        bytes32 toPerspectiveIdHash;
-        bytes32 fromPerspectiveIdHash;
+        string toPerspectiveId;
+        string fromPerspectiveId;
         address owner;
         uint256 nonce;
         HeadUpdate[] headUpdates;
@@ -52,7 +52,8 @@ contract UprtclProposals is Ownable {
     event ProposalCreated(
         bytes32 indexed toPerspectiveIdHash,
         bytes32 indexed fromPerspectiveIdHash,
-        bytes32 indexed proposalId
+        bytes32 indexed proposalId,
+        address creator
     );
 
     function setUprtclRoot(UprtclRoot _uprtclRoot) public onlyOwner {
@@ -60,12 +61,12 @@ contract UprtclProposals is Ownable {
     }
 
     function getProposalId(
-        bytes32 toPerspectiveIdHash,
-        bytes32 fromPerspectiveIdHash,
+        string memory toPerspectiveId,
+        string memory fromPerspectiveId,
         uint256 nonce
     ) public pure returns (bytes32 proposalId) {
         proposalId = keccak256(
-            abi.encodePacked(toPerspectiveIdHash, fromPerspectiveIdHash, nonce)
+            abi.encodePacked(toPerspectiveId, fromPerspectiveId, nonce)
         );
     }
 
@@ -86,7 +87,9 @@ contract UprtclProposals is Ownable {
         address account
     ) public {
         
-        address perspOwner = uprtclRoot.getPerspectiveOwner(newProposal.toPerspectiveIdHash);
+        address perspOwner = uprtclRoot.getPerspectiveOwner(
+            uprtclRoot.getPerspectiveIdHash(newProposal.toPerspectiveId)
+        );
         uint256 perspFee = fees[perspOwner].fee;
 
         if (perspFee == 0) {
@@ -109,8 +112,8 @@ contract UprtclProposals is Ownable {
         }
 
         bytes32 proposalId = getProposalId(
-            newProposal.toPerspectiveIdHash,
-            newProposal.fromPerspectiveIdHash,
+            newProposal.toPerspectiveId,
+            newProposal.fromPerspectiveId,
             newProposal.nonce
         );
 
@@ -118,8 +121,8 @@ contract UprtclProposals is Ownable {
         Proposal storage proposal = proposals[proposalId];
         require(proposal.owner == address(0), "proposal already exist");
 
-        proposal.toPerspectiveIdHash = newProposal.toPerspectiveIdHash;
-        proposal.fromPerspectiveIdHash = newProposal.fromPerspectiveIdHash;
+        proposal.toPerspectiveId = newProposal.toPerspectiveId;
+        proposal.fromPerspectiveId = newProposal.fromPerspectiveId;
         proposal.owner = newProposal.owner;
         proposal.nonce = newProposal.nonce;
         proposal.approvedAddresses = newProposal.approvedAddresses;
@@ -129,9 +132,10 @@ contract UprtclProposals is Ownable {
         addUpdatesToProposal(proposalId, newProposal.headUpdates);
 
         emit ProposalCreated(
-            newProposal.toPerspectiveIdHash,
-            newProposal.fromPerspectiveIdHash,
-            proposalId
+            uprtclRoot.getPerspectiveIdHash(newProposal.toPerspectiveId),
+            uprtclRoot.getPerspectiveIdHash(newProposal.fromPerspectiveId),
+            proposalId,
+            msg.sender
         );
     }
 

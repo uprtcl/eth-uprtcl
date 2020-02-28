@@ -7309,7 +7309,8 @@
             }
           ],
           "name": "OwnershipTransferred",
-          "type": "event"
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
         },
         "0x54d694087b2b7af3574607f1c7957f264e43dae2cd138a793dc22d407fac002b": {
           "anonymous": false,
@@ -7328,16 +7329,17 @@
             }
           ],
           "name": "PerspectiveDetailsSet",
-          "type": "event"
+          "type": "event",
+          "signature": "0x54d694087b2b7af3574607f1c7957f264e43dae2cd138a793dc22d407fac002b"
         }
       },
       "links": {},
       "address": "0xFA33c8EF8b5c4f3003361c876a298D1DB61ccA4e",
-      "transactionHash": "0x79abdb6add929d9694e8dc179c5d88584994d20005598462b73f52dbd7b85c61"
+      "transactionHash": "0x4dc53e856eb982d227a70354a860c26cf2139060ed14ff76f034a9d3989ffa29"
     }
   },
-  "schemaVersion": "3.0.23",
-  "updatedAt": "2020-02-28T11:54:59.145Z",
+  "schemaVersion": "3.0.11",
+  "updatedAt": "2020-02-28T12:00:10.479Z",
   "devdoc": {
     "methods": {
       "isOwner()": {

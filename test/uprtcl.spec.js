@@ -797,14 +797,11 @@ contract('All', (accounts) => {
     const toPerspectiveCid = await generateCid(JSON.stringify(toPerspective), cidConfig1);
     const fromPerspectiveCid = await generateCid(JSON.stringify(fromPerspective), cidConfig1);
     
-    const toPerspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(toPerspectiveCid.toString());
-    const fromPerspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(fromPerspectiveCid.toString());
-
     const nonce = 0;
 
     const newProposal = {
-      toPerspectiveIdHash: toPerspectiveIdHash, 
-      fromPerspectiveIdHash: fromPerspectiveIdHash, 
+      toPerspectiveId: toPerspectiveCid.toString(), 
+      fromPerspectiveId: fromPerspectiveCid.toString(), 
       owner: proposalOwner, 
       nonce: nonce, 
       headUpdates: [], 
@@ -818,8 +815,8 @@ contract('All', (accounts) => {
     console.log(`initProposal gas cost: ${result.receipt.gasUsed}`)
     
     const proposalId01 = await uprtclProposals.getProposalId(
-      toPerspectiveIdHash,
-      fromPerspectiveIdHash,
+      toPerspectiveCid.toString(),
+      fromPerspectiveCid.toString(),
       nonce);
 
     let proposalRead = await uprtclProposals.getProposal(proposalId01);
@@ -857,8 +854,6 @@ contract('All', (accounts) => {
     const toPerspectiveCid = await generateCid(JSON.stringify(toPerspective), cidConfig1);
     const fromPerspectiveCid = await generateCid(JSON.stringify(fromPerspective), cidConfig1);
     
-    const toPerspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(toPerspectiveCid.toString());
-    const fromPerspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(fromPerspectiveCid.toString());
     const nonce = 0;
 
     await uprtclAccounts.setUsufructuary(requestRegistrator, true, { from: accountOwner });
@@ -867,8 +862,8 @@ contract('All', (accounts) => {
 
 
     const newProposal = {
-      toPerspectiveIdHash: toPerspectiveIdHash, 
-      fromPerspectiveIdHash: fromPerspectiveIdHash, 
+      toPerspectiveId: toPerspectiveCid.toString(), 
+      fromPerspectiveId: fromPerspectiveCid.toString(), 
       owner: proposalOwner, 
       nonce: nonce, 
       headUpdates: [], 
@@ -883,8 +878,8 @@ contract('All', (accounts) => {
     console.log(`initProposal gas cost: ${result.receipt.gasUsed}`)
     
     const proposalId01 = await uprtclProposals.getProposalId(
-      toPerspectiveIdHash,
-      fromPerspectiveIdHash,
+      toPerspectiveCid.toString(),
+      fromPerspectiveCid.toString(),
       nonce);
 
     let proposalRead = await uprtclProposals.getProposal(proposalId01);
