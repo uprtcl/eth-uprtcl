@@ -183,7 +183,7 @@ contract UprtclRoot is HasSuperUsers {
     }
 
     /** Get the perspective owner and details from its ID */
-    function getPerspectiveDetails(bytes32 perspectiveIdHash)
+    function getPerspective(bytes32 perspectiveIdHash)
         public
         view
         returns (address owner, bytes32 headCid1, bytes32 headCid0)

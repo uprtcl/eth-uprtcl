@@ -3,12 +3,19 @@ pragma experimental ABIEncoderV2;
 
 import "./UprtclRoot.sol";
 import "./Ownable.sol";
+import "./SafeMath.sol";
 
 contract UprtclDetails is Ownable {
+    using SafeMath for uint256;
 
     struct PerspectiveDetails {
         string name;
         string context;
+    }
+
+    struct InitPerspective {
+        UprtclRoot.NewPerspective perspective;
+        PerspectiveDetails details;
     }
 
     event PerspectiveDetailsSet (
@@ -22,6 +29,10 @@ contract UprtclDetails is Ownable {
 
     function setUprtclRoot(UprtclRoot _uprtclRoot) public onlyOwner {
         uprtclRoot = _uprtclRoot;
+    }
+
+    function getContextHash(string memory context) public pure returns (bytes32 contextHash) {
+        return keccak256(abi.encodePacked(context));
     }
 
     /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
@@ -41,7 +52,7 @@ contract UprtclDetails is Ownable {
 
         emit PerspectiveDetailsSet(
             perspectiveIdHash,
-            keccak256(abi.encodePacked(details.context))
+            getContextHash(details.context)
         );
     }
 
@@ -57,9 +68,17 @@ contract UprtclDetails is Ownable {
         return (details.name, details.context);
     }
 
+    function initPerspectiveInternal(InitPerspective memory perspectiveData, address account) private {
+        uprtclRoot.createPerspective(perspectiveData.perspective, account);
+
+        setPerspectiveDetailsInternal(
+            uprtclRoot.getPerspectiveIdHash(perspectiveData.perspective.perspectiveId),
+            perspectiveData.details,
+            perspectiveData.perspective.owner);
+    }
+
     function initPerspective(
-        UprtclRoot.NewPerspective memory newPerspective,
-        PerspectiveDetails memory newDetails,
+        InitPerspective memory perspectiveData,
         address account) public {
 
         /** collect fee here */
@@ -68,12 +87,22 @@ contract UprtclDetails is Ownable {
             uprtclRoot.consume(account, msg.sender, fee);
         }
 
-        uprtclRoot.createPerspective(newPerspective, account);
-        
-        setPerspectiveDetailsInternal(
-            uprtclRoot.getPerspectiveIdHash(newPerspective.perspectiveId),
-            newDetails,
-            newPerspective.owner);
+        initPerspectiveInternal(perspectiveData, account);
+    }
+
+    function initPerspectiveBatch(InitPerspective[] memory perspectivesData, address account)
+        public
+    {
+        uint256 nPerspectives = perspectivesData.length;
+        uint256 fee = uprtclRoot.getUpdateFee().mul(nPerspectives);
+
+        if (fee > 0) {
+            uprtclRoot.consume(account, msg.sender, fee);
+        }
+
+        for (uint256 ix = 0; ix < nPerspectives; ix++) {
+            initPerspectiveInternal(perspectivesData[ix], account);
+        }
     }
 
 }
