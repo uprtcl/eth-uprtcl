@@ -1378,11 +1378,11 @@
       "events": {},
       "links": {},
       "address": "0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab",
-      "transactionHash": "0x2dc588a80551eef17055ebda39d44ce9fd10943b2bbc87534831f174ac95119d"
+      "transactionHash": "0x6b2b42df6acf5f7944354d59a4d2c49fa26eb889b24f02c12e7aa3dd21a3ed19"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2020-02-28T12:00:10.497Z",
+  "updatedAt": "2020-02-28T17:15:41.513Z",
   "devdoc": {
     "methods": {}
   },

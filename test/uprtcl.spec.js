@@ -278,7 +278,7 @@ contract('All', (accounts) => {
     await uprtclRoot.transferOwnership(god, { from: newOwner });
   })
 
-  it('should be able to set the accounts', async () => {
+  it.skip('should be able to set the accounts', async () => {
     /** set accounts token */
     let failed = false;
     await uprtclAccounts.setToken(erc20Instance.address, { from: observer }).catch((error) => {
@@ -300,7 +300,7 @@ contract('All', (accounts) => {
     await uprtclRoot.setAccounts(uprtclAccounts.address, { from: god });
   })
 
-  it('should persist and read a perspective - no fees', async () => {
+  it.skip('should persist and read a perspective - no fees', async () => {
     await uprtclRoot.setFees(0, 0, { from: god })
 
     const perspective = {
@@ -335,7 +335,7 @@ contract('All', (accounts) => {
     assert.equal(perspectiveRead.headCid1, ZERO_HEX_32, "head is not what was expected");
   });
 
-  it('should persist and read a perspective - with fees', async () => {
+  it.skip('should persist and read a perspective - with fees', async () => {
     await uprtclRoot.setFees(ADD_FEE, 0, { from: god })
 
     const perspective = {
@@ -390,7 +390,7 @@ contract('All', (accounts) => {
     assert.equal(perspectiveRead.headCid1, ZERO_HEX_32, "head is not what was expected");
   });
 
-  it('should persist and read a perspective with head', async () => {
+  it.skip('should persist and read a perspective with head', async () => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
@@ -444,7 +444,7 @@ contract('All', (accounts) => {
     assert.equal(perspectiveRead.headCid1, headCidParts[0], "head is not what was expected");
   });
   
-  it('should persist and update a perspective', async () => {
+  it.skip('should persist and update a perspective', async () => {
     await uprtclRoot.setFees(ADD_FEE, UPDATE_FEE, { from: god })
 
     const perspective = {
@@ -534,7 +534,7 @@ contract('All', (accounts) => {
     assert.equal(perspectiveRead2.headCid1, headCidParts[0], "head is not what was expected");
   });
 
-  it('should be able to add a batch of perspectives', async () => {
+  it.skip('should be able to add a batch of perspectives', async () => {
     const timestamps = randomVec(50);
 
     const buildPerspectivesPromises = timestamps.map(async (timestamp) => {
@@ -606,7 +606,7 @@ contract('All', (accounts) => {
 
   });
 
-  it('should be able to set the details of a persective', async () => {
+  it.skip('should be able to set the details of a persective', async () => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
@@ -664,7 +664,7 @@ contract('All', (accounts) => {
 
   });
 
-  it('should be able to init a persective with head and details', async () => {
+  it.skip('should be able to init a persective with head and details', async () => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
@@ -701,7 +701,7 @@ contract('All', (accounts) => {
 
   });
 
-  it('should be able to init a batch of persectives with head and details', async () => {
+  it.skip('should be able to init a batch of persectives with head and details', async () => {
 
     const timestamps = randomVec(40);
 
@@ -782,6 +782,9 @@ contract('All', (accounts) => {
   });
 
   it('should be able to create a new proposal - free', async () => {
+    
+    await uprtclRoot.setFees(0, 0, { from: god })
+
     const toPerspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
@@ -796,15 +799,100 @@ contract('All', (accounts) => {
 
     const toPerspectiveCid = await generateCid(JSON.stringify(toPerspective), cidConfig1);
     const fromPerspectiveCid = await generateCid(JSON.stringify(fromPerspective), cidConfig1);
-    
     const nonce = 0;
+
+    /** head updates */
+    const timestamps = randomVec(10);
+
+    const buildPerspectivesPromises = timestamps.map(async (timestamp) => {
+
+      const data = {
+        text: `This is my data ${randomInt()}`
+      }
+
+      const dataId = await generateCid(JSON.stringify(data), cidConfig1);
+
+      const head = {
+        creatorId: 'did:uport:123',
+        timestamp: timestamp + 1,
+        message: 'test commit new',
+        parentsIds: [],
+        dataId: dataId.toString()
+      }
+      
+      const perspective = {
+        origin: 'eth://contractAddress',
+        creatorId: 'did:uport:123',
+        timestamp: timestamp
+      }
+
+      const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+
+      const headId = await generateCid(JSON.stringify(head), cidConfig1);
+      const headCidStr = headId.toString();
+      const headCidParts = cidToHex32(headCidStr);
+
+      const ethPerspective = {
+        perspectiveId: perspectiveCid.toString(),
+        headCid1: headCidParts[0],
+        headCid0: headCidParts[1],
+        owner: firstOwner
+      }
+
+      const details = {
+        context: (timestamp + 2).toString(),
+        name: randomInt().toString()
+      }
+      
+      return { perspective: ethPerspective, details };
+    });
+
+    const perspectivesData = await Promise.all(buildPerspectivesPromises);
+
+    await uprtclDetails.initPerspectiveBatch(
+      perspectivesData,
+      accountOwner,
+      { from: creator } )
+
+    const buildUpdatesPromises = perspectivesData.map(async (perspectivesData) => {
+
+      const data = {
+        text: `This is my data ${randomInt()}`
+      }
+
+      const dataId = await generateCid(JSON.stringify(data), cidConfig1);
+
+      const head = {
+        creatorId: 'did:uport:123',
+        timestamp: randomInt(),
+        message: 'test commit new',
+        parentsIds: [],
+        dataId: dataId.toString()
+      }
+
+      const headId = await generateCid(JSON.stringify(head), cidConfig1);
+      const headCidStr = headId.toString();
+      const headCidParts = cidToHex32(headCidStr);
+      const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectivesData.perspective.perspectiveId);
+
+      const headUpdate = {
+        perspectiveIdHash: perspectiveIdHash,
+        headCid1: headCidParts[0],
+        headCid0: headCidParts[1],
+        executed: "0"
+      }
+
+      return { perspectivesData, headUpdate };
+    });
+
+    const updates = await Promise.all(buildUpdatesPromises);
 
     const newProposal = {
       toPerspectiveId: toPerspectiveCid.toString(), 
       fromPerspectiveId: fromPerspectiveCid.toString(), 
-      owner: proposalOwner, 
+      owner: firstOwner, 
       nonce: nonce, 
-      headUpdates: [], 
+      headUpdates: updates.map(u => u.headUpdate), 
       approvedAddresses: []
     }
 
@@ -820,13 +908,69 @@ contract('All', (accounts) => {
       nonce);
 
     let proposalRead = await uprtclProposals.getProposal(proposalId01);
-    assert.equal(proposalRead.owner, proposalOwner, "unexpected request owner")
+
+    assert.equal(proposalRead.toPerspectiveId, toPerspectiveCid.toString(), "unexpected request toPerspectiveCid")
+    assert.equal(proposalRead.fromPerspectiveId, fromPerspectiveCid.toString(), "unexpected request fromPerspectiveCid")
+    assert.equal(proposalRead.owner, firstOwner, "unexpected request owner")
     assert.equal(proposalRead.approvedAddresses.length, 0, "unexpected approvedAddress")
     assert.equal(proposalRead.status, 1, "unexpected status")
     assert.equal(proposalRead.authorized, 0, "unexpected authorized")
+
+    proposalRead.headUpdates.map((update, ix) => {
+      assert.equal(update.perspectiveIdHash, updates[ix].headUpdate.perspectiveIdHash, "unexpected request toPerspectiveCid")
+      assert.equal(update.headCid1, updates[ix].headUpdate.headCid1, "unexpected request headCid1")
+      assert.equal(update.headCid0, updates[ix].headUpdate.headCid0, "unexpected request headCid1")
+    })
+
+    failed = false;
+    await uprtclProposals.setProposalAuthorized(
+      proposalId01, 1,
+      { from: requestRegistrator }).catch((error) => {
+      assert.equal(error.reason, 'Proposal can only by authorized by its owner');
+      failed = true
+    });
+    assert.isTrue(failed, "setProposalAuthorized set did not failed");
+
+    await uprtclProposals.setProposalAuthorized(
+      proposalId01, 1,
+      { from: firstOwner })
+
+
+    /** check heads are original */
+    const checkHeadsPromises = perspectivesData.map(async (perspectiveData) => {
+      const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveData.perspective.perspectiveId);
+
+      const perspectiveRead = await uprtclRoot.getPerspective(
+        perspectiveIdHash,
+        { from: observer });
+  
+      assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
+      assert.equal(perspectiveRead.headCid0, perspectiveData.perspective.headCid0, "head is not what was expected");
+      assert.equal(perspectiveRead.headCid1, perspectiveData.perspective.headCid1, "head is not what was expected");
+    })
+
+    await Promise.all(checkHeadsPromises);
+
+    await uprtclProposals.executeProposal(
+      proposalId01,
+      { from: firstOwner });
+
+    /** check heads are original */
+    const checkHeadsPromisesAfter = updates.map(async (update) => {
+      const perspectiveRead = await uprtclRoot.getPerspective(
+        update.headUpdate.perspectiveIdHash,
+        { from: observer });
+  
+      assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
+      assert.equal(perspectiveRead.headCid0, update.headUpdate.headCid0, "head is not what was expected");
+      assert.equal(perspectiveRead.headCid1, update.headUpdate.headCid1, "head is not what was expected");
+    })
+
+    await Promise.all(checkHeadsPromisesAfter);
+
   });
 
-  it('should be able to create a new proposal - with fee', async () => {
+  it.skip('should be able to create a new proposal - with fee', async () => {
 
     let failed = false;
     await uprtclProposals.setMinFee(PROPOSAL_MIN_FEE, { from: observer }).catch((error) => {
@@ -888,4 +1032,6 @@ contract('All', (accounts) => {
     assert.equal(proposalRead.status, 1, "unexpected status")
     assert.equal(proposalRead.authorized, 0, "unexpected authorized")
   });
+
+  
 });
