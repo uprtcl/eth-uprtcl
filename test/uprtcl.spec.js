@@ -278,7 +278,7 @@ contract('All', (accounts) => {
     await uprtclRoot.transferOwnership(god, { from: newOwner });
   })
 
-  it.skip('should be able to set the accounts', async () => {
+  it('should be able to set the accounts', async () => {
     /** set accounts token */
     let failed = false;
     await uprtclAccounts.setToken(erc20Instance.address, { from: observer }).catch((error) => {
@@ -300,7 +300,7 @@ contract('All', (accounts) => {
     await uprtclRoot.setAccounts(uprtclAccounts.address, { from: god });
   })
 
-  it.skip('should persist and read a perspective - no fees', async () => {
+  it('should persist and read a perspective - no fees', async () => {
     await uprtclRoot.setFees(0, 0, { from: god })
 
     const perspective = {
@@ -335,7 +335,7 @@ contract('All', (accounts) => {
     assert.equal(perspectiveRead.headCid1, ZERO_HEX_32, "head is not what was expected");
   });
 
-  it.skip('should persist and read a perspective - with fees', async () => {
+  it('should persist and read a perspective - with fees', async () => {
     await uprtclRoot.setFees(ADD_FEE, 0, { from: god })
 
     const perspective = {
@@ -390,7 +390,7 @@ contract('All', (accounts) => {
     assert.equal(perspectiveRead.headCid1, ZERO_HEX_32, "head is not what was expected");
   });
 
-  it.skip('should persist and read a perspective with head', async () => {
+  it('should persist and read a perspective with head', async () => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
@@ -444,7 +444,7 @@ contract('All', (accounts) => {
     assert.equal(perspectiveRead.headCid1, headCidParts[0], "head is not what was expected");
   });
   
-  it.skip('should persist and update a perspective', async () => {
+  it('should persist and update a perspective', async () => {
     await uprtclRoot.setFees(ADD_FEE, UPDATE_FEE, { from: god })
 
     const perspective = {
@@ -534,7 +534,7 @@ contract('All', (accounts) => {
     assert.equal(perspectiveRead2.headCid1, headCidParts[0], "head is not what was expected");
   });
 
-  it.skip('should be able to add a batch of perspectives', async () => {
+  it('should be able to add a batch of perspectives', async () => {
     const timestamps = randomVec(50);
 
     const buildPerspectivesPromises = timestamps.map(async (timestamp) => {
@@ -606,7 +606,7 @@ contract('All', (accounts) => {
 
   });
 
-  it.skip('should be able to set the details of a persective', async () => {
+  it('should be able to set the details of a persective', async () => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
@@ -664,7 +664,7 @@ contract('All', (accounts) => {
 
   });
 
-  it.skip('should be able to init a persective with head and details', async () => {
+  it('should be able to init a persective with head and details', async () => {
     const perspective = {
       origin: 'eth://contractAddress',
       creatorId: 'did:uport:123',
@@ -701,7 +701,7 @@ contract('All', (accounts) => {
 
   });
 
-  it.skip('should be able to init a batch of persectives with head and details', async () => {
+  it('should be able to init a batch of persectives with head and details', async () => {
 
     const timestamps = randomVec(40);
 
@@ -970,7 +970,7 @@ contract('All', (accounts) => {
 
   });
 
-  it.skip('should be able to create a new proposal - with fee', async () => {
+  it('should be able to create a new proposal - with fee', async () => {
 
     let failed = false;
     await uprtclProposals.setMinFee(PROPOSAL_MIN_FEE, { from: observer }).catch((error) => {

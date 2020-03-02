@@ -7335,11 +7335,11 @@
       },
       "links": {},
       "address": "0xFA33c8EF8b5c4f3003361c876a298D1DB61ccA4e",
-      "transactionHash": "0xc0e8258ff42a6e2642d1f8899c56c4f262096ec2c8009d6d7ff037d8e409d0e6"
+      "transactionHash": "0x4dc53e856eb982d227a70354a860c26cf2139060ed14ff76f034a9d3989ffa29"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2020-02-28T17:15:41.496Z",
+  "updatedAt": "2020-03-02T09:08:37.101Z",
   "devdoc": {
     "methods": {
       "isOwner()": {

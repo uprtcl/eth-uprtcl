@@ -14689,11 +14689,11 @@
       },
       "links": {},
       "address": "0x07a457d878BF363E0Bb5aa0B096092f941e19962",
-      "transactionHash": "0xc447f45a7077977db0fd611844afb67fb940bb5f3c26f20f58335aad1fb0712a"
+      "transactionHash": "0xa33b1276f8bacf20ffba3d8d8a34d7873a0748eac8c6efda0d5a84a69b8ab76f"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2020-02-28T17:15:41.488Z",
+  "updatedAt": "2020-03-02T09:08:37.089Z",
   "devdoc": {
     "methods": {
       "isOwner()": {
