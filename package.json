@@ -4,7 +4,7 @@
     "test": "truffle test",
     "migrate": "truffle migrate",
     "migrate-rinkeby": "truffle migrate --network rinkeby",
-    "dev": "concurrently \"ganache-cli --networkId 3333 --blockTime 5 --deterministic\" \"npm run migrate\" "
+    "dev": "concurrently \"ganache-cli --networkId 3333 --blockTime 0 --deterministic\" \"npm run migrate\" "
   },
   "dependencies": {
     "@types/node": "^12.0.8",
@@ -12,6 +12,7 @@
     "cids": "^0.7.1",
     "dotenv": "^8.0.0",
     "multihashing-async": "^0.7.0",
+    "seedrandom": "^3.0.5",
     "truffle": "^5.0.22",
     "truffle-hdwallet-provider": "^1.0.17",
     "truffle-privatekey-provider": "^1.3.0",
