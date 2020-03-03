@@ -165,7 +165,7 @@ const generateCid = async (message, cidConfig) => {
   return new CID(cidConfig.version, cidConfig.codec, encoded, cidConfig.base);
 }
 
-contract('All', (accounts) => {
+contract.skip('All', (accounts) => {
 
   const creator = accounts[0];
   const firstOwner = accounts[1];
