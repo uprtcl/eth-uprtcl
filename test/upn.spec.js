@@ -46,39 +46,49 @@ contract('UPNService', (accounts) => {
   })
 
   it('should be able to register and transfer a UPN - free', async () => {
-    await upnService.setRegFees(Array(16).fill(0), { from: god })
-    await upnService.registerUPN(aliceUpn, alice, account, { from: alice });
+    const upn = {
+      owner: alice,
+      V: 0,
+      P: 0
+    }
+    await upnService.registerUPN(aliceUpn, upn, account, 0, { from: alice });
 
     const aliceUpnHash = await upnService.hashUpn(aliceUpn);
-    const owner = await upnService.getUPN(aliceUpnHash, { from: observer });
+    const upnRead = await upnService.getUPN(aliceUpnHash, { from: observer });
 
-    assert.equal(owner, alice, "UPN owner not expected");
+    assert.equal(upnRead.owner, alice, "UPN owner not expected");
 
     let failed = false;
 
+    const upnBob = {
+      owner: bob,
+      V: 0,
+      P: 0
+    }
+
     failed = false;
-    await upnService.registerUPN(aliceUpn, bob, account, { from: bob }).catch((error) => {
-      assert.equal(error.reason, 'UPN not available', "unexpected reason");
+    await upnService.registerUPN(aliceUpn, upnBob, account, 0, { from: bob }).catch((error) => {
+      assert.equal(error.reason, 'upn not available', "unexpected reason");
       failed = true
     });
     assert.isTrue(failed, "upn register did not failed");
 
     failed = false;
-    await upnService.transferUPN(aliceUpn, bob, account, { from: bob }).catch((error) => {
-      assert.equal(error.reason, 'UPN not owned by msg.sender', "unexpected reason");
+    await upnService.transferUPN(await upnService.hashUpn(aliceUpn), bob, { from: bob }).catch((error) => {
+      assert.equal(error.reason, 'upn can only be updated by its current owner', "unexpected reason");
       failed = true
     });
     assert.isTrue(failed, "upn trasnfer did not failed");
 
-    await upnService.transferUPN(aliceUpn, bob, account, { from: alice })
+    await upnService.transferUPN(await upnService.hashUpn(aliceUpn), bob, { from: alice })
 
-    const newOwner = await upnService.getUPN(aliceUpnHash, { from: observer });
-    assert.equal(newOwner, bob, "UPN owner not expected");
+    const newUpnRead = await upnService.getUPN(aliceUpnHash, { from: observer });
+    assert.equal(newUpnRead.owner, bob, "UPN owner not expected");
 
     /** leave it to the name of alice */
-    await upnService.transferUPN(aliceUpn, alice, account, { from: bob })
-    const finalOwner = await upnService.getUPN(aliceUpnHash, { from: observer });
-    assert.equal(finalOwner, alice, "UPN owner not expected");
+    await upnService.transferUPN(await upnService.hashUpn(aliceUpn), alice, { from: bob })
+    const finalUpn = await upnService.getUPN(aliceUpnHash, { from: observer });
+    assert.equal(finalUpn.owner, alice, "UPN owner not expected");
   })
 
   it('should be able to register UPRs of a registered UPN', async () => {
