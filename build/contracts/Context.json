@@ -8,7 +8,7 @@
       "type": "constructor"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.8+commit.23d335f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Context.sol\":\"Context\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Context.sol\":{\"keccak256\":\"0x90a3995645af7562d84b9d69363ffa5ae7217714ab61e951bf7bc450f40e4061\",\"urls\":[\"bzzr://51482c01bddf23793bddee43b60ab9578a62948a4f2082def24ea792a553b055\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Context.sol\":\"Context\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/pepo/pr/uprtcl/eth-uprtcl/contracts/Context.sol\":{\"keccak256\":\"0x90a3995645af7562d84b9d69363ffa5ae7217714ab61e951bf7bc450f40e4061\",\"urls\":[\"bzz-raw://216ef9d6b614db4eb46970b4e84903f2534a45572dd30a79f0041f1a5830f436\",\"dweb:/ipfs/QmNPrJ4MWKUAWzKXpUqeyKRUfosaoANZAqXgvepdrCwZAG\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "sourceMap": "",
@@ -96,7 +96,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 2526,
+                      "referencedDeclaration": 3545,
                       "src": "867:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -190,7 +190,7 @@
                     "name": "this",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 2540,
+                    "referencedDeclaration": 3559,
                     "src": "957:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_contract$_Context_$26",
@@ -210,7 +210,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 2526,
+                      "referencedDeclaration": 3545,
                       "src": "1097:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -378,7 +378,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 2526,
+                      "referencedDeclaration": 3545,
                       "src": "867:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -472,7 +472,7 @@
                     "name": "this",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 2540,
+                    "referencedDeclaration": 3559,
                     "src": "957:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_contract$_Context_$26",
@@ -492,7 +492,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 2526,
+                      "referencedDeclaration": 3545,
                       "src": "1097:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -581,11 +581,11 @@
   },
   "compiler": {
     "name": "solc",
-    "version": "0.5.8+commit.23d335f2.Emscripten.clang"
+    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.0.11",
-  "updatedAt": "2020-02-27T12:07:21.570Z",
+  "schemaVersion": "3.0.23",
+  "updatedAt": "2020-03-05T11:18:20.796Z",
   "devdoc": {
     "methods": {}
   },

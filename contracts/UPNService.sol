@@ -39,8 +39,9 @@ contract UPNService is Ownable {
 
     uint256 public Fi;
     uint256 public Ri;
-    uint256 public Qi;
+    uint256 public Q;
     uint256 public P_BLOCKS;
+    uint256 public P_PER_YEAR;
 
     uint256 public DECIMALS = 1000000;
 
@@ -50,17 +51,22 @@ contract UPNService is Ownable {
         uprtclRoot = _uprtclRoot;
     }
 
-    function setFi(uint256 newValue) public onlyOwner { Fi = newValue; }
-    function setRi(uint256 newValue) public onlyOwner { Ri = newValue; }
-    function setQ(uint256 newValue) public onlyOwner { Qi = newValue; }
-    function setP_BLOCKS(uint256 newValue) public onlyOwner { P_BLOCKS = newValue; }
+    function setFi(uint256 nv) public onlyOwner { Fi = nv; }
+    function setRi(uint256 nv) public onlyOwner { Ri = nv; }
+    function setQ(uint256 nv) public onlyOwner { Q = nv; }
+    function setP_BLOCKS(uint256 nv) public onlyOwner { P_BLOCKS = nv; }
+    function setP_PER_YEAR(uint256 nv) public onlyOwner { P_PER_YEAR = nv; }
 
     function hashUpn(string memory upn) public pure returns(bytes32 upnHased) {
         return keccak256(abi.encode(upn));
     }
 
-    function getTaxPerBlock(uint256 V, uint256 P) public view returns(uint256 price) {
-        return V.mul(Ri).div(DECIMALS).add((Qi.mul(P).mul(P).div(DECIMALS)));
+    function getTaxPerYear(uint256 V, uint256 P) public view returns(uint256 yearlyTax) {
+        return V.mul(Ri).div(DECIMALS).add((Q.mul(P).mul(P)));
+    }
+
+    function getTaxPerBlock(uint256 V, uint256 P) public view returns(uint256 perBlockTax) {
+        return getTaxPerYear(V, P).div(P_PER_YEAR).div(P_BLOCKS);
     }
 
     function registerUPN(string calldata upnName, UPNIn calldata upnIn, address account, uint256 upfront) external {
@@ -71,9 +77,10 @@ contract UPNService is Ownable {
         /** new registration */
         if (upfront > 0) {
             uprtclRoot.consume(account, msg.sender, upfront);
-            upn.block0 = block.number;
-            upn.paid = upfront;
         }
+
+        upn.block0 = block.number;
+        upn.paid = upfront;
 
         upn.owner = upnIn.owner;
         upn.V = upnIn.V;
@@ -114,10 +121,13 @@ contract UPNService is Ownable {
     function takeUnpaidUPN(bytes32 upnHash, UPNIn calldata upnIn, address account, uint256 upfront) external {
         UPN storage upn = upns[upnHash];
         uint256 shouldHavePaid = getTaxPerBlock(upn.V, upn.P).mul(block.number - upn.block0);
-        require(shouldHavePaid > upn.paid, "UPN is uptodate on payments");
+        require(shouldHavePaid > upn.paid, "UPN is up-to-date on payments");
 
         /** reset payment status */
-        uprtclRoot.consume(account, msg.sender, upfront);
+        if (upfront > 0) {
+            uprtclRoot.consume(account, msg.sender, upfront);
+        }
+        
         upn.block0 = block.number;
         upn.paid = upfront;
 
