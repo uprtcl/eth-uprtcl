@@ -159,7 +159,7 @@ contract('UPNService', (accounts) => {
     await upnService.setP_PER_YEAR(P_PER_YEAR, { from: god });
   })
 
-  it('should be able to register and transfer a UPN - with V and P', async () => {
+  it('should be able to register and transfer a UPN - with V and P without upfront payment', async () => {
     const DECIMALS = await upnService.DECIMALS();
     const Ri = web3.utils.toBN(DECIMALS.toNumber()*R);
     
@@ -192,7 +192,7 @@ contract('UPNService', (accounts) => {
     assert.equal(upnRead.owner, bob, "UPN owner not expected");
   })
 
-  it('should be able to register and transfer a UPN - with V and P', async () => {
+  it('should be able to register and transfer a UPN - with V and P with upfront payment', async () => {
     const V = web3.utils.toWei(web3.utils.toBN(100000));
     const P = new BN(16);
     const taxRead = await upnService.getTaxPerYear(V, P);
@@ -235,15 +235,84 @@ contract('UPNService', (accounts) => {
     assert.isTrue(failed, "upn take did not failed");
 
     /*** time has passed */
-    console.log('time travelling');
     await mineNBlocks(Math.floor(2336000/(365*24)) + 10);
-    console.log('done');
-
+    
     await upnService.takeUnpaidUPN(upnHash, bobConfig, account, 0, { from: bob });
 
     const upnRead2 = await upnService.getUPN(upnHash, { from: observer });
     assert.equal(upnRead2.owner, bob, "UPN owner not expected");
 
+  })
+
+  it('should be able to register and transfer a UPN - with V and P recharging balance', async () => {
+    const V = web3.utils.toWei(web3.utils.toBN(100000));
+    const P = new BN(16);
+    const taxRead = await upnService.getTaxPerYear(V, P);
+     
+    const upnName = `alice${randomInt()}`;
+    const upnHash = await upnService.hashUpn(upnName);
+    const aliceConfig = {
+      owner: alice,
+      V: V.toString(),
+      P: P.toString()
+    }
+    const bobConfig = {
+      owner: bob,
+      V: V.toString(),
+      P: P.toString()
+    }
+
+    /** prepay 1 hour (aprox) */
+    const UPFRONT = taxRead.div(new BN(365*24));
+
+    // console.log({taxRead: taxRead.toString()});
+    // console.log({UPFRONT: UPFRONT.toString()});
+
+    await erc20Instance.mint(account, UPFRONT, { from: god });
+    await erc20Instance.approve(UprtclAccounts.address, UPFRONT, { from: account });
+    await uprtclAccounts.setUsufructuary(alice, true, { from: account });
+
+    const result = await upnService.registerUPN(upnName, aliceConfig, account, UPFRONT, { from: alice });
+
+    const allowance = await erc20Instance.allowance(account, UprtclAccounts.address);
+    assert.equal(allowance, 0, "allowance not expected");
+
+    const upnRead = await upnService.getUPN(upnHash, { from: observer });
+    assert.equal(upnRead.owner, alice, "UPN owner not expected");
+    assert.equal(upnRead.paid, UPFRONT, "UPN owner not expected");
+    assert.equal(upnRead.block0, result.receipt.blockNumber, "UPN owner not expected");
+
+    let failed = false;
+    await upnService.takeUnpaidUPN(upnHash, bobConfig, account, 0, { from: bob }).catch((error) => {
+      assert.equal(error.reason, 'UPN is up-to-date on payments', "unexpected reason");
+      failed = true
+    });
+    assert.isTrue(failed, "upn take did not failed");
+
+    /** recharge with 1 hour more */
+    await erc20Instance.mint(account, UPFRONT, { from: god });
+    await erc20Instance.approve(UprtclAccounts.address, UPFRONT, { from: account });
+
+    await upnService.chargeUPN(upnHash, account, UPFRONT, { from: alice });
+    
+    /*** 1hr has passed */
+    await mineNBlocks(Math.floor(2336000/(365*24)));
+    
+    /** it still fails */
+    failed = false;
+    await upnService.takeUnpaidUPN(upnHash, bobConfig, account, 0, { from: bob }).catch((error) => {
+      assert.equal(error.reason, 'UPN is up-to-date on payments', "unexpected reason");
+      failed = true
+    });
+
+    /** another hour passes */
+    await mineNBlocks(Math.floor(2336000/(365*24)) + 10);
+    
+    /** now it should be able to take the domain */
+    await upnService.takeUnpaidUPN(upnHash, bobConfig, account, 0, { from: bob });
+
+    const upnRead2 = await upnService.getUPN(upnHash, { from: observer });
+    assert.equal(upnRead2.owner, bob, "UPN owner not expected");
   })
 
   it('should be able to register UPRs of a registered UPN', async () => {
