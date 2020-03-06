@@ -108,7 +108,7 @@ contract UPNService is Ownable {
 
         /** send unpaid balance back ot owner */
         uint256 shouldHavePaid = getTaxPerBlock(upn.V, upn.P).mul(block.number - upn.block0);
-        uprtclRoot.transferTo(account, msg.sender, upn.owner, upn.paid.sub(shouldHavePaid));
+        uprtclRoot.transfer(upn.owner, upn.paid.sub(shouldHavePaid));
 
         /** consume new upfront payment */
         uprtclRoot.consume(account, msg.sender, upfront);
@@ -147,6 +147,7 @@ contract UPNService is Ownable {
 
             upn.taken = 0;
             upn.newOwner = address(0);
+            upn.blockAvailable = 0;
             upn.newV = 0;
             upn.newP = 0;
             // upn.newRegistry = address(0);
@@ -177,10 +178,22 @@ contract UPNService is Ownable {
         upn.blockAvailable = block.number.add(upn.P);
     }
 
-    function executeTake(bytes32 upnHash) external {
+    function executeTake(bytes32 upnHash, address account, uint256 upfront) external {
         UPN storage upn = upns[upnHash];
         require(upn.taken == 1, "upn not previously taken");
+        require(upn.newOwner == msg.sender, "only new owner can execute the take");
         require(block.number >= upn.blockAvailable, "upn still under protection period");
+
+        /** reimburse not spent balance to current owner */
+        uint256 shouldHavePaid = getTaxPerBlock(upn.V, upn.P).mul(block.number - upn.block0);
+        uprtclRoot.transfer(upn.owner, upn.paid.sub(shouldHavePaid));
+
+        /** reset payment status */
+        if (upfront > 0) {
+            uprtclRoot.consume(account, msg.sender, upfront);
+        }
+        upn.block0 = block.number;
+        upn.paid = upfront;
 
         upn.owner = upn.newOwner;
         upn.V = upn.newV;
@@ -189,6 +202,7 @@ contract UPNService is Ownable {
 
         upn.taken = 0;
         upn.newOwner = address(0);
+        upn.blockAvailable = 0;
         upn.newV = 0;
         upn.newP = 0;
         // upn.newRegistry = address(0);
