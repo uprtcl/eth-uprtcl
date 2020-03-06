@@ -69,6 +69,10 @@ contract UprtclRoot is HasSuperUsers {
         accounts.transferTo(from, by, to, amount);
     }
 
+    function transfer(address to, uint256 amount) public onlySuperUser {
+        accounts.transfer(to, amount);
+    }
+
     function getPerspectiveIdHash(string memory perspectiveId) public pure returns (bytes32 idHash) {
         return keccak256(abi.encodePacked(perspectiveId));
     }
