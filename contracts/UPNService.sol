@@ -62,7 +62,7 @@ contract UPNService is Ownable {
     }
 
     function getTaxPerYear(uint256 V, uint256 P) public view returns(uint256 yearlyTax) {
-        return V.mul(Ri).div(DECIMALS).add((Q.mul(P).mul(P)));
+        return V.mul(Ri).div(DECIMALS).add((Q.mul(P).div(P_BLOCKS).mul(P).div(P_BLOCKS)));
     }
 
     function getTaxPerBlock(uint256 V, uint256 P) public view returns(uint256 perBlockTax) {
@@ -105,6 +105,7 @@ contract UPNService is Ownable {
     function editUPN(bytes32 upnHash, uint256 V, uint256 P, address account, uint256 upfront) external {
         UPN storage upn = upns[upnHash];
         require(upn.owner == msg.sender, "upn can only be updated by its current owner");
+        require(upn.taken == 0, "taken upns cant be edited");
 
         /** send unpaid balance back ot owner */
         uint256 shouldHavePaid = getTaxPerBlock(upn.V, upn.P).mul(block.number - upn.block0);
@@ -163,9 +164,7 @@ contract UPNService is Ownable {
         upn.newOwner = upnIn.owner;
         upn.newV = upnIn.V;
         upn.newP = upnIn.P;
-
-        uint256 Pb = upn.P.mul(P_BLOCKS);
-        upn.blockAvailable = block.number.add(Pb);
+        upn.blockAvailable = block.number.add(upn.P);
     }
 
     function executeTake(bytes32 upnHash) external {
@@ -187,12 +186,12 @@ contract UPNService is Ownable {
         return upns[upnHash];
     }
 
-    function hashUpr(string memory context, string memory upn) public pure returns(bytes32 uprHashed) {
+    function hashUPR(string memory context, string memory upn) public pure returns(bytes32 uprHashed) {
         return keccak256(abi.encode(context, upn));
     }
 
     function setUPRInternal(UPRParts memory uprParts, string memory value) private {
-        bytes32 uprHash = hashUpr(uprParts.context, uprParts.upn);
+        bytes32 uprHash = hashUPR(uprParts.context, uprParts.upn);
         uprs[uprHash] = value;
     }
 
