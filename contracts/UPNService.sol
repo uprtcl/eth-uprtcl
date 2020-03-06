@@ -127,7 +127,7 @@ contract UPNService is Ownable {
         if (upfront > 0) {
             uprtclRoot.consume(account, msg.sender, upfront);
         }
-        
+
         upn.block0 = block.number;
         upn.paid = upfront;
 

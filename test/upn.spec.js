@@ -12,36 +12,43 @@ const randomInt = () => {
 }
 
 const mineOneBlock = async () => {
-  await web3.currentProvider.send({
-    jsonrpc: '2.0',
-    method: 'evm_mine',
-    params: [],
-    id: 0,
-  })
+  return new Promise((resolve) => {
+    web3.currentProvider.send({
+      jsonrpc: '2.0',
+      method: 'evm_mine',
+      params: [],
+      id: new Date().getTime(),
+    }, () => resolve())
+  });
 }
 
 const startMiner = async () => {
-  await web3.currentProvider.send({
-    jsonrpc: '2.0',
-    method: 'miner_start',
-    id: 0,
-  })
+  return new Promise((resolve) => {
+    web3.currentProvider.send({
+      jsonrpc: '2.0',
+      method: 'miner_start',
+      params: [1],
+      id: new Date().getTime(),
+    }, () => resolve())
+  });
 }
 
 const stopMiner = async () => {
-  await web3.currentProvider.send({
-    jsonrpc: '2.0',
-    method: 'miner_stop',
-    id: 0,
-  })
+  return new Promise((resolve) => {
+    web3.currentProvider.send({
+      jsonrpc: '2.0',
+      method: 'miner_stop',
+      params: [1],
+      id: new Date().getTime(),
+    }, () => resolve())
+  });
 }
 
 const mineNBlocks = async (n) => {
-  await stopMiner()
   for (let i = 0; i < n; i++) {
-    await mineOneBlock()
+    await mineOneBlock();
+    // console.log(`mining ${i}/${n}`)
   }
-  await startMiner()
 }
 
 
@@ -164,7 +171,7 @@ contract('UPNService', (accounts) => {
     assert.isTrue(taxExpected.eq(web3.utils.toWei(web3.utils.toBN(1012))), "tax not expected");
     assert.isTrue(taxRead.eq(taxExpected), "tax not expected");
     
-    const upnName = 'alice-2';
+    const upnName = `alice${randomInt()}`;
     const aliceConfig = {
       owner: alice,
       V: V.toString(),
@@ -183,37 +190,58 @@ contract('UPNService', (accounts) => {
 
     const upnRead = await upnService.getUPN(upnHash, { from: observer });
     assert.equal(upnRead.owner, bob, "UPN owner not expected");
+  })
 
-    const upnName2 = 'alice-3';
-    
-    /** prepay half a year */
-    const UPFRONT = web3.utils.toWei(taxRead).div(new BN(36));
+  it('should be able to register and transfer a UPN - with V and P', async () => {
+    const V = web3.utils.toWei(web3.utils.toBN(100000));
+    const P = new BN(16);
+    const taxRead = await upnService.getTaxPerYear(V, P);
+     
+    const upnName = `alice${randomInt()}`;
+    const upnHash = await upnService.hashUpn(upnName);
+    const aliceConfig = {
+      owner: alice,
+      V: V.toString(),
+      P: P.toString()
+    }
+    const bobConfig = {
+      owner: bob,
+      V: V.toString(),
+      P: P.toString()
+    }
+
+    /** prepay 1 hour (aprox) */
+    const UPFRONT = taxRead.div(new BN(365*24));
+
+    // console.log({taxRead: taxRead.toString()});
+    // console.log({UPFRONT: UPFRONT.toString()});
 
     await erc20Instance.mint(account, UPFRONT, { from: god });
     await erc20Instance.approve(UprtclAccounts.address, UPFRONT, { from: account });
     await uprtclAccounts.setUsufructuary(alice, true, { from: account });
 
-    await upnService.registerUPN(upnName2, aliceConfig, account, UPFRONT, { from: alice });
+    const result = await upnService.registerUPN(upnName, aliceConfig, account, UPFRONT, { from: alice });
 
-    const upnHash2 = await upnService.hashUpn(upnName2);
+    const upnRead = await upnService.getUPN(upnHash, { from: observer });
+    assert.equal(upnRead.owner, alice, "UPN owner not expected");
+    assert.equal(upnRead.paid, UPFRONT, "UPN owner not expected");
+    assert.equal(upnRead.block0, result.receipt.blockNumber, "UPN owner not expected");
+
     let failed = false;
-    await upnService.takeUnpaidUPN(upnHash2, bobConfig, account, 0, { from: bob }).catch((error) => {
+    await upnService.takeUnpaidUPN(upnHash, bobConfig, account, 0, { from: bob }).catch((error) => {
       assert.equal(error.reason, 'UPN is up-to-date on payments', "unexpected reason");
       failed = true
     });
     assert.isTrue(failed, "upn take did not failed");
 
-    /*** half of year time has passed */
-    // console.log('time travelling');
-    // await mineNBlocks(2336000/36);
-    // console.log('done');
+    /*** time has passed */
+    console.log('time travelling');
+    await mineNBlocks(Math.floor(2336000/(365*24)) + 10);
+    console.log('done');
 
-    await stopMiner();
-    await startMiner();
+    await upnService.takeUnpaidUPN(upnHash, bobConfig, account, 0, { from: bob });
 
-    await upnService.takeUnpaidUPN(upnHash2, bobConfig, account, 0, { from: bob });
-
-    const upnRead2 = await upnService.getUPN(upnHash2, { from: observer });
+    const upnRead2 = await upnService.getUPN(upnHash, { from: observer });
     assert.equal(upnRead2.owner, bob, "UPN owner not expected");
 
   })
