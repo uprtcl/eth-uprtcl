@@ -2,6 +2,7 @@ pragma solidity >=0.5.0 <0.6.0;
 pragma experimental ABIEncoderV2;
 
 import "./UprtclRoot.sol";
+import "./UPRRegistry.sol";
 import "./Ownable.sol";
 import "./SafeMath.sol";
 
@@ -13,6 +14,7 @@ contract UPNService is Ownable {
         address owner;
         uint256 V;
         uint256 P;
+        UPRRegistry registry;
     }
 
     struct UPN {
@@ -21,22 +23,18 @@ contract UPNService is Ownable {
         uint256 P;
         uint256 block0;
         uint256 paid;
+        UPRRegistry registry;
 
         uint8 taken;
         address newOwner;
         uint256 blockAvailable;
         uint256 newV;
         uint256 newP;
-    }
-
-    struct UPRParts {
-        string context;
-        string upn;
+        UPRRegistry newRegistry;
     }
 
     mapping(bytes32 => UPN) upns;
-    mapping(bytes32 => string) uprs;
-
+    
     uint256 public Fi;
     uint256 public Ri;
     uint256 public Q;
@@ -85,6 +83,7 @@ contract UPNService is Ownable {
         upn.owner = upnIn.owner;
         upn.V = upnIn.V;
         upn.P = upnIn.P;
+        upn.registry = upnIn.registry;
     }
 
     function chargeUPN(bytes32 upnHash, address account, uint256 amount) external {
@@ -119,6 +118,14 @@ contract UPNService is Ownable {
         upn.P = P;
     }
 
+    function changeUPRRegistry(bytes32 upnHash, UPRRegistry registry) external {
+        UPN storage upn = upns[upnHash];
+        require(upn.owner == msg.sender, "upn can only be updated by its current owner");
+        require(upn.taken == 0, "taken upns cant be edited");
+
+        upn.registry = registry;
+    }
+
     function takeUnpaidUPN(bytes32 upnHash, UPNIn calldata upnIn, address account, uint256 upfront) external {
         UPN storage upn = upns[upnHash];
         uint256 shouldHavePaid = getTaxPerBlock(upn.V, upn.P).mul(block.number - upn.block0);
@@ -142,10 +149,12 @@ contract UPNService is Ownable {
             upn.newOwner = address(0);
             upn.newV = 0;
             upn.newP = 0;
+            // upn.newRegistry = address(0);
         } else {
             upn.owner = upnIn.owner;
             upn.V = upnIn.V;
             upn.P = upnIn.P;
+            upn.registry = upnIn.registry;
         }
     }
 
@@ -164,6 +173,7 @@ contract UPNService is Ownable {
         upn.newOwner = upnIn.owner;
         upn.newV = upnIn.V;
         upn.newP = upnIn.P;
+        upn.newRegistry = upnIn.registry;
         upn.blockAvailable = block.number.add(upn.P);
     }
 
@@ -175,34 +185,26 @@ contract UPNService is Ownable {
         upn.owner = upn.newOwner;
         upn.V = upn.newV;
         upn.P = upn.newP;
+        upn.registry = upn.newRegistry;
 
         upn.taken = 0;
         upn.newOwner = address(0);
         upn.newV = 0;
         upn.newP = 0;
+        // upn.newRegistry = address(0);
     }
 
     function getUPN(bytes32 upnHash) public view returns(UPN memory upn) {
         return upns[upnHash];
     }
 
-    function hashUPR(string memory context, string memory upn) public pure returns(bytes32 uprHashed) {
-        return keccak256(abi.encode(context, upn));
+    function hashContext(string memory context) public pure returns(bytes32 uprHashed) {
+        return keccak256(abi.encode(context));
     }
 
-    function setUPRInternal(UPRParts memory uprParts, string memory value) private {
-        bytes32 uprHash = hashUPR(uprParts.context, uprParts.upn);
-        uprs[uprHash] = value;
-    }
-
-    function setUPR(UPRParts memory uprParts, string memory value) public {
-        bytes32 upnHash = hashUpn(uprParts.upn);
-        require(upns[upnHash].owner == msg.sender, "UPN not owned by msg.sender");
-        setUPRInternal(uprParts, value);
-    }
-
-    function getUPR(bytes32 uprHash) public view returns (string memory value) {
-        return uprs[uprHash];
+    function getUPR(bytes32 contextHash, bytes32 upnHash) public view returns (string memory value) {
+        UPN storage upn = upns[upnHash];
+        return upn.registry.getUPR(contextHash);
     }
 
 }

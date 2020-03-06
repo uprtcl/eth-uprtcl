@@ -2,6 +2,7 @@ const UprtclRoot = artifacts.require("UprtclRoot");
 const UPNService = artifacts.require("UPNService");
 const UprtclAccounts = artifacts.require("UprtclAccounts");
 const ERC20Mintable = artifacts.require("ERC20Mintable");
+const UPRRegistry = artifacts.require("UPRRegistry");
 
 var seedrandom = require('seedrandom');
 var BN = web3.utils.BN;
@@ -159,7 +160,7 @@ contract('UPNService', (accounts) => {
     await upnService.setP_PER_YEAR(P_PER_YEAR, { from: god });
   })
 
-  it.skip('should be able to register and loose a UPN - without upfront payment', async () => {
+  it('should be able to register and loose a UPN - without upfront payment', async () => {
     const DECIMALS = await upnService.DECIMALS();
     const P_BLOCKS = await upnService.P_BLOCKS();
 
@@ -178,47 +179,48 @@ contract('UPNService', (accounts) => {
     const cidAlice = `zbAlice`;
     const cidBob = `zbBob`;
 
+    const upnHash = await upnService.hashUpn(upnName);
+
+    const aliceUPR = await UPRRegistry.new({ from: alice });
+
     const aliceConfig = {
       owner: alice,
       V: V.toString(),
-      P: P.toString()
+      P: P.toString(),
+      registry: aliceUPR.address
     }
 
     await upnService.registerUPN(upnName, aliceConfig, account, 0, { from: alice });
-    await upnService.setUPR({ context: contextName, upn: upnName}, cidAlice, { from: alice });
 
-    const uprHash = await upnService.hashUPR(contextName, upnName, { from: observer });
-    const uprRead = await upnService.getUPR(uprHash);
+    const contextHash = await upnService.hashContext(contextName);
+    await aliceUPR.setUPR(contextHash, cidAlice, { from: alice });
+
+    const uprRead = await upnService.getUPR(contextHash, upnHash);
     assert.equal(uprRead, cidAlice, "UPR value not expected");    
 
     let failed = false;
-    await upnService.setUPR({ context: contextName, upn: upnName}, cidBob, { from: bob }).catch((error) => {
-      assert.equal(error.reason, 'UPN not owned by msg.sender', "unexpected reason");
+    await aliceUPR.setUPR(contextHash, cidBob, { from: bob }).catch((error) => {
+      assert.equal(error.reason, 'Ownable: caller is not the owner', "unexpected reason");
       failed = true
     });
     assert.isTrue(failed, "upr set did not failed");
 
+    const bobUPR = await UPRRegistry.new({ from: bob });
     const bobConfig = {
       owner: bob,
       V: V.toString(),
-      P: P.toString()
+      P: P.toString(),
+      registry: bobUPR.address
     }
-    const upnHash = await upnService.hashUpn(upnName);
+
+    await bobUPR.setUPR(contextHash, cidBob, { from: bob });
+
     await upnService.takeUnpaidUPN(upnHash, bobConfig, account, 0, { from: bob });
 
     const upnRead = await upnService.getUPN(upnHash, { from: observer });
     assert.equal(upnRead.owner, bob, "UPN owner not expected");
-
-    /** UPR can be set by bob */
-    failed = false;
-    await upnService.setUPR({ context: contextName, upn: upnName}, cidAlice, { from: alice }).catch((error) => {
-      assert.equal(error.reason, 'UPN not owned by msg.sender', "unexpected reason");
-      failed = true
-    });
-    assert.isTrue(failed, "upr set did not failed");
-
-    await upnService.setUPR({ context: contextName, upn: upnName}, cidBob, { from: bob });
-    const uprRead2 = await upnService.getUPR(uprHash);
+    
+    const uprRead2 = await upnService.getUPR(contextHash, upnHash);
     assert.equal(uprRead2, cidBob, "UPR value not expected");   
 
   })
@@ -349,7 +351,7 @@ contract('UPNService', (accounts) => {
     assert.equal(upnRead2.owner, bob, "UPN owner not expected");
   })
 
-  it('should be able to register and force-sell a UPN', async () => {
+  it.skip('should be able to register and force-sell a UPN', async () => {
     const DECIMALS = await upnService.DECIMALS();
     const P_BLOCKS = await upnService.P_BLOCKS();
     const Valice = web3.utils.toWei(web3.utils.toBN(100000));
