@@ -62,7 +62,7 @@ contract('UPNService', (accounts) => {
 
   const aliceUpn = 'alice';
   const bob = accounts[5];
-  const god = accounts[9];
+  const god = accounts[0];
 
   let uprtclRoot;
   let upnService;

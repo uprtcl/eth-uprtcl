@@ -7,7 +7,7 @@ const ERC20Mintable = artifacts.require("ERC20Mintable");
 
 module.exports = function(deployer, networks, acccounts) {
     deployer.then(async () => {
-        const god = acccounts[9];
+        const god = acccounts[0];
 
         const uprtclRoot = await UprtclRoot.deployed();
         const uprtclDetails = await UprtclDetails.deployed();

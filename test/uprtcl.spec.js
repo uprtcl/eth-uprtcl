@@ -167,13 +167,13 @@ const generateCid = async (message, cidConfig) => {
 
 contract('All', (accounts) => {
 
-  const creator = accounts[0];
+  const creator = accounts[9];
   const firstOwner = accounts[1];
   const observer = accounts[3];
   
   const newOwner = accounts[8];
 
-  const god = accounts[9];
+  const god = accounts[0];
 
   const proposalOwner = accounts[0];
   const requestRegistrator = accounts[4];
