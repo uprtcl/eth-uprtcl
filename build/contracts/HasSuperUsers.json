@@ -258,7 +258,7 @@
                               "name": "msg",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 3545,
+                              "referencedDeclaration": 3738,
                               "src": "195:3:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_message",
@@ -346,10 +346,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        3548,
-                        3549
+                        3741,
+                        3742
                       ],
-                      "referencedDeclaration": 3549,
+                      "referencedDeclaration": 3742,
                       "src": "175:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -850,7 +850,7 @@
                               "name": "msg",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 3545,
+                              "referencedDeclaration": 3738,
                               "src": "195:3:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_message",
@@ -938,10 +938,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        3548,
-                        3549
+                        3741,
+                        3742
                       ],
-                      "referencedDeclaration": 3549,
+                      "referencedDeclaration": 3742,
                       "src": "175:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1313,7 +1313,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-03-05T11:18:20.798Z",
+  "updatedAt": "2020-03-16T21:21:42.086Z",
   "devdoc": {
     "methods": {
       "isOwner()": {

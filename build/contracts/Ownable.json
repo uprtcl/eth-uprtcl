@@ -617,10 +617,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        3548,
-                        3549
+                        3741,
+                        3742
                       ],
-                      "referencedDeclaration": 3549,
+                      "referencedDeclaration": 3742,
                       "src": "1064:7:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1316,10 +1316,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        3548,
-                        3549
+                        3741,
+                        3742
                       ],
-                      "referencedDeclaration": 3549,
+                      "referencedDeclaration": 3742,
                       "src": "2228:7:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -2052,10 +2052,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        3548,
-                        3549
+                        3741,
+                        3742
                       ],
-                      "referencedDeclaration": 3549,
+                      "referencedDeclaration": 3742,
                       "src": "1064:7:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -2751,10 +2751,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        3548,
-                        3549
+                        3741,
+                        3742
                       ],
-                      "referencedDeclaration": 3549,
+                      "referencedDeclaration": 3742,
                       "src": "2228:7:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -2964,7 +2964,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-03-05T11:18:20.802Z",
+  "updatedAt": "2020-03-16T21:21:42.089Z",
   "devdoc": {
     "details": "Contract module which provides a basic access control mechanism, where there is an account (an owner) that can be granted exclusive access to specific functions. * This module is used through inheritance. It will make available the modifier `onlyOwner`, which can be applied to your functions to restrict their use to the owner.",
     "methods": {
