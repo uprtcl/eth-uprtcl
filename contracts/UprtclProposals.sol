@@ -196,7 +196,7 @@ contract UprtclProposals is Ownable {
         proposal.status = status;
     }
 
-    function setProposalAuthorized(bytes32 proposalId, uint8 authorized) public {
+    function setProposalAuthorized(bytes32 proposalId, uint8 authorized, bool execute) public {
         Proposal storage proposal = proposals[proposalId];
         require(
             msg.sender == proposal.owner,
@@ -205,6 +205,10 @@ contract UprtclProposals is Ownable {
         /** by default the proposal is closed once it is authorized. */
         if (authorized > 0) proposal.status = 0;
         proposal.authorized = authorized;
+
+        if (execute) {
+            executeProposal(proposalId);
+        }
     }
 
     function executeProposal(bytes32 proposalId) public {
