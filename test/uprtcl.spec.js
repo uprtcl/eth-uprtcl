@@ -923,16 +923,16 @@ contract('All', (accounts) => {
     })
 
     failed = false;
-    await uprtclProposals.setProposalAuthorized(
-      proposalId01, 1,
+    await uprtclProposals.authorizeProposal(
+      proposalId01, 1, true,
       { from: requestRegistrator }).catch((error) => {
       assert.equal(error.reason, 'Proposal can only by authorized by its owner');
       failed = true
     });
     assert.isTrue(failed, "setProposalAuthorized set did not failed");
 
-    await uprtclProposals.setProposalAuthorized(
-      proposalId01, 1,
+    await uprtclProposals.authorizeProposal(
+      proposalId01, 1, true,
       { from: firstOwner })
 
 

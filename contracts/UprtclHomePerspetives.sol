@@ -1,5 +1,7 @@
 pragma solidity >=0.5.0 <0.6.0;
 
+import "./HasSuperUsers.sol";
+
 contract UprtclHomePerspectives is HasSuperUsers {
     mapping(address => string) public homePerspectives;
 

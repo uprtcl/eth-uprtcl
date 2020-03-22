@@ -144,10 +144,10 @@ contract UprtclProposals is Ownable {
         pure
         returns (uint8 approved)
     {
-		if (proposal.approvedAddresses.length == 0) {
-			approved = 1;
-			return approved;
-		}
+        if (proposal.approvedAddresses.length == 0) {
+          approved = 1;
+          return approved;
+        }
 
         for (uint32 ix = 0; ix < proposal.approvedAddresses.length; ix++) {
             if (value == proposal.approvedAddresses[ix]) {
@@ -196,19 +196,23 @@ contract UprtclProposals is Ownable {
         proposal.status = status;
     }
 
-    function setProposalAuthorized(bytes32 proposalId, uint8 authorized, bool execute) public {
+    function setProposalAuthorized(bytes32 proposalId, uint8 authorized, bool execute, address msgSender) private {
         Proposal storage proposal = proposals[proposalId];
         require(
-            msg.sender == proposal.owner,
+            msgSender == proposal.owner,
             "Proposal can only by authorized by its owner"
         );
         /** by default the proposal is closed once it is authorized. */
         if (authorized > 0) proposal.status = 0;
         proposal.authorized = authorized;
 
-        if (execute) {
-            executeProposal(proposalId);
-        }
+        // if (execute) {
+        //     executeProposal(proposalId);
+        // }
+    }
+
+    function authorizeProposal(bytes32 proposalId, uint8 authorized, bool execute) public {
+      setProposalAuthorized(proposalId, authorized, execute, msg.sender);
     }
 
     function executeProposal(bytes32 proposalId) public {
