@@ -171,7 +171,25 @@ contract("DAO Wrapper", async accounts => {
     assert.equal(newOwner, dao, "Perspective owner did not change")
   }
 
+  const dontChangeOwner = async () => {
+    const oldOwner = await root.getPerspectiveOwner(perspectiveIdHash)
+    root.setSuperUser(wrapper.address, true, { from: god });
+    await wrapper.changeOwner(perspectiveIdHash, dao, oldOwner)
+    let failed = false
+    try {
+
+      const newOwner = await root.getPerspectiveOwner(perspectiveIdHash)
+    } catch (e) {
+      failed = true
+    } finally {
+      assert.isTrue(failed, "Perspective owner did change")
+    }
+  }
+
+
+
   it("should set home perspective", setHomePerspective);
   it("should authorize proposal", authorizeProposal);
   it("should change owner", changeOwner);
+  it("should not change owner", dontChangeOwner);
 });
