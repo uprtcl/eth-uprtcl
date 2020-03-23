@@ -21,6 +21,7 @@ let details;
 let proposals;
 let homePerspectives;
 
+let perspectiveIdHash;
 
 contract("DAO Wrapper", async accounts => {
   const god = accounts[0];
@@ -131,10 +132,10 @@ contract("DAO Wrapper", async accounts => {
       const headId = await generateCid(JSON.stringify(head), cidConfig1);
       const headCidStr = headId.toString();
       const headCidParts = cidToHex32(headCidStr);
-      const perspectiveIdHash = await root.getPerspectiveIdHash(perspectivesData.perspective.perspectiveId);
+      perspectiveIdHash = await root.getPerspectiveIdHash(perspectivesData.perspective.perspectiveId);
 
       const headUpdate = {
-        perspectiveIdHash: perspectiveIdHash,
+        perspectiveIdHash,
         headCid1: headCidParts[0],
         headCid0: headCidParts[1],
         executed: "0"
@@ -156,12 +157,21 @@ contract("DAO Wrapper", async accounts => {
 
     const result = await proposals.initProposal(newProposal, accountOwner, { from: requestRegistrator });
 
-    const proposalId01 = await proposals.getProposalId(toPerspectiveCid.toString(), fromPerspectiveCid.toString(), nonce);
+    const proposalId = await proposals.getProposalId(toPerspectiveCid.toString(), fromPerspectiveCid.toString(), nonce);
 
     proposals.setSuperUser(wrapper.address, true, { from: god });
-    await wrapper.authorizeProposal(proposalId01, 1, true, firstOwner, { from: dao });
+    await wrapper.authorizeProposal(proposalId, 1, true, firstOwner, { from: dao });
   };
+
+  const changeOwner = async () => {
+    const oldOwner = await root.getPerspectiveOwner(perspectiveIdHash)
+    root.setSuperUser(wrapper.address, true, { from: god });
+    await wrapper.changeOwner(perspectiveIdHash, dao, oldOwner, { from: dao })
+    const newOwner = await root.getPerspectiveOwner(perspectiveIdHash)
+    assert.equal(newOwner, dao, "Perspective owner did not change")
+  }
 
   it("should set home perspective", setHomePerspective);
   it("should authorize proposal", authorizeProposal);
+  it("should change owner", changeOwner);
 });

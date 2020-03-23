@@ -25,7 +25,10 @@ contract UprtclDAOWrapper is Ownable {
     }
 
     function setHomePerspective(string calldata perspectiveId) external {
-        uprtclHomePerspectives.setHomePerspectiveSuperUser(perspectiveId, msg.sender);
+        uprtclHomePerspectives.setHomePerspectiveSuperUser(
+            perspectiveId,
+            msg.sender
+        );
     }
 
     function authorizeProposal(
@@ -34,12 +37,25 @@ contract UprtclDAOWrapper is Ownable {
         bool execute,
         address proposalOwner
     ) external onlyOwner {
-        uprtclProposals.authorizeProposalSuperUser(proposalId, authorized, execute, proposalOwner);
+        uprtclProposals.authorizeProposalSuperUser(
+            proposalId,
+            authorized,
+            execute,
+            proposalOwner
+        );
     }
 
-    // changeOwner() {
-    //     uprtclRoot.changeOwner(..)
-    // }
+    function changeOwner(
+        bytes32 perspectiveIdHash,
+        address newOwner,
+        address oldOwner
+    ) external onlyOwner {
+        uprtclRoot.changePerspectiveOwnerSuperUser(
+            perspectiveIdHash,
+            newOwner,
+            oldOwner
+        );
+    }
 
     // setPerspectiveDetails() {
     //     uprtclDetails.setPerspectiveDetails(...)
