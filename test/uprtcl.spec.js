@@ -924,7 +924,7 @@ contract('All', (accounts) => {
 
     failed = false;
     await uprtclProposals.authorizeProposal(
-      proposalId01, 1, true,
+      proposalId01, 1, false,
       { from: requestRegistrator }).catch((error) => {
       assert.equal(error.reason, 'Proposal can only by authorized by its owner');
       failed = true
@@ -932,7 +932,7 @@ contract('All', (accounts) => {
     assert.isTrue(failed, "setProposalAuthorized set did not failed");
 
     await uprtclProposals.authorizeProposal(
-      proposalId01, 1, true,
+      proposalId01, 1, false,
       { from: firstOwner })
 
 
@@ -951,7 +951,7 @@ contract('All', (accounts) => {
 
     await Promise.all(checkHeadsPromises);
 
-    await uprtclProposals.executeProposal(
+    await uprtclProposals.executeProposalExternal(
       proposalId01,
       { from: firstOwner });
 
@@ -1031,6 +1031,7 @@ contract('All', (accounts) => {
     assert.equal(proposalRead.approvedAddresses.length, 0, "unexpected approvedAddress")
     assert.equal(proposalRead.status, 1, "unexpected status")
     assert.equal(proposalRead.authorized, 0, "unexpected authorized")
+    await uprtclProposals.setMinFee(0, { from: god })
   });
 
   

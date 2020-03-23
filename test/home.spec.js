@@ -14,8 +14,8 @@ contract('UprtclHomePerspectives', (accounts) => {
     await uprtclHomePerspectives.setSuperUser(alice, { from: observer });
     await uprtclHomePerspectives.setSuperUser(bob, { from: observer });
 
-    await uprtclHomePerspectives.setHomePerspective(pidAlice, alice, { from: alice });
-    await uprtclHomePerspectives.setHomePerspective(pidBob, bob, { from: bob });
+    await uprtclHomePerspectives.setHomePerspectivePublic(pidAlice, { from: alice });
+    await uprtclHomePerspectives.setHomePerspectivePublic(pidBob, { from: bob });
 
     const pidAliceRead = await uprtclHomePerspectives.getHomePerspective(alice, { from: observer });
     const pidBobRead = await uprtclHomePerspectives.getHomePerspective(bob, { from: observer });

@@ -48,7 +48,6 @@ contract("DAO Wrapper", async accounts => {
     const firstOwner = accounts[9];
     const creator = accounts[7];
     const requestRegistrator = accounts[8];
-
     const toPerspective = {
       origin: "eth://contractAddressTwo",
       creatorId: "did:uport:456",
@@ -149,7 +148,7 @@ contract("DAO Wrapper", async accounts => {
     const newProposal = {
       toPerspectiveId: toPerspectiveCid.toString(),
       fromPerspectiveId: fromPerspectiveCid.toString(),
-      owner: accountOwner,
+      owner: firstOwner,
       nonce: nonce,
       headUpdates: updates.map(u => u.headUpdate),
       approvedAddresses: []
@@ -160,7 +159,7 @@ contract("DAO Wrapper", async accounts => {
     const proposalId01 = await proposals.getProposalId(toPerspectiveCid.toString(), fromPerspectiveCid.toString(), nonce);
 
     proposals.setSuperUser(wrapper.address, true, { from: god });
-    await wrapper.authorizeProposal(proposalId01, 1, true, accountOwner, { from: dao });
+    await wrapper.authorizeProposal(proposalId01, 1, true, firstOwner, { from: dao });
   };
 
   it("should set home perspective", setHomePerspective);

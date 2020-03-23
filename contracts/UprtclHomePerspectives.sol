@@ -9,11 +9,15 @@ contract UprtclHomePerspectives is HasSuperUsers {
         return homePerspectives[owner];
     }
 
-    function setHomePerspectiveInternal(string memory perspectiveId, address msgSender) private onlySuperUser {
+    function setHomePerspectiveInternal(string memory perspectiveId, address msgSender) private {
         homePerspectives[msgSender] = perspectiveId;
     }
 
-    function setHomePerspective(string calldata perspectiveId, address msgSender) external {
+    function setHomePerspectiveSuperUser(string calldata perspectiveId, address msgSender) external onlySuperUser {
         setHomePerspectiveInternal(perspectiveId, msgSender);
+    }
+
+    function setHomePerspectivePublic(string calldata perspectiveId) external {
+        setHomePerspectiveInternal(perspectiveId, msg.sender);
     }
 }
