@@ -2,20 +2,22 @@ pragma solidity >=0.5.0 <0.6.0;
 pragma experimental ABIEncoderV2;
 
 import "./UprtclRoot.sol";
-import "./Ownable.sol";
+import "./HasSuperUsers.sol";
 import "./SafeMath.sol";
 
-contract UprtclDetails is Ownable {
-    using SafeMath for uint256;
-
+library SharedPerspectiveDetails {
     struct PerspectiveDetails {
         string name;
         string context;
     }
+}
+
+contract UprtclDetails is HasSuperUsers {
+    using SafeMath for uint256;
 
     struct InitPerspective {
         UprtclRoot.NewPerspective perspective;
-        PerspectiveDetails details;
+        SharedPerspectiveDetails.PerspectiveDetails details;
     }
 
     event PerspectiveDetailsSet (
@@ -23,7 +25,7 @@ contract UprtclDetails is Ownable {
         bytes32 indexed contextHash
     );
 
-    mapping(bytes32 => PerspectiveDetails) public perspectivesDetails;
+    mapping(bytes32 => SharedPerspectiveDetails.PerspectiveDetails) public perspectivesDetails;
 
     UprtclRoot uprtclRoot;
 
@@ -38,12 +40,12 @@ contract UprtclDetails is Ownable {
     /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
     function setPerspectiveDetailsInternal(
         bytes32 perspectiveIdHash,
-        PerspectiveDetails memory newDetails,
+        SharedPerspectiveDetails.PerspectiveDetails memory newDetails,
         address sender
     ) private {
         require(uprtclRoot.getPerspectiveOwner(perspectiveIdHash) == sender, "details can only by set by perspective owner");
 
-        PerspectiveDetails storage details = perspectivesDetails[perspectiveIdHash];
+        SharedPerspectiveDetails.PerspectiveDetails storage details = perspectivesDetails[perspectiveIdHash];
 
         details.name = newDetails.name;
         details.context = newDetails.context;
@@ -58,13 +60,21 @@ contract UprtclDetails is Ownable {
 
     function setPerspectiveDetails(
         bytes32 perspectiveIdHash,
-        PerspectiveDetails memory newDetails
+        SharedPerspectiveDetails.PerspectiveDetails memory newDetails
     ) public {
         setPerspectiveDetailsInternal(perspectiveIdHash, newDetails, msg.sender);
     }
 
+    function setPerspectiveDetailsSuperUser(
+        bytes32 perspectiveIdHash,
+        SharedPerspectiveDetails.PerspectiveDetails memory newDetails,
+        address msgSender
+    ) public onlySuperUser {
+        setPerspectiveDetailsInternal(perspectiveIdHash, newDetails, msgSender);
+    }
+
     function getPerspectiveDetails(bytes32 perspectiveIdHash) public view returns (string memory name, string memory context) {
-        PerspectiveDetails memory details = perspectivesDetails[perspectiveIdHash];
+        SharedPerspectiveDetails.PerspectiveDetails memory details = perspectivesDetails[perspectiveIdHash];
         return (details.name, details.context);
     }
 

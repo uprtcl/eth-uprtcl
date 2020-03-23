@@ -164,32 +164,56 @@ contract("DAO Wrapper", async accounts => {
   };
 
   const changeOwner = async () => {
-    const oldOwner = await root.getPerspectiveOwner(perspectiveIdHash)
+    const oldOwner = await root.getPerspectiveOwner(perspectiveIdHash);
     root.setSuperUser(wrapper.address, true, { from: god });
-    await wrapper.changeOwner(perspectiveIdHash, dao, oldOwner, { from: dao })
-    const newOwner = await root.getPerspectiveOwner(perspectiveIdHash)
-    assert.equal(newOwner, dao, "Perspective owner did not change")
-  }
+    await wrapper.changeOwner(perspectiveIdHash, dao, oldOwner, { from: dao });
+    const newOwner = await root.getPerspectiveOwner(perspectiveIdHash);
+    assert.equal(newOwner, dao, "Perspective owner did not change");
+  };
 
   const dontChangeOwner = async () => {
-    const oldOwner = await root.getPerspectiveOwner(perspectiveIdHash)
-    root.setSuperUser(wrapper.address, true, { from: god });
-    await wrapper.changeOwner(perspectiveIdHash, dao, oldOwner)
-    let failed = false
+    const oldOwner = await root.getPerspectiveOwner(perspectiveIdHash);
+    let failed = false;
     try {
-
-      const newOwner = await root.getPerspectiveOwner(perspectiveIdHash)
+      await wrapper.changeOwner(perspectiveIdHash, dao, oldOwner);
+      const newOwner = await root.getPerspectiveOwner(perspectiveIdHash);
     } catch (e) {
-      failed = true
+      failed = true;
     } finally {
-      assert.isTrue(failed, "Perspective owner did change")
+      assert.isTrue(failed, "Perspective owner did change");
     }
-  }
+  };
 
+  const changePespectiveDetail = async () => {
+    const newDetails = {
+      name: "new name",
+      context: "new context"
+    };
+    details.setSuperUser(wrapper.address, true, { from: god });
+    await wrapper.setPerspectiveDetails(perspectiveIdHash, newDetails, { from: dao });
+    const perspective = await details.getPerspectiveDetails(perspectiveIdHash);
+    assert.equal(newDetails.name, perspective.name, "Perspective name did not change");
+  };
 
+  const dontChangePerspectiveDetail = async () => {
+    const newDetails = {
+      name: "new name",
+      context: "new context"
+    };
+    let failed = false;
+    try {
+      await wrapper.setPerspectiveDetails(perspectiveIdHash, newDetails, { from: firstOwner });
+    } catch (e) {
+      failed = true;
+    } finally {
+      assert.isTrue(failed, "Perspective name did change");
+    }
+  };
 
   it("should set home perspective", setHomePerspective);
   it("should authorize proposal", authorizeProposal);
   it("should change owner", changeOwner);
   it("should not change owner", dontChangeOwner);
+  it("should change perspective's name", changePespectiveDetail);
+  it("should not change perspective's name, because user is not authorized", dontChangePerspectiveDetail);
 });

@@ -57,8 +57,15 @@ contract UprtclDAOWrapper is Ownable {
         );
     }
 
-    // setPerspectiveDetails() {
-    //     uprtclDetails.setPerspectiveDetails(...)
-    // }
+    function setPerspectiveDetails(
+        bytes32 perspectiveIdHash,
+        SharedPerspectiveDetails.PerspectiveDetails memory newDetails
+    ) public {
+        uprtclDetails.setPerspectiveDetailsSuperUser(
+            perspectiveIdHash,
+            newDetails,
+            msg.sender
+        );
+    }
 
 }
