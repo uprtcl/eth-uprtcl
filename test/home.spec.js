@@ -11,9 +11,11 @@ contract('UprtclHomePerspectives', (accounts) => {
     
     const pidAlice = '12345';
     const pidBob = '87654';
+    await uprtclHomePerspectives.setSuperUser(alice, { from: observer });
+    await uprtclHomePerspectives.setSuperUser(bob, { from: observer });
 
-    await uprtclHomePerspectives.setHomePerspective(pidAlice, { from: alice });
-    await uprtclHomePerspectives.setHomePerspective(pidBob, { from: bob });
+    await uprtclHomePerspectives.setHomePerspectivePublic(pidAlice, { from: alice });
+    await uprtclHomePerspectives.setHomePerspectivePublic(pidBob, { from: bob });
 
     const pidAliceRead = await uprtclHomePerspectives.getHomePerspective(alice, { from: observer });
     const pidBobRead = await uprtclHomePerspectives.getHomePerspective(bob, { from: observer });

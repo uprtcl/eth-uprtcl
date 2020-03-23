@@ -5,9 +5,11 @@ const UprtclAccounts = artifacts.require("UprtclAccounts");
 const ERC20Mintable = artifacts.require("ERC20Mintable");
 const UPNService = artifacts.require("UPNService");
 const UprtclHomePerspectives = artifacts.require("UprtclHomePerspectives");
+const UprtclDAOWrapper = artifacts.require("UprtclDAOWrapper");
 
 module.exports = async (deployer, network, accounts) => {
   const god = accounts[0];
+  const dao = accounts[7];
   deployer.deploy(UprtclRoot, { from: god });
   deployer.deploy(UprtclDetails, { from: god });
   deployer.deploy(UprtclProposals, { from: god });
@@ -15,4 +17,5 @@ module.exports = async (deployer, network, accounts) => {
   deployer.deploy(ERC20Mintable, { from: god });
   deployer.deploy(UPNService, { from: god });
   deployer.deploy(UprtclHomePerspectives, { from: god });
+  deployer.deploy(UprtclDAOWrapper, { from: dao });
 };

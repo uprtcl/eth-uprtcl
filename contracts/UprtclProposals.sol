@@ -3,8 +3,9 @@ pragma experimental ABIEncoderV2;
 
 import "./UprtclRoot.sol";
 import "./SafeMath.sol";
+import "./HasSuperUsers.sol";
 
-contract UprtclProposals is Ownable {
+contract UprtclProposals is HasSuperUsers {
 
     using SafeMath for uint256;
 
@@ -144,10 +145,10 @@ contract UprtclProposals is Ownable {
         pure
         returns (uint8 approved)
     {
-		if (proposal.approvedAddresses.length == 0) {
-			approved = 1;
-			return approved;
-		}
+        if (proposal.approvedAddresses.length == 0) {
+          approved = 1;
+          return approved;
+        }
 
         for (uint32 ix = 0; ix < proposal.approvedAddresses.length; ix++) {
             if (value == proposal.approvedAddresses[ix]) {
@@ -196,23 +197,35 @@ contract UprtclProposals is Ownable {
         proposal.status = status;
     }
 
-    function setProposalAuthorized(bytes32 proposalId, uint8 authorized) public {
+    function authorizeProposalSuperUser(bytes32 proposalId, uint8 authorized, bool execute, address msgSender) public onlySuperUser {
+        setProposalAuthorized(proposalId, authorized, execute, msgSender);
+    }
+
+    function authorizeProposal(bytes32 proposalId, uint8 authorized, bool execute) public {
+        setProposalAuthorized(proposalId, authorized, execute, msg.sender);
+    }
+
+    function setProposalAuthorized(bytes32 proposalId, uint8 authorized, bool execute, address msgSender) private {
         Proposal storage proposal = proposals[proposalId];
         require(
-            msg.sender == proposal.owner,
+            msgSender == proposal.owner,
             "Proposal can only by authorized by its owner"
         );
         /** by default the proposal is closed once it is authorized. */
         if (authorized > 0) proposal.status = 0;
         proposal.authorized = authorized;
+
+        if (execute) {
+            executeProposalInternal(proposalId, msgSender);
+        }
     }
 
-    function executeProposal(bytes32 proposalId) public {
+    function executeProposalInternal(bytes32 proposalId, address msgSender) private {
         Proposal storage proposal = proposals[proposalId];
 
         /** Check the msg.sender is an approved address */
         require(
-            isApproved(proposal, msg.sender) > 0,
+            isApproved(proposal, msgSender) > 0,
             "msg.sender not an approved address"
         );
 
@@ -221,7 +234,12 @@ contract UprtclProposals is Ownable {
             indexes[ix] = ix;
         }
 
-        executeProposalPartiallyInternal(proposalId, indexes, msg.sender);
+        executeProposalPartiallyInternal(proposalId, indexes, msgSender);
+    }
+
+
+    function executeProposalExternal(bytes32 proposalId) external {
+        executeProposalInternal(proposalId, msg.sender);
     }
 
     function executeProposalPartially(
