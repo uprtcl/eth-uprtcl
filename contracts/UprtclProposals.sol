@@ -3,8 +3,9 @@ pragma experimental ABIEncoderV2;
 
 import "./UprtclRoot.sol";
 import "./SafeMath.sol";
+import "./HasSuperUsers.sol";
 
-contract UprtclProposals is Ownable {
+contract UprtclProposals is HasSuperUsers {
 
     using SafeMath for uint256;
 
@@ -206,16 +207,37 @@ contract UprtclProposals is Ownable {
         if (authorized > 0) proposal.status = 0;
         proposal.authorized = authorized;
 
-        // if (execute) {
-        //     executeProposal(proposalId);
-        // }
+        if (execute) {
+            executeProposalInternal(proposalId, msgSender);
+        }
+    }
+
+    function wrapAuthorizeProposal(bytes32 proposalId, uint8 authorized, bool execute, address msgSender) public onlySuperUser {
+        setProposalAuthorized(proposalId, authorized, execute, msgSender);
+    }
+
+    function executeProposalInternal(bytes32 proposalId, address msgSender) private {
+        Proposal storage proposal = proposals[proposalId];
+
+        /** Check the msg.sender is an approved address */
+        require(
+            isApproved(proposal, msgSender) > 0,
+            "msg.sender not an approved address"
+        );
+
+        uint256[] memory indexes = new uint256[](proposal.headUpdates.length);
+        for (uint256 ix = 0; ix < proposal.headUpdates.length; ix++) {
+            indexes[ix] = ix;
+        }
+
+        executeProposalPartiallyInternal(proposalId, indexes, msgSender);
     }
 
     function authorizeProposal(bytes32 proposalId, uint8 authorized, bool execute) public {
-      setProposalAuthorized(proposalId, authorized, execute, msg.sender);
+        setProposalAuthorized(proposalId, authorized, execute, msg.sender);
     }
 
-    function executeProposal(bytes32 proposalId) public {
+    function executeProposalExternal(bytes32 proposalId) public {
         Proposal storage proposal = proposals[proposalId];
 
         /** Check the msg.sender is an approved address */
