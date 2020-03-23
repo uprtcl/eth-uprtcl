@@ -235,17 +235,58 @@ contract("DAO Wrapper", async accounts => {
   };
 
   const changePespectiveDetail = async () => {
+    const perspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123',
+      timestamp: randomInt()
+    }
+
+    const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+    const perspectiveIdHash = await root.getPerspectiveIdHash(perspectiveCid.toString());
+    
+    const newPerspective = {
+      perspectiveId: perspectiveCid.toString(),
+      headCid1: ZERO_HEX_32,
+      headCid0: ZERO_HEX_32,
+      owner: dao
+    }
+
+    await root.createPerspective(
+      newPerspective, observer,
+      { from: observer });
+
     const newDetails = {
       name: "new name",
       context: "new context"
     };
     details.setSuperUser(wrapper.address, true, { from: god });
     await wrapper.setPerspectiveDetails(perspectiveIdHash, newDetails, { from: dao });
-    const perspective = await details.getPerspectiveDetails(perspectiveIdHash);
-    assert.equal(newDetails.name, perspective.name, "Perspective name did not change");
+    const updatedPerspective = await details.getPerspectiveDetails(perspectiveIdHash);
+    details.setSuperUser(wrapper.address, true, { from: god });
+    assert.equal(newDetails.name, updatedPerspective.name, "Perspective name did not change");
   };
 
   const dontChangePerspectiveDetail = async () => {
+    const perspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123',
+      timestamp: randomInt()
+    }
+
+    const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+    const perspectiveIdHash = await root.getPerspectiveIdHash(perspectiveCid.toString());
+    
+    const newPerspective = {
+      perspectiveId: perspectiveCid.toString(),
+      headCid1: ZERO_HEX_32,
+      headCid0: ZERO_HEX_32,
+      owner: dao
+    }
+
+    await root.createPerspective(
+      newPerspective, observer,
+      { from: observer });
+
     const newDetails = {
       name: "new name",
       context: "new context"
