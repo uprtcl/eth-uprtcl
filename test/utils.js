@@ -75,6 +75,8 @@ const generateCid = async (message, cidConfig) => {
   return new CID(cidConfig.version, cidConfig.codec, encoded, cidConfig.base);
 }
 
+const ZERO_HEX_32 = '0x' + Array(64).fill(0).join('');
+
 module.exports = {
   randomInt,
   randomVec,
@@ -83,5 +85,6 @@ module.exports = {
   cidConfig1,
   cidConfig2,
   cidToHex32,
-  generateCid
+  generateCid,
+  ZERO_HEX_32
 }

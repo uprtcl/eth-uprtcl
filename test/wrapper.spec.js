@@ -12,7 +12,8 @@ const {
   cidConfig1,
   cidConfig2,
   cidToHex32,
-  generateCid
+  generateCid,
+  ZERO_HEX_32
 } = require("./utils");
 
 let wrapper;
@@ -21,11 +22,13 @@ let details;
 let proposals;
 let homePerspectives;
 
-let perspectiveIdHash;
-
 contract("DAO Wrapper", async accounts => {
   const god = accounts[0];
-  const dao = accounts[7];
+
+  const newOwner = accounts[1];
+  const observer = accounts[2];
+
+  const dao = accounts[3];
 
   const setHomePerspective = async () => {
     wrapper = await UprtclDAOWrapper.deployed();
@@ -34,7 +37,11 @@ contract("DAO Wrapper", async accounts => {
     proposals = await UprtclProposals.deployed();
     homePerspectives = await UprtclHomePerspectives.deployed();
 
-    await wrapper.setDependencies(root.address, details.address, proposals.address, homePerspectives.address, { from: dao });
+    await wrapper.setDependencies(
+      root.address, 
+      details.address, 
+      proposals.address, 
+      homePerspectives.address, { from: god });
 
     const myPerspectiveHash = "0x10";
     homePerspectives.setSuperUser(wrapper.address, true, { from: god });
@@ -49,6 +56,7 @@ contract("DAO Wrapper", async accounts => {
     const firstOwner = accounts[9];
     const creator = accounts[7];
     const requestRegistrator = accounts[8];
+
     const toPerspective = {
       origin: "eth://contractAddressTwo",
       creatorId: "did:uport:456",
@@ -132,7 +140,7 @@ contract("DAO Wrapper", async accounts => {
       const headId = await generateCid(JSON.stringify(head), cidConfig1);
       const headCidStr = headId.toString();
       const headCidParts = cidToHex32(headCidStr);
-      perspectiveIdHash = await root.getPerspectiveIdHash(perspectivesData.perspective.perspectiveId);
+      const perspectiveIdHash = await root.getPerspectiveIdHash(perspectivesData.perspective.perspectiveId);
 
       const headUpdate = {
         perspectiveIdHash,
@@ -160,23 +168,65 @@ contract("DAO Wrapper", async accounts => {
     const proposalId = await proposals.getProposalId(toPerspectiveCid.toString(), fromPerspectiveCid.toString(), nonce);
 
     proposals.setSuperUser(wrapper.address, true, { from: god });
-    await wrapper.authorizeProposal(proposalId, 1, true, firstOwner, { from: dao });
+    
+    await wrapper.authorizeProposal(proposalId, 1, true, { from: firstOwner });
   };
 
-  const changeOwner = async () => {
-    const oldOwner = await root.getPerspectiveOwner(perspectiveIdHash);
+  const changePerspectiveOwner = async () => {
+    const perspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123',
+      timestamp: randomInt()
+    }
+
+    const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+    const perspectiveIdHash = await root.getPerspectiveIdHash(perspectiveCid.toString());
+
+    const newPerspective = {
+      perspectiveId: perspectiveCid.toString(),
+      headCid1: ZERO_HEX_32,
+      headCid0: ZERO_HEX_32,
+      owner: dao
+    }
+
+    await root.createPerspective(
+      newPerspective, observer,
+      { from: observer });
+
+
     root.setSuperUser(wrapper.address, true, { from: god });
-    await wrapper.changeOwner(perspectiveIdHash, dao, oldOwner, { from: dao });
-    const newOwner = await root.getPerspectiveOwner(perspectiveIdHash);
-    assert.equal(newOwner, dao, "Perspective owner did not change");
+
+    await wrapper.changePerspectiveOwner(perspectiveIdHash, newOwner, { from: dao });
+
+    const newOwnerRead = await root.getPerspectiveOwner(perspectiveIdHash);
+    assert.equal(newOwnerRead, newOwner, "Perspective owner did not change");
   };
 
-  const dontChangeOwner = async () => {
-    const oldOwner = await root.getPerspectiveOwner(perspectiveIdHash);
+  const dontChangePerspectiveOwner = async () => {
+    const perspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123',
+      timestamp: randomInt()
+    }
+
+    const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+    const perspectiveIdHash = await root.getPerspectiveIdHash(perspectiveCid.toString());
+    
+    const newPerspective = {
+      perspectiveId: perspectiveCid.toString(),
+      headCid1: ZERO_HEX_32,
+      headCid0: ZERO_HEX_32,
+      owner: dao
+    }
+
+    await root.createPerspective(
+      newPerspective, observer,
+      { from: observer });
+
     let failed = false;
     try {
-      await wrapper.changeOwner(perspectiveIdHash, dao, oldOwner);
-      const newOwner = await root.getPerspectiveOwner(perspectiveIdHash);
+      await wrapper.changeOwner(perspectiveIdHash, newOwner, { from: observer });
+      await root.getPerspectiveOwner(perspectiveIdHash);
     } catch (e) {
       failed = true;
     } finally {
@@ -185,24 +235,65 @@ contract("DAO Wrapper", async accounts => {
   };
 
   const changePespectiveDetail = async () => {
+    const perspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123',
+      timestamp: randomInt()
+    }
+
+    const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+    const perspectiveIdHash = await root.getPerspectiveIdHash(perspectiveCid.toString());
+    
+    const newPerspective = {
+      perspectiveId: perspectiveCid.toString(),
+      headCid1: ZERO_HEX_32,
+      headCid0: ZERO_HEX_32,
+      owner: dao
+    }
+
+    await root.createPerspective(
+      newPerspective, observer,
+      { from: observer });
+
     const newDetails = {
       name: "new name",
       context: "new context"
     };
     details.setSuperUser(wrapper.address, true, { from: god });
     await wrapper.setPerspectiveDetails(perspectiveIdHash, newDetails, { from: dao });
-    const perspective = await details.getPerspectiveDetails(perspectiveIdHash);
-    assert.equal(newDetails.name, perspective.name, "Perspective name did not change");
+    const updatedPerspective = await details.getPerspectiveDetails(perspectiveIdHash);
+    details.setSuperUser(wrapper.address, true, { from: god });
+    assert.equal(newDetails.name, updatedPerspective.name, "Perspective name did not change");
   };
 
   const dontChangePerspectiveDetail = async () => {
+    const perspective = {
+      origin: 'eth://contractAddress',
+      creatorId: 'did:uport:123',
+      timestamp: randomInt()
+    }
+
+    const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
+    const perspectiveIdHash = await root.getPerspectiveIdHash(perspectiveCid.toString());
+    
+    const newPerspective = {
+      perspectiveId: perspectiveCid.toString(),
+      headCid1: ZERO_HEX_32,
+      headCid0: ZERO_HEX_32,
+      owner: dao
+    }
+
+    await root.createPerspective(
+      newPerspective, observer,
+      { from: observer });
+
     const newDetails = {
       name: "new name",
       context: "new context"
     };
     let failed = false;
     try {
-      await wrapper.setPerspectiveDetails(perspectiveIdHash, newDetails, { from: firstOwner });
+      await wrapper.setPerspectiveDetails(perspectiveIdHash, newDetails, { from: observer });
     } catch (e) {
       failed = true;
     } finally {
@@ -212,8 +303,8 @@ contract("DAO Wrapper", async accounts => {
 
   it("should set home perspective", setHomePerspective);
   it("should authorize proposal", authorizeProposal);
-  it("should change owner", changeOwner);
-  it("should not change owner", dontChangeOwner);
+  it("should change owner", changePerspectiveOwner);
+  it("should not change owner", dontChangePerspectiveOwner);
   it("should change perspective's name", changePespectiveDetail);
   it("should not change perspective's name, because user is not authorized", dontChangePerspectiveDetail);
 });

@@ -11,11 +11,11 @@ const {
   cidConfig1,
   cidConfig2,
   cidToHex32,
-  generateCid
+  generateCid,
+  ZERO_HEX_32
 } = require("./utils");
 
 var BN = web3.utils.BN;
-const ZERO_HEX_32 = '0x' + Array(64).fill(0).join('');
 
 const stringToHex32 = (str) => {
   var bytes = Buffer.from(str, 'utf8').toString('hex');

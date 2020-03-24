@@ -15,12 +15,12 @@ contract UprtclDAOWrapper is Ownable {
     function setDependencies(
         UprtclRoot _uprtclRoot,
         UprtclDetails _uprtclDetails,
-        UprtclProposals uUprtclProposals,
+        UprtclProposals _uprtclProposals,
         UprtclHomePerspectives _uprtclHomePerspectives
     ) external onlyOwner {
         uprtclRoot = _uprtclRoot;
         uprtclDetails = _uprtclDetails;
-        uprtclProposals = uUprtclProposals;
+        uprtclProposals = _uprtclProposals;
         uprtclHomePerspectives = _uprtclHomePerspectives;
     }
 
@@ -34,26 +34,24 @@ contract UprtclDAOWrapper is Ownable {
     function authorizeProposal(
         bytes32 proposalId,
         uint8 authorized,
-        bool execute,
-        address proposalOwner
-    ) external onlyOwner {
+        bool execute
+    ) external {
         uprtclProposals.authorizeProposalSuperUser(
             proposalId,
             authorized,
             execute,
-            proposalOwner
+            msg.sender
         );
     }
 
-    function changeOwner(
+    function changePerspectiveOwner(
         bytes32 perspectiveIdHash,
-        address newOwner,
-        address oldOwner
-    ) external onlyOwner {
+        address newOwner
+    ) external {
         uprtclRoot.changePerspectiveOwnerSuperUser(
             perspectiveIdHash,
             newOwner,
-            oldOwner
+            msg.sender
         );
     }
 

@@ -173,8 +173,8 @@ contract UprtclRoot is HasSuperUsers {
         changePerspectiveOwnerInternal(perspectiveIdHash, newOwner, msg.sender);
     }
 
-    function changePerspectiveOwnerSuperUser(bytes32 perspectiveIdHash, address newOwner, address oldOwner) external onlySuperUser {
-        changePerspectiveOwnerInternal(perspectiveIdHash, newOwner, oldOwner);
+    function changePerspectiveOwnerSuperUser(bytes32 perspectiveIdHash, address newOwner, address msgSender) external onlySuperUser {
+        changePerspectiveOwnerInternal(perspectiveIdHash, newOwner, msgSender);
     }
 
     function changePerspectiveOwnerBatch(

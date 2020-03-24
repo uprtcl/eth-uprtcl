@@ -9,13 +9,14 @@ const UprtclDAOWrapper = artifacts.require("UprtclDAOWrapper");
 
 module.exports = async (deployer, network, accounts) => {
   const god = accounts[0];
-  const dao = accounts[7];
+
   deployer.deploy(UprtclRoot, { from: god });
   deployer.deploy(UprtclDetails, { from: god });
   deployer.deploy(UprtclProposals, { from: god });
   deployer.deploy(UprtclAccounts, { from: god });
   deployer.deploy(ERC20Mintable, { from: god });
   deployer.deploy(UPNService, { from: god });
+  
   deployer.deploy(UprtclHomePerspectives, { from: god });
-  deployer.deploy(UprtclDAOWrapper, { from: dao });
+  deployer.deploy(UprtclDAOWrapper, { from: god });
 };
