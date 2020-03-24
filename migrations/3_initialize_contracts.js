@@ -28,7 +28,7 @@ module.exports = function (deployer, networks, acccounts) {
                 uprtclRoot.address, 
                 uprtclDetails.address, 
                 uprtclProposals.address, 
-                uprtclHomePerspectives.address),
+                uprtclHomePerspectives.address,  { from: god }),
 
             uprtclAccounts.setSuperUser(uprtclRoot.address, true, { from: god }),
             uprtclRoot.setSuperUser(uprtclDetails.address, true, { from: god }),
