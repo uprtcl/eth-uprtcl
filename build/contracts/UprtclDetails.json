@@ -7903,6 +7903,51 @@
       "address": "0x26e86Dcff1B5b1d368be4B76f92797997CDE6544",
       "transactionHash": "0x3969f92760ce92ad573c7fdfa1e744bafa9aaf675c8bc42d5fa31a4dab6677fd"
     },
+    "42": {
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        "0x54d694087b2b7af3574607f1c7957f264e43dae2cd138a793dc22d407fac002b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "perspectiveIdHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "contextHash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "PerspectiveDetailsSet",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xAdC7e0649Fd48D8500E75f64E2ecECeef6fD5E93",
+      "transactionHash": "0x08ffa7389c8224bcc0b94f0e8d4b0fcd335697053fe7ebb112ffafe751604ec8"
+    },
     "3333": {
       "events": {
         "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
@@ -7950,7 +7995,7 @@
     }
   },
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-03-24T06:30:45.848Z",
+  "updatedAt": "2020-04-01T08:24:29.573Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {

@@ -3055,6 +3055,32 @@
       "address": "0x840a979c8014D4b4cc6b7b0d26FB14f7782f28EC",
       "transactionHash": "0xdb1811ef95dce1437c6ed27fd01d5111c73d6381e771405dabcc77edff91d161"
     },
+    "42": {
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xb1dB4a5e4c35727eec8e6285cDdF1844cd71027c",
+      "transactionHash": "0x947340ae0c56249d925257b3da7536464f430e8709c52ac3adfc87f548f0adc9"
+    },
     "3333": {
       "events": {
         "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
@@ -3083,7 +3109,7 @@
     }
   },
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-03-24T06:30:45.910Z",
+  "updatedAt": "2020-04-01T08:24:29.622Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {

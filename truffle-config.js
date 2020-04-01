@@ -15,6 +15,13 @@ module.exports = {
       },
       gasPrice: 25000000000,
       network_id: 4
+    },
+    kovan: {
+      provider: () => {
+        return new HDWalletProvider(process.env.mnemonic, process.env.endpoint)
+      },
+      gasPrice: 25000000000,
+      network_id: 42
     }
   },
 
