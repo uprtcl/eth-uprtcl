@@ -21897,7 +21897,8 @@
             }
           ],
           "name": "OwnershipTransferred",
-          "type": "event"
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
         },
         "0x7172667a4024e27a0d3a896c8ba72947ebed1a0bb37d5c6aaff808c4f6b574ef": {
           "anonymous": false,
@@ -21928,7 +21929,8 @@
             }
           ],
           "name": "ProposalCreated",
-          "type": "event"
+          "type": "event",
+          "signature": "0x7172667a4024e27a0d3a896c8ba72947ebed1a0bb37d5c6aaff808c4f6b574ef"
         }
       },
       "links": {},
@@ -21936,9 +21938,8 @@
       "transactionHash": "0x5091956f2a0dac9c7c9d10fc78d5c41ad3fbd98f0c381999f2799cd3022eaeac"
     }
   },
-  "schemaVersion": "3.0.23",
-  "updatedAt": "2020-04-01T08:24:29.581Z",
-  "networkType": "ethereum",
+  "schemaVersion": "3.0.11",
+  "updatedAt": "2020-04-06T14:44:09.366Z",
   "devdoc": {
     "methods": {
       "isOwner()": {

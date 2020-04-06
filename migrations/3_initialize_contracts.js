@@ -33,7 +33,11 @@ module.exports = function (deployer, networks, acccounts) {
             uprtclAccounts.setSuperUser(uprtclRoot.address, true, { from: god }),
             uprtclRoot.setSuperUser(uprtclDetails.address, true, { from: god }),
             uprtclRoot.setSuperUser(uprtclProposals.address, true, { from: god }),
-            uprtclRoot.setSuperUser(uprtclDAOWrapper.address, true, { from: god })
+            
+            uprtclRoot.setSuperUser(uprtclDAOWrapper.address, true, { from: god }),
+            uprtclHomePerspectives.setSuperUser(uprtclDAOWrapper, true, { from: god }),
+            uprtclProposals.setSuperUser(uprtclDAOWrapper, true, { from: god }),
+            uprtclDetails.setSuperUser(uprtclDAOWrapper, true, { from: god }),
         ])
     })
 
