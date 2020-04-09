@@ -814,6 +814,8 @@ contract('All', (accounts) => {
     const newProposal = {
       toPerspectiveId: toPerspectiveCid.toString(), 
       fromPerspectiveId: fromPerspectiveCid.toString(), 
+      toHeadId: '',
+      fromHeadId: '',
       owner: firstOwner, 
       nonce: nonce, 
       headUpdates: updates.map(u => u.headUpdate), 
@@ -932,6 +934,8 @@ contract('All', (accounts) => {
     const newProposal = {
       toPerspectiveId: toPerspectiveCid.toString(), 
       fromPerspectiveId: fromPerspectiveCid.toString(), 
+      toHeadId: '',
+      fromHeadId: '',
       owner: proposalOwner, 
       nonce: nonce, 
       headUpdates: [], 

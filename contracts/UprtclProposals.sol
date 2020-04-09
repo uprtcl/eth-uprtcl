@@ -19,6 +19,8 @@ contract UprtclProposals is HasSuperUsers {
     struct NewProposal {
         string toPerspectiveId;
         string fromPerspectiveId;
+        string toHeadId;
+        string fromHeadId;
         address owner;
         uint256 nonce;
         HeadUpdate[] headUpdates;
@@ -28,12 +30,16 @@ contract UprtclProposals is HasSuperUsers {
     struct Proposal {
         string toPerspectiveId;
         string fromPerspectiveId;
+        string toHeadId;
+        string fromHeadId;
         address owner;
         uint256 nonce;
         HeadUpdate[] headUpdates;
         address[] approvedAddresses;
         uint8 status;
         uint8 authorized;
+        uint8 rejected;
+        uint8 withdrawn;
     }
 
     struct OwnerFees {
@@ -43,7 +49,7 @@ contract UprtclProposals is HasSuperUsers {
 
     mapping(bytes32 => Proposal) public proposals;
     mapping(address => OwnerFees) public fees;
-    
+
     uint256 public minFee;
     uint256 public factor_num;
     uint256 public factor_den;
@@ -57,7 +63,7 @@ contract UprtclProposals is HasSuperUsers {
         address creator
     );
 
-    function setUprtclRoot(UprtclRoot _uprtclRoot) public onlyOwner {
+    function setUprtclRoot(UprtclRoot _uprtclRoot) external onlyOwner {
         uprtclRoot = _uprtclRoot;
     }
 
@@ -71,15 +77,15 @@ contract UprtclProposals is HasSuperUsers {
         );
     }
 
-    function setMinFee(uint256 _minFee) public onlyOwner {
+    function setMinFee(uint256 _minFee) external onlyOwner {
         minFee = _minFee;
     }
 
-    function setFactorNum(uint256 _factor_num) public onlyOwner {
+    function setFactorNum(uint256 _factor_num) external onlyOwner {
         factor_num = _factor_num;
     }
 
-    function setFactorDen(uint256 _factor_den) public onlyOwner {
+    function setFactorDen(uint256 _factor_den) external onlyOwner {
         factor_den = _factor_den;
     }
 
@@ -87,7 +93,7 @@ contract UprtclProposals is HasSuperUsers {
         NewProposal memory newProposal,
         address account
     ) public {
-        
+
         address perspOwner = uprtclRoot.getPerspectiveOwner(
             uprtclRoot.getPerspectiveIdHash(newProposal.toPerspectiveId)
         );
@@ -124,11 +130,15 @@ contract UprtclProposals is HasSuperUsers {
 
         proposal.toPerspectiveId = newProposal.toPerspectiveId;
         proposal.fromPerspectiveId = newProposal.fromPerspectiveId;
+        proposal.toHeadId = newProposal.toHeadId;
+        proposal.fromHeadId = newProposal.fromHeadId;
         proposal.owner = newProposal.owner;
         proposal.nonce = newProposal.nonce;
         proposal.approvedAddresses = newProposal.approvedAddresses;
         proposal.status = 1;
         proposal.authorized = 0;
+        proposal.rejected = 0;
+        proposal.withdrawn = 0;
 
         addUpdatesToProposal(proposalId, newProposal.headUpdates);
 
@@ -188,20 +198,20 @@ contract UprtclProposals is HasSuperUsers {
         }
     }
 
-    function setProposalStatus(bytes32 proposalId, uint8 status) public {
+    function setProposalStatus(bytes32 proposalId, uint8 status) external {
         Proposal storage proposal = proposals[proposalId];
         require(
-            msg.sender == proposal.owner,
-            "Proposal status can only by set by its owner"
+            isApproved(proposal, msg.sender) > 0,
+            "msg.sender not an approved address"
         );
         proposal.status = status;
     }
 
-    function authorizeProposalSuperUser(bytes32 proposalId, uint8 authorized, bool execute, address msgSender) public onlySuperUser {
+    function authorizeProposalSuperUser(bytes32 proposalId, uint8 authorized, bool execute, address msgSender) external onlySuperUser {
         setProposalAuthorized(proposalId, authorized, execute, msgSender);
     }
 
-    function authorizeProposal(bytes32 proposalId, uint8 authorized, bool execute) public {
+    function authorizeProposal(bytes32 proposalId, uint8 authorized, bool execute) external {
         setProposalAuthorized(proposalId, authorized, execute, msg.sender);
     }
 
@@ -211,14 +221,41 @@ contract UprtclProposals is HasSuperUsers {
             msgSender == proposal.owner,
             "Proposal can only by authorized by its owner"
         );
-        /** by default the proposal is closed once it is authorized. */
-        if (authorized > 0) proposal.status = 0;
+        if (authorized > 0) {
+            require(proposal.withdrawn == 0, "proposal can't be authorized, it's been withdrawn");
+            /** by default the proposal is closed once it is authorized. */
+            proposal.status = 0;
+        }
         proposal.authorized = authorized;
 
         if (execute) {
             executeProposalInternal(proposalId, msgSender);
         }
     }
+
+    function rejectProposal(bytes32 proposalId) external {
+        Proposal storage proposal = proposals[proposalId];
+        require(
+            msg.sender == proposal.owner,
+            "Proposal can only by rejected by its owner"
+        );
+        require(proposal.authorized == 0, "proposal can't be rejected, it's already authorized");
+        /** once rejected, a proposal cant be executed */
+        proposal.rejected = 1;
+    }
+
+    function withdrawProposal(bytes32 proposalId) external {
+        Proposal storage proposal = proposals[proposalId];
+        require(
+            msg.sender == proposal.owner,
+            "Proposal can only by rejected by its owner"
+        );
+        require(proposal.authorized == 0, "proposal can't be withdrawn, it's already authorized");
+
+        /** once withdrawn, a proposal cant be authorized */
+        proposal.withdrawn = 1;
+    }
+
 
     function executeProposalInternal(bytes32 proposalId, address msgSender) private {
         Proposal storage proposal = proposals[proposalId];
