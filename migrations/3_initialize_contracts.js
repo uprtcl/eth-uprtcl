@@ -35,9 +35,9 @@ module.exports = function (deployer, networks, acccounts) {
             uprtclRoot.setSuperUser(uprtclProposals.address, true, { from: god }),
             
             uprtclRoot.setSuperUser(uprtclDAOWrapper.address, true, { from: god }),
-            uprtclHomePerspectives.setSuperUser(uprtclDAOWrapper, true, { from: god }),
-            uprtclProposals.setSuperUser(uprtclDAOWrapper, true, { from: god }),
-            uprtclDetails.setSuperUser(uprtclDAOWrapper, true, { from: god }),
+            uprtclHomePerspectives.setSuperUser(uprtclDAOWrapper.address, true, { from: god }),
+            uprtclProposals.setSuperUser(uprtclDAOWrapper.address, true, { from: god }),
+            uprtclDetails.setSuperUser(uprtclDAOWrapper.address, true, { from: god }),
         ])
     })
 
