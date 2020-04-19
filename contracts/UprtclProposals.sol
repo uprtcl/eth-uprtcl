@@ -28,12 +28,7 @@ contract UprtclProposals is HasSuperUsers {
     }
 
     struct Proposal {
-        string toPerspectiveId;
-        string fromPerspectiveId;
-        string toHeadId;
-        string fromHeadId;
         address owner;
-        uint256 nonce;
         HeadUpdate[] headUpdates;
         address[] approvedAddresses;
         uint8 status;
@@ -60,6 +55,11 @@ contract UprtclProposals is HasSuperUsers {
         bytes32 indexed toPerspectiveIdHash,
         bytes32 indexed fromPerspectiveIdHash,
         bytes32 indexed proposalId,
+        string toPerspectiveId,
+        string fromPerspectiveId,
+        string toHeadId,
+        string fromHeadId,
+        uint256 nonce,
         address creator
     );
 
@@ -128,12 +128,7 @@ contract UprtclProposals is HasSuperUsers {
         Proposal storage proposal = proposals[proposalId];
         require(proposal.owner == address(0), "proposal already exist");
 
-        proposal.toPerspectiveId = newProposal.toPerspectiveId;
-        proposal.fromPerspectiveId = newProposal.fromPerspectiveId;
-        proposal.toHeadId = newProposal.toHeadId;
-        proposal.fromHeadId = newProposal.fromHeadId;
         proposal.owner = newProposal.owner;
-        proposal.nonce = newProposal.nonce;
         proposal.approvedAddresses = newProposal.approvedAddresses;
         proposal.status = 1;
         proposal.authorized = 0;
@@ -146,6 +141,11 @@ contract UprtclProposals is HasSuperUsers {
             uprtclRoot.getPerspectiveIdHash(newProposal.toPerspectiveId),
             uprtclRoot.getPerspectiveIdHash(newProposal.fromPerspectiveId),
             proposalId,
+            newProposal.toPerspectiveId,
+            newProposal.fromPerspectiveId,
+            newProposal.toHeadId,
+            newProposal.fromHeadId,
+            newProposal.nonce,
             msg.sender
         );
     }

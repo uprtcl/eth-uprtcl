@@ -835,8 +835,26 @@ contract('All', (accounts) => {
 
     let proposalRead = await uprtclProposals.getProposal(proposalId01);
 
-    assert.equal(proposalRead.toPerspectiveId, toPerspectiveCid.toString(), "unexpected request toPerspectiveCid")
-    assert.equal(proposalRead.fromPerspectiveId, fromPerspectiveCid.toString(), "unexpected request fromPerspectiveCid")
+    const proposalDetails = await uprtclProposals.getPastEvents('ProposalCreated', {
+      filter: { proposalId: proposalId01 },
+      fromBlock: 0
+    });
+
+    const perspectiveDetails = proposalDetails.map(e => {
+        return {
+          toPerspectiveId: e.returnValues.toPerspectiveId,
+          fromPerspectiveId: e.returnValues.fromPerspectiveId,
+          toHeadId: e.returnValues.toHeadId,
+          fromHeadId: e.returnValues.fromHeadId,
+          nonce: e.returnValues.fromHeadId
+        }
+      });
+
+    assert.equal(perspectiveDetails.length, 1, 'unexpected number of initProposal events');
+
+    assert.equal(perspectiveDetails[0].toPerspectiveId, toPerspectiveCid.toString(), "unexpected request toPerspectiveCid")
+    assert.equal(perspectiveDetails[0].fromPerspectiveId, fromPerspectiveCid.toString(), "unexpected request fromPerspectiveCid")
+
     assert.equal(proposalRead.owner, firstOwner, "unexpected request owner")
     assert.equal(proposalRead.approvedAddresses.length, 0, "unexpected approvedAddress")
     assert.equal(proposalRead.status, 1, "unexpected status")
