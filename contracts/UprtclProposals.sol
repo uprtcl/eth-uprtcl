@@ -16,6 +16,14 @@ contract UprtclProposals is HasSuperUsers {
         uint8 executed;
     }
 
+    struct HeadUpdateInput {
+        bytes32 perspectiveIdHash;
+        bytes32 headCid1;
+        bytes32 headCid0;
+        string fromPerspectiveId;
+        string fromHeadId;
+    }
+
     struct NewProposal {
         string toPerspectiveId;
         string fromPerspectiveId;
@@ -23,7 +31,7 @@ contract UprtclProposals is HasSuperUsers {
         string fromHeadId;
         address owner;
         uint256 nonce;
-        HeadUpdate[] headUpdates;
+        HeadUpdateInput[] headUpdates;
         address[] approvedAddresses;
     }
 
@@ -61,6 +69,13 @@ contract UprtclProposals is HasSuperUsers {
         string fromHeadId,
         uint256 nonce,
         address creator
+    );
+
+    event HeadUpdateAdded(
+        bytes32 indexed proposalId,
+        bytes32 indexed perspectiveIdHash,
+        string fromPerspectiveId,
+        string fromHeadId
     );
 
     function setUprtclRoot(UprtclRoot _uprtclRoot) external onlyOwner {
@@ -172,7 +187,7 @@ contract UprtclProposals is HasSuperUsers {
     /** Add one or more headUpdate elements to an existing proposal */
     function addUpdatesToProposal(
         bytes32 proposalId,
-        HeadUpdate[] memory headUpdates
+        HeadUpdateInput[] memory headUpdates
     ) public {
         Proposal storage proposal = proposals[proposalId];
 
@@ -185,16 +200,27 @@ contract UprtclProposals is HasSuperUsers {
         );
 
         for (uint8 ix = 0; ix < headUpdates.length; ix++) {
-            HeadUpdate memory headUpdate = headUpdates[ix];
+            HeadUpdateInput memory headUpdateInput = headUpdates[ix];
+
             require(
-                headUpdate.executed == 0,
-                "head update executed property must be zero"
-            );
-            require(
-                uprtclRoot.getPerspectiveOwner(headUpdate.perspectiveIdHash) == proposal.owner,
+                uprtclRoot.getPerspectiveOwner(headUpdateInput.perspectiveIdHash) == proposal.owner,
                 "proposal can only store perspectives owned by its owner"
             );
+
+            HeadUpdate memory headUpdate;
+            headUpdate.perspectiveIdHash = headUpdateInput.perspectiveIdHash;
+            headUpdate.headCid1 = headUpdateInput.headCid1;
+            headUpdate.headCid0 = headUpdateInput.headCid0;
+            headUpdate.executed = 0;
+
             proposal.headUpdates.push(headUpdate);
+
+            emit HeadUpdateAdded(
+                proposalId,
+                headUpdateInput.perspectiveIdHash,
+                headUpdateInput.fromPerspectiveId,
+                headUpdateInput.fromHeadId        
+            );
         }
     }
 

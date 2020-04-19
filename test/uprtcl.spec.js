@@ -731,7 +731,8 @@ contract('All', (accounts) => {
         perspectiveIdHash: perspectiveIdHash,
         headCid1: headCidParts[0],
         headCid0: headCidParts[1],
-        executed: "0"
+        fromPerspectiveId: "",
+        fromHeadId: ""
       }
 
       return { perspectivesData, headUpdate };
