@@ -5,27 +5,19 @@ import "./UprtclRoot.sol";
 import "./HasSuperUsers.sol";
 import "./SafeMath.sol";
 
-library SharedPerspectiveDetails {
-    struct PerspectiveDetails {
-        string name;
-        string context;
-    }
-}
-
 contract UprtclDetails is HasSuperUsers {
     using SafeMath for uint256;
 
     struct InitPerspective {
         UprtclRoot.NewPerspective perspective;
-        SharedPerspectiveDetails.PerspectiveDetails details;
+        string context;
     }
 
     event PerspectiveDetailsSet (
         bytes32 indexed perspectiveIdHash,
-        bytes32 indexed contextHash
+        bytes32 indexed contextHash,
+        string context
     );
-
-    mapping(bytes32 => SharedPerspectiveDetails.PerspectiveDetails) public perspectivesDetails;
 
     UprtclRoot uprtclRoot;
 
@@ -40,42 +32,31 @@ contract UprtclDetails is HasSuperUsers {
     /** Adds a new perspective to the mapping and sets the owner. The head pointer and the context. */
     function setPerspectiveDetailsInternal(
         bytes32 perspectiveIdHash,
-        SharedPerspectiveDetails.PerspectiveDetails memory newDetails,
+        string memory context,
         address sender
     ) private {
         require(uprtclRoot.getPerspectiveOwner(perspectiveIdHash) == sender, "details can only by set by perspective owner");
 
-        SharedPerspectiveDetails.PerspectiveDetails storage details = perspectivesDetails[perspectiveIdHash];
-
-        details.name = newDetails.name;
-        details.context = newDetails.context;
-
-        perspectivesDetails[perspectiveIdHash] = details;
-
         emit PerspectiveDetailsSet(
             perspectiveIdHash,
-            getContextHash(details.context)
+            getContextHash(context),
+            context
         );
     }
 
     function setPerspectiveDetails(
         bytes32 perspectiveIdHash,
-        SharedPerspectiveDetails.PerspectiveDetails memory newDetails
+        string memory context
     ) public {
-        setPerspectiveDetailsInternal(perspectiveIdHash, newDetails, msg.sender);
+        setPerspectiveDetailsInternal(perspectiveIdHash, context, msg.sender);
     }
 
     function setPerspectiveDetailsSuperUser(
         bytes32 perspectiveIdHash,
-        SharedPerspectiveDetails.PerspectiveDetails memory newDetails,
+        string memory context,
         address msgSender
     ) public onlySuperUser {
-        setPerspectiveDetailsInternal(perspectiveIdHash, newDetails, msgSender);
-    }
-
-    function getPerspectiveDetails(bytes32 perspectiveIdHash) public view returns (string memory name, string memory context) {
-        SharedPerspectiveDetails.PerspectiveDetails memory details = perspectivesDetails[perspectiveIdHash];
-        return (details.name, details.context);
+        setPerspectiveDetailsInternal(perspectiveIdHash, context, msgSender);
     }
 
     function initPerspectiveInternal(InitPerspective memory perspectiveData, address account) private {
@@ -83,7 +64,7 @@ contract UprtclDetails is HasSuperUsers {
 
         setPerspectiveDetailsInternal(
             uprtclRoot.getPerspectiveIdHash(perspectiveData.perspective.perspectiveId),
-            perspectiveData.details,
+            perspectiveData.context,
             perspectiveData.perspective.owner);
     }
 

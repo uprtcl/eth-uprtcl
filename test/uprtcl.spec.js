@@ -7,87 +7,15 @@ const {
   randomInt,
   randomVec,
   multibaseToUint,
-  constants,
   cidConfig1,
-  cidConfig2,
   cidToHex32,
   generateCid,
-  ZERO_HEX_32
+  ZERO_HEX_32,
+  getPerspectiveHead,
+  getPerspectiveDetails
 } = require("./utils");
 
 var BN = web3.utils.BN;
-
-const stringToHex32 = (str) => {
-  var bytes = Buffer.from(str, 'utf8').toString('hex');
-
-  /** convert to hex */
-  cidEncoded16 = bytes.toString('hex')
-  /** pad with zeros */
-  cidEncoded16 = cidEncoded16.padStart(128, '0');
-
-  let hex0 = cidEncoded16.slice(-64);      /** LSB */
-  let hex1 = cidEncoded16.slice(-128, -64);
-
-  return ['0x' + hex1, '0x' + hex0];
-}
-
-const bytes32ToCid = (bytes) => {
-  let cidHex1 = bytes[0].substring(2);
-  let cidHex0 = bytes[1].substring(2); /** LSB */
-
-  let cidHex = cidHex1.concat(cidHex0).replace(/^0+/, '');
-  let cidBufferWithBase = Buffer.from(cidHex, 'hex');
-
-  let multibaseCode = cidBufferWithBase[0];
-  let cidBuffer = cidBufferWithBase.slice(1)
-
-  let multibaseName = uintToMultibase(multibaseCode);
-
-  /** Force Buffer class */
-  let cid = new CID(toBuffer(cidBuffer));
-
-  return cid.toBaseEncodedString(multibaseName);
-}
-
-
-const cidToHeadParts = (cidStr) => {
-  /** store the encoded cids as they are, including the multibase bytes */
-  let cid = new CID(cidStr);
-  let bytes = cid.buffer;
-
-  /* push the code of the multibse (UTF8 number of the string) */
-  let firstByte = new Buffer(1).fill(multibaseToUint(cid.multibaseName));
-  let arr = [firstByte, bytes];
-  bytesWithMultibase = Buffer.concat(arr);
-
-  /** convert to hex */
-  cidEncoded16 = bytesWithMultibase.toString('hex')
-  /** pad with zeros */
-  cidEncoded16 = cidEncoded16.padStart(128, '0');
-
-  let cidHex0 = cidEncoded16.slice(-64);      /** LSB */
-  let cidHex1 = cidEncoded16.slice(-128, -64);
-
-  return ['0x' + cidHex1, '0x' + cidHex0];
-}
-
-const headPartsToCid = (headParts) => {
-  let cidHex1 = headParts[0].substring(2);
-  let cidHex0 = headParts[1].substring(2); /** LSB */
-
-  let cidHex = cidHex1.concat(cidHex0).replace(/^0+/, '');
-  let cidBufferWithBase = Buffer.from(cidHex, 'hex');
-
-  let multibaseCode = cidBufferWithBase[0];
-  let cidBuffer = cidBufferWithBase.slice(1)
-
-  let multibaseName = uintToMultibase(multibaseCode);
-
-  /** Force Buffer class */
-  let cid = new CID(toBuffer(cidBuffer));
-
-  return cid.toBaseEncodedString(multibaseName);
-}
 
 contract('All', (accounts) => {
 
@@ -250,13 +178,15 @@ contract('All', (accounts) => {
 
     const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
     
-    let perspectiveRead = await uprtclRoot.getPerspective(
+    const ownerRead = await uprtclRoot.getPerspectiveOwner(
       perspectiveIdHash,
       { from: observer });
 
-    assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
-    assert.equal(perspectiveRead.headCid0, ZERO_HEX_32, "head is not what was expected");
-    assert.equal(perspectiveRead.headCid1, ZERO_HEX_32, "head is not what was expected");
+    const perspectiveHead = await getPerspectiveHead(uprtclRoot, perspectiveIdHash);
+
+    assert.equal(ownerRead, firstOwner, "owner is not what was expected");
+    assert.equal(perspectiveHead.headCid0, ZERO_HEX_32, "head is not what was expected");
+    assert.equal(perspectiveHead.headCid1, ZERO_HEX_32, "head is not what was expected");
   });
 
   it('should persist and read a perspective - with fees', async () => {
@@ -305,13 +235,16 @@ contract('All', (accounts) => {
     assert.isTrue(uprtclBalance.eq(ADD_FEE), "uprtcl balance not as expected");
     
     const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
-    let perspectiveRead = await uprtclRoot.getPerspective(
+    
+    const ownerRead = await uprtclRoot.getPerspectiveOwner(
       perspectiveIdHash,
       { from: observer });
 
-    assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
-    assert.equal(perspectiveRead.headCid0, ZERO_HEX_32, "head is not what was expected");
-    assert.equal(perspectiveRead.headCid1, ZERO_HEX_32, "head is not what was expected");
+    const perspectiveHead = await getPerspectiveHead(uprtclRoot, perspectiveIdHash);
+
+    assert.equal(ownerRead, firstOwner, "owner is not what was expected");
+    assert.equal(perspectiveHead.headCid0, ZERO_HEX_32, "head is not what was expected");
+    assert.equal(perspectiveHead.headCid1, ZERO_HEX_32, "head is not what was expected");
   });
 
   it('should persist and read a perspective with head', async () => {
@@ -359,13 +292,16 @@ contract('All', (accounts) => {
     console.log(`createPerspective with head gas cost: ${result.receipt.gasUsed}`);
 
     const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
-    let perspectiveRead = await uprtclRoot.getPerspective(
+    
+    const ownerRead = await uprtclRoot.getPerspectiveOwner(
       perspectiveIdHash,
       { from: observer });
 
-    assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
-    assert.equal(perspectiveRead.headCid0, headCidParts[1], "head is not what was expected");
-    assert.equal(perspectiveRead.headCid1, headCidParts[0], "head is not what was expected");
+    const perspectiveHead = await getPerspectiveHead(uprtclRoot, perspectiveIdHash);
+
+    assert.equal(ownerRead, firstOwner, "owner is not what was expected");
+    assert.equal(perspectiveHead.headCid0, headCidParts[1], "head is not what was expected");
+    assert.equal(perspectiveHead.headCid1, headCidParts[0], "head is not what was expected");
   });
   
   it('should persist and update a perspective', async () => {
@@ -394,13 +330,16 @@ contract('All', (accounts) => {
       { from: creator });
 
     const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
-    let perspectiveRead1 = await uprtclRoot.getPerspective(
+    
+    const ownerRead1 = await uprtclRoot.getPerspectiveOwner(
       perspectiveIdHash,
       { from: observer });
 
-    assert.equal(perspectiveRead1.owner, firstOwner, "owner is not what was expected");
-    assert.equal(perspectiveRead1.headCid0, ZERO_HEX_32, "head is not what was expected");
-    assert.equal(perspectiveRead1.headCid1, ZERO_HEX_32, "head is not what was expected");
+    const perspectiveHead1 = await getPerspectiveHead(uprtclRoot, perspectiveIdHash);
+
+    assert.equal(ownerRead1, firstOwner, "owner is not what was expected");
+    assert.equal(perspectiveHead1.headCid0, ZERO_HEX_32, "head is not what was expected");
+    assert.equal(perspectiveHead1.headCid1, ZERO_HEX_32, "head is not what was expected");
 
     const data = {
       text: 'This is my data ads'
@@ -449,13 +388,15 @@ contract('All', (accounts) => {
 
     console.log(`updateHead gas cost: ${result.receipt.gasUsed}`);
 
-    let perspectiveRead2 = await uprtclRoot.getPerspective(
+    const ownerRead2 = await uprtclRoot.getPerspectiveOwner(
       perspectiveIdHash,
       { from: observer });
 
-    assert.equal(perspectiveRead2.owner, firstOwner, "owner is not what was expected");
-    assert.equal(perspectiveRead2.headCid0, headCidParts[1], "head is not what was expected");
-    assert.equal(perspectiveRead2.headCid1, headCidParts[0], "head is not what was expected");
+    const perspectiveHead2 = await getPerspectiveHead(uprtclRoot, perspectiveIdHash);
+
+    assert.equal(ownerRead2, firstOwner, "owner is not what was expected");
+    assert.equal(perspectiveHead2.headCid0, headCidParts[1], "head is not what was expected");
+    assert.equal(perspectiveHead2.headCid1, headCidParts[0], "head is not what was expected");
   });
 
   it('should be able to add a batch of perspectives', async () => {
@@ -519,11 +460,12 @@ contract('All', (accounts) => {
       const perspectiveCid = await generateCid(JSON.stringify(perspective), cidConfig1);
 
       const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
-      let perspectiveRead = await uprtclRoot.getPerspective(
+
+      const ownerRead = await uprtclRoot.getPerspectiveOwner(
         perspectiveIdHash,
         { from: observer });
   
-      assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
+      assert.equal(ownerRead, firstOwner, "owner is not what was expected");
     })
 
     await Promise.all(checkOwnersPromises);
@@ -554,20 +496,16 @@ contract('All', (accounts) => {
       { from: creator });
 
     const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
-    const currentDetails = await uprtclDetails.getPerspectiveDetails(perspectiveIdHash);
+    const currentContext = await getPerspectiveDetails(uprtclDetails, perspectiveIdHash);
     
-    assert.equal(currentDetails.name, '', "wrong name");
-    assert.equal(currentDetails.context, '', "wrong context");
+    assert.equal(currentContext, '', "wrong context");
 
-    const details = {
-      name: 'my-name',
-      context: 'my-context'
-    };
+    const context = 'my-context';
 
     let failed = false;
     await uprtclDetails.setPerspectiveDetails(
       perspectiveIdHash,
-      details,
+      context,
       { from: observer } )
     .catch((error) => {
       assert.equal(error.reason, 'details can only by set by perspective owner', "unexpected reason");
@@ -578,13 +516,12 @@ contract('All', (accounts) => {
     
     await uprtclDetails.setPerspectiveDetails(
         perspectiveIdHash,
-        details,
+        context,
         { from: firstOwner } )
 
-    const newDetails = await uprtclDetails.getPerspectiveDetails(perspectiveIdHash);
+    const newContext = await getPerspectiveDetails(uprtclDetails, perspectiveIdHash);
 
-    assert.equal(newDetails.name, 'my-name', "wrong name");
-    assert.equal(newDetails.context, 'my-context', "wrong context");
+    assert.equal(newContext, 'my-context', "wrong context");
 
   });
 
@@ -604,24 +541,20 @@ contract('All', (accounts) => {
       owner: firstOwner
     }
 
-    const details = {
-      name: 'my-name',
-      context: 'my-context'
-    };
+    const context = 'my-context';
 
     await erc20Instance.mint(accountOwner, ADD_FEE, { from: god });
     await erc20Instance.approve(UprtclAccounts.address, ADD_FEE, { from: accountOwner });
 
     await uprtclDetails.initPerspective(
-        { perspective: newPerspective, details },
+        { perspective: newPerspective, context },
         accountOwner,
         { from: creator } )
 
     const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveCid.toString());
-    const newDetails = await uprtclDetails.getPerspectiveDetails(perspectiveIdHash);
+    const newDetails = await getPerspectiveDetails(uprtclDetails, perspectiveIdHash);
 
-    assert.equal(newDetails.name, 'my-name', "wrong name");
-    assert.equal(newDetails.context, 'my-context', "wrong context");
+    assert.equal(newDetails, 'my-context', "wrong context");
 
   });
 
@@ -664,12 +597,9 @@ contract('All', (accounts) => {
         owner: firstOwner
       }
 
-      const details = {
-        context: (timestamp + 2).toString(),
-        name: randomInt().toString()
-      }
+      const context = (timestamp + 2).toString();
       
-      return { perspective: ethPerspective, details };
+      return { perspective: ethPerspective, context };
     });
 
     const perspectivesData = await Promise.all(buildPerspectivesPromises);
@@ -690,16 +620,17 @@ contract('All', (accounts) => {
       
       const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveData.perspective.perspectiveId);
 
-      let perspectiveRead = await uprtclRoot.getPerspective(perspectiveIdHash);
-  
-      assert.equal(perspectiveRead.owner, perspectiveData.perspective.owner, "owner is not what was expected");
-      assert.equal(perspectiveRead.headCid1, perspectiveData.perspective.headCid1, "headCid1 is not what was expected");
-      assert.equal(perspectiveRead.headCid0, perspectiveData.perspective.headCid0, "headCid0 is not what was expected");
+      let ownerRead = await uprtclRoot.getPerspectiveOwner(perspectiveIdHash);
 
-      const detailsRead = await uprtclDetails.getPerspectiveDetails(perspectiveIdHash);
+      const perspectiveHead = await getPerspectiveHead(uprtclRoot, perspectiveIdHash);
+  
+      assert.equal(ownerRead, perspectiveData.perspective.owner, "owner is not what was expected");
+      assert.equal(perspectiveHead.headCid1, perspectiveData.perspective.headCid1, "headCid1 is not what was expected");
+      assert.equal(perspectiveHead.headCid0, perspectiveData.perspective.headCid0, "headCid0 is not what was expected");
+
+      const contextRead = await getPerspectiveDetails(uprtclDetails, perspectiveIdHash);
     
-      assert.equal(detailsRead.name, perspectiveData.details.name, "wrong name");
-      assert.equal(detailsRead.context, perspectiveData.details.context, "wrong context");
+      assert.equal(contextRead, perspectiveData.context, "wrong context");
     })
 
     await Promise.all(checkOwnersPromises);
@@ -763,12 +694,9 @@ contract('All', (accounts) => {
         owner: firstOwner
       }
 
-      const details = {
-        context: (timestamp + 2).toString(),
-        name: randomInt().toString()
-      }
+      const context = (timestamp + 2).toString();
       
-      return { perspective: ethPerspective, details };
+      return { perspective: ethPerspective, context };
     });
 
     const perspectivesData = await Promise.all(buildPerspectivesPromises);
@@ -884,13 +812,15 @@ contract('All', (accounts) => {
     const checkHeadsPromises = perspectivesData.map(async (perspectiveData) => {
       const perspectiveIdHash = await uprtclRoot.getPerspectiveIdHash(perspectiveData.perspective.perspectiveId);
 
-      const perspectiveRead = await uprtclRoot.getPerspective(
+      const ownerRead = await uprtclRoot.getPerspectiveOwner(
         perspectiveIdHash,
         { from: observer });
+
+      const perspectiveHead = await getPerspectiveHead(uprtclRoot, perspectiveIdHash);
   
-      assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
-      assert.equal(perspectiveRead.headCid0, perspectiveData.perspective.headCid0, "head is not what was expected");
-      assert.equal(perspectiveRead.headCid1, perspectiveData.perspective.headCid1, "head is not what was expected");
+      assert.equal(ownerRead, firstOwner, "owner is not what was expected");
+      assert.equal(perspectiveHead.headCid0, perspectiveData.perspective.headCid0, "head is not what was expected");
+      assert.equal(perspectiveHead.headCid1, perspectiveData.perspective.headCid1, "head is not what was expected");
     })
 
     await Promise.all(checkHeadsPromises);
@@ -901,13 +831,15 @@ contract('All', (accounts) => {
 
     /** check heads are original */
     const checkHeadsPromisesAfter = updates.map(async (update) => {
-      const perspectiveRead = await uprtclRoot.getPerspective(
+      const ownerRead = await uprtclRoot.getPerspectiveOwner(
         update.headUpdate.perspectiveIdHash,
         { from: observer });
+
+      const perspectiveHead = await getPerspectiveHead(uprtclRoot, update.headUpdate.perspectiveIdHash);
   
-      assert.equal(perspectiveRead.owner, firstOwner, "owner is not what was expected");
-      assert.equal(perspectiveRead.headCid0, update.headUpdate.headCid0, "head is not what was expected");
-      assert.equal(perspectiveRead.headCid1, update.headUpdate.headCid1, "head is not what was expected");
+      assert.equal(ownerRead, firstOwner, "owner is not what was expected");
+      assert.equal(perspectiveHead.headCid0, update.headUpdate.headCid0, "head is not what was expected");
+      assert.equal(perspectiveHead.headCid1, update.headUpdate.headCid1, "head is not what was expected");
     })
 
     await Promise.all(checkHeadsPromisesAfter);

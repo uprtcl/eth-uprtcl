@@ -13,8 +13,6 @@ contract UprtclRoot is HasSuperUsers {
 
     struct Perspective {
         address owner;
-        bytes32 headCid1;
-        bytes32 headCid0;
     }
 
     struct NewPerspective {
@@ -32,6 +30,12 @@ contract UprtclRoot is HasSuperUsers {
     event PerspectiveCreated(
         bytes32 indexed perspectiveIdHash,
         string perspectiveId
+    );
+
+    event PerspectiveHeadUpdated(
+        bytes32 indexed perspectiveIdHash,
+        bytes32 headCid1,
+        bytes32 headCid0
     );
 
     UprtclAccounts public accounts;
@@ -88,14 +92,17 @@ contract UprtclRoot is HasSuperUsers {
         require(address(0) == perspective.owner, "existing perspective");
 
         perspective.owner = newPerspective.owner;
-        perspective.headCid1 = newPerspective.headCid1;
-        perspective.headCid0 = newPerspective.headCid0;
-
         perspectives[perspectiveIdHash] = perspective;
 
         emit PerspectiveCreated(
             perspectiveIdHash,
             newPerspective.perspectiveId
+        );
+
+        emit PerspectiveHeadUpdated(
+            perspectiveIdHash,
+            newPerspective.headCid1,
+            newPerspective.headCid0
         );
     }
 
@@ -149,10 +156,11 @@ contract UprtclRoot is HasSuperUsers {
             "only the owner can update the perspective"
         );
 
-        if (newHeadCid0 != bytes32(0)) {
-            perspective.headCid0 = newHeadCid0;
-            perspective.headCid1 = newHeadCid1;
-        }
+        emit PerspectiveHeadUpdated(
+            perspectiveIdHash,
+            newHeadCid1,
+            newHeadCid0
+        );
     }
 
     function changePerspectiveOwnerInternal(
@@ -188,17 +196,6 @@ contract UprtclRoot is HasSuperUsers {
                 msg.sender
             );
         }
-    }
-
-    /** Get the perspective owner and details from its ID */
-    function getPerspective(bytes32 perspectiveIdHash)
-        public
-        view
-        returns (address owner, bytes32 headCid1, bytes32 headCid0)
-    {
-        Perspective memory perspective = perspectives[perspectiveIdHash];
-
-        return (perspective.owner, perspective.headCid1, perspective.headCid0);
     }
 
     /** Get the perspective owner and details from its ID */

@@ -57,13 +57,23 @@ contract UprtclDAOWrapper is Ownable {
 
     function setPerspectiveDetails(
         bytes32 perspectiveIdHash,
-        SharedPerspectiveDetails.PerspectiveDetails memory newDetails
+        string memory context
     ) public {
         uprtclDetails.setPerspectiveDetailsSuperUser(
             perspectiveIdHash,
-            newDetails,
+            context,
             msg.sender
         );
+    }
+
+    /** create the perspectives and initialize a new proposal on one tx */
+    function createAndInitProposal(
+        UprtclRoot.NewPerspective[] memory newPerspectives,
+        UprtclProposals.NewProposal memory newProposal,
+        address account) public {
+
+        uprtclRoot.createPerspectiveBatch(newPerspectives, account);
+        uprtclProposals.initProposal(newProposal, account);
     }
 
 }
