@@ -1,4 +1,4 @@
-const UprtclDAOWrapper = artifacts.require("UprtclDAOWrapper");
+const UprtclWrapper = artifacts.require("UprtclWrapper");
 const UprtclRoot = artifacts.require("UprtclRoot");
 const UprtclDetails = artifacts.require("UprtclDetails");
 const UprtclProposals = artifacts.require("UprtclProposals");
@@ -29,7 +29,7 @@ contract("DAO Wrapper", async accounts => {
   const dao = accounts[3];
 
   const setHomePerspective = async () => {
-    wrapper = await UprtclDAOWrapper.deployed();
+    wrapper = await UprtclWrapper.deployed();
     root = await UprtclRoot.deployed();
     details = await UprtclDetails.deployed();
     proposals = await UprtclProposals.deployed();

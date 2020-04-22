@@ -5,7 +5,7 @@ const UprtclAccounts = artifacts.require("UprtclAccounts");
 const ERC20Mintable = artifacts.require("ERC20Mintable");
 const UPNService = artifacts.require("UPNService");
 const UprtclHomePerspectives = artifacts.require("UprtclHomePerspectives");
-const UprtclDAOWrapper = artifacts.require("UprtclDAOWrapper");
+const UprtclWrapper = artifacts.require("UprtclWrapper");
 
 module.exports = async (deployer, network, accounts) => {
   const god = accounts[0];
@@ -18,5 +18,5 @@ module.exports = async (deployer, network, accounts) => {
   deployer.deploy(UPNService, { from: god });
   
   deployer.deploy(UprtclHomePerspectives, { from: god });
-  deployer.deploy(UprtclDAOWrapper, { from: god });
+  deployer.deploy(UprtclWrapper, { from: god });
 };

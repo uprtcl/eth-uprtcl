@@ -6,7 +6,7 @@ import "./UprtclDetails.sol";
 import "./UprtclProposals.sol";
 import "./UprtclHomePerspectives.sol";
 
-contract UprtclDAOWrapper is Ownable {
+contract UprtclWrapper is Ownable {
     UprtclRoot uprtclRoot;
     UprtclDetails uprtclDetails;
     UprtclProposals uprtclProposals;
@@ -68,11 +68,11 @@ contract UprtclDAOWrapper is Ownable {
 
     /** create the perspectives and initialize a new proposal on one tx */
     function createAndInitProposal(
-        UprtclRoot.NewPerspective[] memory newPerspectives,
+        UprtclDetails.InitPerspective[] memory newPerspectives,
         UprtclProposals.NewProposal memory newProposal,
         address account) public {
 
-        uprtclRoot.createPerspectiveBatch(newPerspectives, account);
+        uprtclDetails.initPerspectiveBatch(newPerspectives, account);
         uprtclProposals.initProposal(newProposal, account);
     }
 

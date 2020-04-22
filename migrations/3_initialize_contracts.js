@@ -5,7 +5,7 @@ const UprtclAccounts = artifacts.require("UprtclAccounts");
 const UPNService = artifacts.require("UPNService");
 const ERC20Mintable = artifacts.require("ERC20Mintable");
 const UprtclHomePerspectives = artifacts.require("UprtclHomePerspectives");
-const UprtclDAOWrapper = artifacts.require("UprtclDAOWrapper");
+const UprtclWrapper = artifacts.require("UprtclWrapper");
 
 module.exports = function (deployer, networks, acccounts) {
     deployer.then(async () => {
@@ -17,14 +17,14 @@ module.exports = function (deployer, networks, acccounts) {
         const uprtclProposals = await UprtclProposals.deployed();
         const upnService = await UPNService.deployed();
         const uprtclHomePerspectives = await UprtclHomePerspectives.deployed();
-        const uprtclDAOWrapper = await UprtclDAOWrapper.deployed();
+        const uprtclWrapper = await UprtclWrapper.deployed();
 
         return Promise.all([
             uprtclDetails.setUprtclRoot(uprtclRoot.address, { from: god }),
             uprtclProposals.setUprtclRoot(uprtclRoot.address, { from: god }),
             upnService.setUprtclRoot(uprtclRoot.address, { from: god }),
 
-            uprtclDAOWrapper.setDependencies(
+            uprtclWrapper.setDependencies(
                 uprtclRoot.address, 
                 uprtclDetails.address, 
                 uprtclProposals.address, 
@@ -34,10 +34,10 @@ module.exports = function (deployer, networks, acccounts) {
             uprtclRoot.setSuperUser(uprtclDetails.address, true, { from: god }),
             uprtclRoot.setSuperUser(uprtclProposals.address, true, { from: god }),
             
-            uprtclRoot.setSuperUser(uprtclDAOWrapper.address, true, { from: god }),
-            uprtclHomePerspectives.setSuperUser(uprtclDAOWrapper.address, true, { from: god }),
-            uprtclProposals.setSuperUser(uprtclDAOWrapper.address, true, { from: god }),
-            uprtclDetails.setSuperUser(uprtclDAOWrapper.address, true, { from: god }),
+            uprtclRoot.setSuperUser(uprtclWrapper.address, true, { from: god }),
+            uprtclHomePerspectives.setSuperUser(uprtclWrapper.address, true, { from: god }),
+            uprtclProposals.setSuperUser(uprtclWrapper.address, true, { from: god }),
+            uprtclDetails.setSuperUser(uprtclWrapper.address, true, { from: god }),
         ])
     })
 
