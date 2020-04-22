@@ -7,13 +7,11 @@ const UprtclHomePerspectives = artifacts.require("UprtclHomePerspectives");
 const {
   randomInt,
   randomVec,
-  multibaseToUint,
-  constants,
   cidConfig1,
-  cidConfig2,
   cidToHex32,
   generateCid,
-  ZERO_HEX_32
+  ZERO_HEX_32,
+  getPerspectiveDetails
 } = require("./utils");
 
 let wrapper;
@@ -110,12 +108,9 @@ contract("DAO Wrapper", async accounts => {
         owner: firstOwner
       };
 
-      const details = {
-        context: (timestamp + 2).toString(),
-        name: randomInt().toString()
-      };
+      const context = (timestamp + 2).toString();
 
-      return { perspective: ethPerspective, details };
+      return { perspective: ethPerspective, context };
     });
 
     const perspectivesData = await Promise.all(buildPerspectivesPromises);
@@ -146,7 +141,8 @@ contract("DAO Wrapper", async accounts => {
         perspectiveIdHash,
         headCid1: headCidParts[0],
         headCid0: headCidParts[1],
-        executed: "0"
+        fromPerspectiveId: "",
+        fromHeadId: ""
       };
 
       return { perspectivesData, headUpdate };
@@ -157,6 +153,8 @@ contract("DAO Wrapper", async accounts => {
     const newProposal = {
       toPerspectiveId: toPerspectiveCid.toString(),
       fromPerspectiveId: fromPerspectiveCid.toString(),
+      toHeadId: '',
+      fromHeadId: '',
       owner: firstOwner,
       nonce: nonce,
       headUpdates: updates.map(u => u.headUpdate),
@@ -255,15 +253,14 @@ contract("DAO Wrapper", async accounts => {
       newPerspective, observer,
       { from: observer });
 
-    const newDetails = {
-      name: "new name",
-      context: "new context"
-    };
+    const newDetails = "new context";
+
     details.setSuperUser(wrapper.address, true, { from: god });
     await wrapper.setPerspectiveDetails(perspectiveIdHash, newDetails, { from: dao });
-    const updatedPerspective = await details.getPerspectiveDetails(perspectiveIdHash);
+    const readDetails = await getPerspectiveDetails(details, perspectiveIdHash);
+
     details.setSuperUser(wrapper.address, true, { from: god });
-    assert.equal(newDetails.name, updatedPerspective.name, "Perspective name did not change");
+    assert.equal(newDetails, readDetails, "Perspective name did not change");
   };
 
   const dontChangePerspectiveDetail = async () => {
