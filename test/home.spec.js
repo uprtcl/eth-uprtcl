@@ -1,4 +1,5 @@
 const UprtclHomePerspectives = artifacts.require("UprtclHomePerspectives");
+const { getHomePerspective } = require("./utils");
 
 contract('UprtclHomePerspectives', (accounts) => {
 
@@ -17,8 +18,8 @@ contract('UprtclHomePerspectives', (accounts) => {
     await uprtclHomePerspectives.setHomePerspectivePublic(pidAlice, { from: alice });
     await uprtclHomePerspectives.setHomePerspectivePublic(pidBob, { from: bob });
 
-    const pidAliceRead = await uprtclHomePerspectives.getHomePerspective(alice, { from: observer });
-    const pidBobRead = await uprtclHomePerspectives.getHomePerspective(bob, { from: observer });
+    const pidAliceRead = await getHomePerspective(uprtclHomePerspectives, alice);
+    const pidBobRead = await getHomePerspective(uprtclHomePerspectives, bob);
 
     assert.equal(pidAliceRead, pidAlice, "pidAlice not expected");
     assert.equal(pidBobRead, pidBob, "pidBob not expected");
