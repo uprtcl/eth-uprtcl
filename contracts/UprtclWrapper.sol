@@ -76,4 +76,13 @@ contract UprtclWrapper is Ownable {
         uprtclProposals.initProposal(newProposal, account);
     }
 
+    /** create the perspectives and initialize a new proposal on one tx */
+    function createAndSetHome(
+        UprtclDetails.InitPerspective memory newPerspective,
+        address account) public {
+
+        uprtclDetails.initPerspective(newPerspective, account);
+        uprtclHomePerspectives.setHomePerspectiveSuperUser(newPerspective.perspective.perspectiveId, msg.sender);
+    }
+
 }
