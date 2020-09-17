@@ -1,0 +1,25 @@
+specVersion: 0.0.1
+description: UprtclHomePerspectives subgraph
+repository: https://github.com/uprtcl/eth-uprtcl
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: UprtclHomePerspectives
+    network: rinkeby
+    source:
+      address: '0x448c376E292A2c82eB07F86e438F674Ed1e9871f'
+      abi: UprtclHomePerspectives
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - HomePerspective
+      abis:
+        - name: Gravity
+          file: ./build/contracts/UprtclHomePerspectives.min.json
+      eventHandlers:
+        - event: HomePerspectiveSet(address,string)
+          handler: handleHomePerspectiveSet
+      file: ./src/homePerspectives-mapping.ts
