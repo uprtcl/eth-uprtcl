@@ -77,44 +77,18 @@ const generateCid = async (message, cidConfig) => {
 
 const ZERO_HEX_32 = '0x' + Array(64).fill(0).join('');
 
-const getPerspectiveHead = async (uprtclRoot, perspectiveIdHash) => {
-  const events = await uprtclRoot.getPastEvents('PerspectiveHeadUpdated', {
-    filter: { perspectiveIdHash: perspectiveIdHash },
+const getLatestHead = async (uprtclRoot, owner) => {
+  const events = await uprtclRoot.getPastEvents('HeadUpdated', {
+    filter: { owner },
     fromBlock: 0
   });
 
   const last = events.sort((e1, e2) => (e1.blockNumber > e2.blockNumber) ? 1 : -1).pop();
 
   return {
-    headCid1: last.returnValues.headCid1,
-    headCid0: last.returnValues.headCid0
+    val1: last.returnValues.val1,
+    val0: last.returnValues.val0
   }
-}
-
-const getPerspectiveDetails = async (uprtclDetails, perspectiveIdHash) => {
-  const events = await uprtclDetails.getPastEvents('PerspectiveDetailsSet', {
-    filter: { perspectiveIdHash: perspectiveIdHash },
-    fromBlock: 0
-  });
-
-  if (events.length === 0) return '';
-
-  const last = events.sort((e1, e2) => (e1.blockNumber > e2.blockNumber) ? 1 : -1).pop();
-  
-  return last.returnValues.context;
-}
-
-const getHomePerspective = async (uprtclHome, address) => {
-  const events = await uprtclHome.getPastEvents('HomePerspectiveSet', {
-    filter: { owner: address },
-    fromBlock: 0
-  });
-
-  if (events.length === 0) return '';
-
-  const last = events.sort((e1, e2) => (e1.blockNumber > e2.blockNumber) ? 1 : -1).pop();
-  
-  return last.returnValues.perspectiveId;
 }
 
 module.exports = {
@@ -127,7 +101,5 @@ module.exports = {
   cidToHex32,
   generateCid,
   ZERO_HEX_32,
-  getPerspectiveHead,
-  getPerspectiveDetails,
-  getHomePerspective
+  getLatestHead
 }
