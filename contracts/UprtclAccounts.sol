@@ -3,7 +3,7 @@ pragma solidity >=0.5.0 <0.6.0;
 import "./HasSuperUsers.sol";
 import "./IERC20.sol";
 
-contract UprtclAccounts is Ownable {
+contract UprtclAccounts is HasSuperUsers {
     mapping(address => mapping(address => bool)) public accounts;
 
     IERC20 public token;
