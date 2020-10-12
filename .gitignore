@@ -11,8 +11,4 @@ build/contracts/SafeMath.json
 build/contracts/UPNService.json
 build/contracts/UPRRegistry.json
 build/contracts/UprtclAccounts.json
-build/contracts/UprtclDetails.json
-build/contracts/UprtclHomePerspectives.json
-build/contracts/UprtclProposals.json
 build/contracts/UprtclRoot.json
-build/contracts/UprtclWrapper.json

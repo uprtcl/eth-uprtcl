@@ -70,6 +70,7 @@ const cidToHex32 = (cidStr) => {
 }
 
 const generateCid = async (message, cidConfig) => {
+  cidConfig = cidConfig || cidConfig1;
   const b = Buffer.from(message);
   const encoded = await multihashing(b, cidConfig.type);
   return new CID(cidConfig.version, cidConfig.codec, encoded, cidConfig.base);
