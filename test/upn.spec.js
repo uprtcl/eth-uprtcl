@@ -83,13 +83,15 @@ contract('UPNService', (accounts) => {
 
     /** set uprtclAccounts */
     let failed = false;
-    await upnService.setUprtclAccounts(uprtclAccounts.address, { from: observer }).catch((error) => {
+    await upnService.setAccounts(uprtclAccounts.address, { from: observer }).catch((error) => {
       assert.equal(error.reason, 'Ownable: caller is not the owner', "unexpected reason");
       failed = true
     });
     assert.isTrue(failed, "superuser set did not failed");
 
-    await upnService.setUprtclAccounts(uprtclAccounts.address, { from: god });
+    await upnService.setAccounts(uprtclAccounts.address, { from: god });
+    await uprtclAccounts.setSuperUser(upnService.address, true, { from: god });
+
     await uprtclAccounts.setToken(erc20Instance.address, { from: god });
   })
 
@@ -359,6 +361,7 @@ contract('UPNService', (accounts) => {
   })
 
   it('should be able to register and force-sell a UPN', async () => {
+    debugger
     const DECIMALS = await upnService.DECIMALS();
     const P_BLOCKS = await upnService.P_BLOCKS();
     const Valice = web3.utils.toWei(web3.utils.toBN(100000));

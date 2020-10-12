@@ -24,7 +24,7 @@ contract UprtclAccounts is HasSuperUsers {
         return accounts[account][usufructuary];
     }
 
-    function transfer(address to, uint256 amount) public onlyOwner {
+    function transfer(address to, uint256 amount) public onlySuperUser {
         token.transfer(to, amount);
     }
 
@@ -45,7 +45,7 @@ contract UprtclAccounts is HasSuperUsers {
         address by,
         address to,
         uint256 amount
-    ) public onlyOwner {
+    ) public onlySuperUser {
         require(
             isUsufructuary(account, by) == true,
             "user is not an account usufructuary"
