@@ -7,7 +7,7 @@ import "./SafeMath.sol";
 import "./UprtclAccounts.sol";
 
 /** A simple signaling contract purposely designed for _Prtcl evees */
-contract UprtclRoot is HasSuperUsers {
+contract UprtclRoot is Ownable {
     using SafeMath for uint256;
 
     uint256 public fee;
@@ -40,10 +40,8 @@ contract UprtclRoot is HasSuperUsers {
         bytes32 val0,
         address account
     ) external {
-        if (!isSuperUser(msg.sender)) {
-            if (this.fee > 0) {
-                accounts.consume(account, msg.sender, fee);
-            }
+        if (fee > 0) {
+            accounts.consume(account, msg.sender, fee);
         }
         emit HeadUpdated(msg.sender, val1, val0);
     }

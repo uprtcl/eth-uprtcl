@@ -1,4 +1,3 @@
-const UprtclRoot = artifacts.require("UprtclRoot");
 const UPNService = artifacts.require("UPNService");
 const UprtclAccounts = artifacts.require("UprtclAccounts");
 const ERC20Mintable = artifacts.require("ERC20Mintable");
@@ -64,7 +63,6 @@ contract('UPNService', (accounts) => {
   const bob = accounts[5];
   const god = accounts[0];
 
-  let uprtclRoot;
   let upnService;
   let erc20Instance;
   let uprtclAccounts;
@@ -78,26 +76,23 @@ contract('UPNService', (accounts) => {
   let P_PER_YEAR = 4;
   let P_BLOCKS = 585600;
 
-  it('should set uprtclRoot', async () => {
-    uprtclRoot = await UprtclRoot.deployed();
+  it('should set uprtclAccounts', async () => {
     upnService = await UPNService.deployed();
     erc20Instance = await ERC20Mintable.deployed();
     uprtclAccounts = await UprtclAccounts.deployed();
 
-    /** set uprtclRoot */
+    /** set uprtclAccounts */
     let failed = false;
-    await upnService.setUprtclRoot(uprtclRoot.address, { from: observer }).catch((error) => {
+    await upnService.setAccounts(uprtclAccounts.address, { from: observer }).catch((error) => {
       assert.equal(error.reason, 'Ownable: caller is not the owner', "unexpected reason");
       failed = true
     });
     assert.isTrue(failed, "superuser set did not failed");
 
-    await upnService.setUprtclRoot(uprtclRoot.address, { from: god });
-    await uprtclAccounts.setToken(erc20Instance.address, { from: god });
-    await uprtclRoot.setAccounts(uprtclAccounts.address, { from: god });
+    await upnService.setAccounts(uprtclAccounts.address, { from: god });
+    await uprtclAccounts.setSuperUser(upnService.address, true, { from: god });
 
-    await uprtclAccounts.setSuperUser(uprtclRoot.address, true, { from: god });
-    await uprtclRoot.setSuperUser(upnService.address, true, { from: god });    
+    await uprtclAccounts.setToken(erc20Instance.address, { from: god });
   })
 
   it('should be able to create two UPR registries', async () => {
@@ -366,6 +361,7 @@ contract('UPNService', (accounts) => {
   })
 
   it('should be able to register and force-sell a UPN', async () => {
+    debugger
     const DECIMALS = await upnService.DECIMALS();
     const P_BLOCKS = await upnService.P_BLOCKS();
     const Valice = web3.utils.toWei(web3.utils.toBN(100000));

@@ -3,7 +3,7 @@ pragma solidity >=0.5.0 <0.6.0;
 import "./HasSuperUsers.sol";
 import "./IERC20.sol";
 
-contract UprtclAccounts is Ownable {
+contract UprtclAccounts is HasSuperUsers {
     mapping(address => mapping(address => bool)) public accounts;
 
     IERC20 public token;
@@ -24,7 +24,7 @@ contract UprtclAccounts is Ownable {
         return accounts[account][usufructuary];
     }
 
-    function transfer(address to, uint256 amount) public onlyOwner {
+    function transfer(address to, uint256 amount) public onlySuperUser {
         token.transfer(to, amount);
     }
 
@@ -45,7 +45,7 @@ contract UprtclAccounts is Ownable {
         address by,
         address to,
         uint256 amount
-    ) public onlyOwner {
+    ) public onlySuperUser {
         require(
             isUsufructuary(account, by) == true,
             "user is not an account usufructuary"
