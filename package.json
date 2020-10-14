@@ -4,6 +4,7 @@
     "test": "truffle test",
     "migrate": "truffle migrate",
     "migrate-rinkeby": "truffle migrate --network rinkeby",
+    "migrate-xdai": "truffle migrate --network xdai",
     "dev": "concurrently \"ganache-cli --networkId 3333 --blockTime 5 --deterministic\" \"npm run migrate\" ",
     "minify": "node ./json.clean.js ./build/contracts"
   },

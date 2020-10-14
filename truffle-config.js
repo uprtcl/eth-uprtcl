@@ -11,17 +11,17 @@ module.exports = {
     },
     rinkeby: {
       provider: () => {
-        return new HDWalletProvider(process.env.mnemonic, process.env.endpoint)
+        return new HDWalletProvider(process.env.mnemonic, process.env.rinkebyEndpoint)
       },
       gasPrice: 25000000000,
       network_id: 4
     },
-    kovan: {
+    xdai: {
       provider: () => {
-        return new HDWalletProvider(process.env.mnemonic, process.env.endpoint)
+        return new HDWalletProvider(process.env.mnemonic, process.env.xdaiEndpoint)
       },
       gasPrice: 25000000000,
-      network_id: 42
+      network_id: 100
     }
   },
 
